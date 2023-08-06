@@ -1,0 +1,109 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{DD1D185B-452B-42CC-BDD8-1539900ADA9E}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>_2D_My_engine_V2</RootNamespace>
+    <AssemblyName>2D My engine V2</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="NAudio">
+      <HintPath>..\..\..\dlls\NAudio.dll</HintPath>
+    </Reference>
+    <Reference Include="sfml-audio">
+      <HintPath>..\..\..\..\..\..\SFML.Net-2.4\lib\sfml-audio.dll</HintPath>
+    </Reference>
+    <Reference Include="sfml-graphics">
+      <HintPath>..\..\..\..\..\..\SFML.Net-2.4\lib\sfml-graphics.dll</HintPath>
+    </Reference>
+    <Reference Include="sfml-system">
+      <HintPath>..\..\..\..\..\..\SFML.Net-2.4\lib\sfml-system.dll</HintPath>
+    </Reference>
+    <Reference Include="sfml-window">
+      <HintPath>..\..\..\..\..\..\SFML.Net-2.4\lib\sfml-window.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="EngineScripts\Component.cs" />
+    <Compile Include="EngineScripts\Components\AnimationComponent.cs" />
+    <Compile Include="EngineScripts\Components\ButtonComponent.cs" />
+    <Compile Include="EngineScripts\GameObject.cs" />
+    <Compile Include="EngineScripts\IDestroyable.cs" />
+    <Compile Include="EngineScripts\IGraphic.cs" />
+    <Compile Include="EngineScripts\IHaveComponents.cs" />
+    <Compile Include="EngineScripts\ISceneEntryClass.cs" />
+    <Compile Include="EngineScripts\Input.cs" />
+    <Compile Include="EngineScripts\Mathematic.cs" />
+    <Compile Include="EngineScripts\ResourcesManager\SpriteLoader.cs" />
+    <Compile Include="EngineScripts\Scene.cs" />
+    <Compile Include="EngineScripts\Time.cs" />
+    <Compile Include="EngineScripts\Transform.cs" />
+    <Compile Include="NotEngineScripts\Block.cs" />
+    <Compile Include="NotEngineScripts\BlockIdentity.cs" />
+    <Compile Include="NotEngineScripts\DestroyAnim.cs" />
+    <Compile Include="NotEngineScripts\Game.cs" />
+    <Compile Include="NotEngineScripts\Player.cs" />
+    <Compile Include="NotEngineScripts\GameWorld.cs" />
+    <Compile Include="NotEngineScripts\Scene2.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
