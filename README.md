@@ -9,4 +9,4 @@ The engine is not finished yet, it is under active development.
 3. **[Visual Studio 2022](https://visualstudio.microsoft.com/downloads/)**
 
 > [!WARNING]
-> Ñopy the contents of the "Content" folder to the build folder
+> Copy the contents of the "Content" folder to the build folder
