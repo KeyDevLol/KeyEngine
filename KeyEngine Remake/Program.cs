@@ -1,12 +1,10 @@
 ﻿namespace KeyEngine
 {
-     class Program
+    class Program
     {
         private static void Main()
         {
-            //Log.StartLogToFile("log.txt", true);
-            MainWindow.Initialize();
-            //Log.StopLogToFile();
+            MainWindow.Initialize(new SampleScene());
         }
     }
 }
