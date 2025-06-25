@@ -22,7 +22,7 @@ namespace KeyEngine
         private readonly AssetReference<Texture> assetTexture = new AssetReference<Texture>(Texture.Square);
 
         public Shader? Shader = Shader.Default;
-
+        //
         public Color Color
         {
             get => _color;
