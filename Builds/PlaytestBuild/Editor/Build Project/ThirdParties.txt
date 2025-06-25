@@ -1,0 +1,17 @@
+FreeTypeSharp (MIT License)
+https://github.com/ryancheung/FreeTypeSharp
+
+ImGui.NET (MIT License)
+https://github.com/ImGuiNET/ImGui.NET
+
+OpenTK (MIT License)
+https://github.com/opentk/opentk
+
+StbImageSharp (Public Domain)
+https://github.com/StbSharp/StbImageSharp
+
+StbImageWriteSharp (Public Domain)
+https://github.com/StbSharp/StbImageWriteSharp
+
+VelcroPhysics (MIT License)
+https://github.com/Genbox/VelcroPhysics

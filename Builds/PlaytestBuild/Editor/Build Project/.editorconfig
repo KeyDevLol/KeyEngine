@@ -1,0 +1,4 @@
+﻿[*.cs]
+
+# IDE0090: Используйте "new(...)".
+dotnet_diagnostic.IDE0090.severity = none
