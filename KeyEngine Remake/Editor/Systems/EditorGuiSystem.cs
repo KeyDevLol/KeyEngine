@@ -1,7 +1,7 @@
 ﻿using ImGuiNET;
 using KeyEngine.Editor.GUI.Windows;
 using KeyEngine.Editor.GUI;
-using KeyEngine.Renderer;
+using KeyEngine.Rendering;
 using OpenTK.Windowing.Common;
 
 namespace KeyEngine.Editor.Systems

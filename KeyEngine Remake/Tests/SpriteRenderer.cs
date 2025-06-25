@@ -1,10 +1,9 @@
 ﻿using KeyEngine.Editor;
 using KeyEngine.Graphics;
-using KeyEngine.Renderer;
 using KeyEngine.Rendering;
 using OpenTK.Graphics.OpenGL;
 
-namespace KeyEngine
+namespace KeyEngine.Rendering
 {
     public class SpriteRenderer : Component
     {
@@ -22,7 +21,7 @@ namespace KeyEngine
         private readonly AssetReference<Texture> assetTexture = new AssetReference<Texture>(Texture.Square);
 
         public Shader? Shader = Shader.Default;
-        //
+
         public Color Color
         {
             get => _color;

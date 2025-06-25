@@ -1,5 +1,5 @@
 ﻿using KeyEngine.Editor;
-using KeyEngine.Renderer;
+using KeyEngine.Rendering;
 using OpenTK.Compute.OpenCL;
 using OpenTK.Graphics.OpenGL;
 using StbImageSharp;

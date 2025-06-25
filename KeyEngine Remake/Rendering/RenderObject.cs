@@ -1,7 +1,5 @@
 ﻿using KeyEngine.Graphics;
-using KeyEngine.Renderer;
 using OpenTK.Graphics.OpenGL;
-using OpenTK.Mathematics;
 
 namespace KeyEngine.Rendering
 {

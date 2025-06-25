@@ -7,7 +7,7 @@ using OpenTK.Windowing.GraphicsLibraryFramework;
 using System.Diagnostics;
 using ErrorCode = OpenTK.Graphics.OpenGL4.ErrorCode;
 
-namespace KeyEngine.Renderer
+namespace KeyEngine.Rendering
 {
     public class ImGuiController : IDisposable
     {
