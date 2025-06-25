@@ -361,3 +361,8 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# KeyEngine Ignore
+Tests/
+Builds/
+ToDo.txt

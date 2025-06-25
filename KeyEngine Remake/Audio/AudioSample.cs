@@ -25,7 +25,6 @@ namespace KeyEngine.Audio
         /// <param name="filePath">Path to audio file</param>
         public void LoadWavFile(string path)
         {
-            //var l = new Mp3FileReaderBase.FrameDecompressorBuilder(;
             using (WaveFileReader waveFileReader = new WaveFileReader(path))
             {
                 WaveStream stream = waveFileReader;
@@ -34,9 +33,6 @@ namespace KeyEngine.Audio
                 int bits = stream.WaveFormat.BitsPerSample;
                 int sampleRate = stream.WaveFormat.SampleRate;
 
-                //int bufferSize = waveFileReader.;
-
-                //int lol = waveFileReader.ReadByte();
                 byte[] array;
 
                 if (channels == 1)
@@ -52,17 +48,6 @@ namespace KeyEngine.Audio
                     channels = 1;
                 }
 
-                //Log.Print("Samples: " + waveFileReader.SampleCount);
-                //Log.Print($"Channels: {channels}");
-                //Log.Print($"Bits: {bits}");
-                //Log.Print($"SampleRate: {sampleRate}");
-                //Log.Print($"Buf size: {array.Length}");
-                //Log.Print("Extra Size: " + waveFileReader.WaveFormat.ExtraSize);
-                //Log.Print("BitsPerSample: " + waveFileReader.WaveFormat.BitsPerSample);
-                //Log.Print("BlockAlign: " + waveFileReader.WaveFormat.BlockAlign);
-                //Log.Print("Encoding: " + waveFileReader.WaveFormat.Encoding);
-                //Log.Print($"NAUDIO END");
-
                 pointer = GetDataPointer(array);
                 BufferHandle = AL.GenBuffer();
 
@@ -72,63 +57,6 @@ namespace KeyEngine.Audio
                 , pointer
                 , array.Length
                 , sampleRate);
-            }
-
-            return;
-
-            using (BinaryReader reader = new BinaryReader(File.Open(path, FileMode.Open)))
-            {
-                // RIFF header
-                string signature = new string(reader.ReadChars(4));
-                if (signature != "RIFF")
-                    throw new NotSupportedException("Specified stream is not a wave file.");
-
-                int riff_chunck_size = reader.ReadInt32();
-
-                string format = new string(reader.ReadChars(4));
-                if (format != "WAVE")
-                    throw new NotSupportedException("Specified stream is not a wave file.");
-
-                // WAVE header
-                string format_signature = new string(reader.ReadChars(4));
-                //if (format_signature != "fmt ")
-                //    throw new NotSupportedException("Specified wave file is not supported.");
-
-                int formatChunkSize = reader.ReadInt32();
-                int audioFormat = reader.ReadInt16();
-                int channels = reader.ReadInt16();
-                int sampleRate = reader.ReadInt32();
-                int byteRate = reader.ReadInt32();
-                int blockAlign = reader.ReadInt16();
-                int bits = reader.ReadInt16();
-
-                string data_signature = new string(reader.ReadChars(4));
-
-                int data_chunk_size = reader.ReadInt32();
-
-                //Init
-                byte[] data = reader.ReadBytes((int)reader.BaseStream.Length);
-                int bufferSize = data.Length;
-
-                DisposeUnmanaged();
-
-                pointer = GetDataPointer(data);
-
-                BufferHandle = AL.GenBuffer();
-
-                AL.BufferData(
-                BufferHandle
-                , AudioManager.GetSoundFormat(channels, bits)
-                , pointer
-                , bufferSize
-                , sampleRate);
-
-                Log.Print(data.Length);
-                Log.Print($"Channels: {channels}");
-                Log.Print($"Bits: {bits}");
-                Log.Print($"SampleRate: {sampleRate}");
-                Log.Print($"Buf size: {bufferSize}");
-                Log.Print($"CUSTOM END");
             }
         }
 
