@@ -11,23 +11,15 @@ namespace KeyEngine
     //
     public class TestScene : IScene
     {
-        public int lol = 100;
-        public int lol3 = 100;
-        public int lol2 = 100;
-        private AssetReference<AudioSample> audioSample = new AssetReference<AudioSample>(@"Assets/Audio/Vigilantism 2.wav");
+        //private AssetReference<AudioSample> audioSample = new AssetReference<AudioSample>(@"Assets/Audio/Vigilantism 2.wav");
 
         public void Load()
         {
-            //Entity hello = ECS.AddEntity("Hello Entity 1");
-            //hello.AddComponent<SpriteRenderer>().Owner.Position = new Vector2(0, 0);
-
             Entity grass = ECS.AddEntity("Grass");
             grass.Layer = -1;
             SpriteRenderer spriteRenderer = grass.AddComponent<SpriteRenderer>();
-            spriteRenderer.Texture = AssetsManager.GetAsset<Texture>("Assets/Textures/Grass.png");
+            spriteRenderer.Color = Color.Green;
             grass.Scale = new Vector2(200, 200);
-            spriteRenderer.Texture.WrapMode = WrapMode.Repeat;
-            spriteRenderer.TileSize = new Vector2(200, 200);
 
             Entity lol = ECS.AddEntity("Lol");
             lol.Scale = new Vector2(3, 3);
@@ -38,13 +30,13 @@ namespace KeyEngine
             audioListener.AddComponent<SpriteRenderer>();
             audioListener.AddComponent<Player>();
 
-            AudioSource audSource = lol.AddComponent<AudioSource>();
-            audSource.Looping = true;
-            audSource.PanSmoothness = 3.5f;
-            audSource.MaxDistance = 20;
-            audSource.Volume = 100;
-            audSource.SetAudioSample(audioSample.Value);
-            audSource.Play();
+            //AudioSource audSource = lol.AddComponent<AudioSource>();
+            //audSource.Looping = true;
+            //audSource.PanSmoothness = 3.5f;
+            //audSource.MaxDistance = 20;
+            //audSource.Volume = 100;
+            //audSource.SetAudioSample(audioSample.Value);
+            //audSource.Play();
             ////for (int i = 0; i < 100; i++)
             ////{
 

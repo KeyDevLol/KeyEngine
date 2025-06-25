@@ -36,7 +36,7 @@ namespace KeyEngine
             instance = new MainWindow(nativeWindowSettings);
             GL.ClearColor(0.39f, 0.58f, 0.93f, 1.0f);
             instance.WindowState = WindowState.Maximized;
-            SceneManager.LoadScene<TextTestScene>();
+            SceneManager.LoadScene<TestScene>();
 
             instance.Run();
             

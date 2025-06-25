@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 
 namespace KeyEngine.Tests
 {
-    //
     public static class Counter
     {
         public static List<string> RegisteredComponents = new List<string>();
