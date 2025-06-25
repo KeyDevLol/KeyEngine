@@ -1,6 +1,5 @@
 ﻿using KeyEngine.Editor;
 using KeyEngine.Graphics;
-using KeyEngine.Renderer;
 using KeyEngine.Rendering;
 using OpenTK.Graphics.OpenGL;
 
