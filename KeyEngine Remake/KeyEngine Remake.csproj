@@ -36,4 +36,8 @@
     <PackageReference Include="StbImageWriteSharp" Version="1.16.7" />
   </ItemGroup>
 
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="xcopy &quot;$(SolutionDir)Resources\&quot; &quot;$(ProjectDir)$(OutDir)&quot; /E /Y" />
+  </Target>
+
 </Project>

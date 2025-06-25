@@ -28,5 +28,26 @@ namespace KeyEngine
             ECS.PassRemoveQueue();
             ECS.CallStart();
         }
+
+        public static void LoadScene(IScene scene, bool callGC = false)
+        {
+            CurrentScene?.Unload();
+            SceneIsRunning = false;
+
+            ECS.DeleteAllEntities();
+            ECS.ClearAddQueue();
+            ECS.ClearRemoveQueue();
+            if (callGC)
+                GC.Collect();
+
+            CurrentScene = scene;
+            CurrentScene.Load();
+
+            SceneIsRunning = true;
+
+            ECS.PassAddQueue();
+            ECS.PassRemoveQueue();
+            ECS.CallStart();
+        }
     }
 }

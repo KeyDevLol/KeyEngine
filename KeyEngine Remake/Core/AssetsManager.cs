@@ -1,6 +1,5 @@
 ﻿using KeyEngine.Audio;
 using KeyEngine.Graphics;
-using System.Diagnostics;
 
 namespace KeyEngine.Editor
 {
@@ -10,30 +9,6 @@ namespace KeyEngine.Editor
         public const string ASSETS_FOLDER_PATH = "Assets";
 
         public static Dictionary<string, AssetData> Assets = new Dictionary<string, AssetData>();
-
-        static AssetsManager()
-        {
-            //string[] files = Directory.GetFiles(ASSETS_FOLDER_PATH, "*.*", SearchOption.AllDirectories);
-
-            //foreach (string file in files)
-            //{
-            //    string fileExtension = Path.GetExtension(file);
-            //    Type? type = null;
-
-            //    switch (fileExtension)
-            //    {
-            //        case ".png": type = typeof(Texture); break;
-            //        case ".bmp": type = typeof(Texture); break;
-            //        case ".jpg": type = typeof(Texture); break;
-            //        case ".jpeg": type = typeof(Texture); break;
-            //    }
-
-            //    Log.Print(type);
-
-            //    if (type != null)
-            //        Assets.Add(file, new AssetData(type, file));
-            //}
-        }
 
         public static T? GetAsset<T>(string filePath) where T : IAsset
         {
@@ -105,36 +80,5 @@ namespace KeyEngine.Editor
 
             Assets.Clear();
         }
-    }
-
-    public class AssetData
-    {
-        public readonly string Path;
-        public readonly IAsset? Instance;
-        private readonly Type type;
-
-        public AssetData(Type type, string path)
-        {
-            Path = path;
-
-            if (type.GetInterface(nameof(IAsset)) != null)
-                this.type = type;
-            else
-                throw new InvalidCastException();
-
-            object? obj = Activator.CreateInstance(type) ?? throw new NullReferenceException();
-            Instance = (IAsset)obj;
-            Instance.LoadAsset(Path);
-        }
-
-        public void Unload() => Instance?.UnloadAsset();
-    }
-
-    public interface IAsset
-    {
-        public void LoadAsset(string path);
-        public void UnloadAsset();
-
-        public bool AssetLoaded { get; }
     }
 }
