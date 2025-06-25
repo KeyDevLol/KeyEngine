@@ -1,10 +1,8 @@
 ﻿using KeyEngine.Rendering;
-using KeyEngine.Tests;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
-using System.Reflection;
 
 namespace KeyEngine
 {
@@ -35,11 +33,10 @@ namespace KeyEngine
 
             instance = new MainWindow(nativeWindowSettings);
             GL.ClearColor(0.39f, 0.58f, 0.93f, 1.0f);
-            instance.WindowState = WindowState.Maximized;
-            SceneManager.LoadScene<TestScene>();
+            instance.WindowState = WindowState.Normal;
+            SceneManager.LoadScene<SampleScene>();
 
             instance.Run();
-            
         }
 
         protected override void OnUpdateFrame(FrameEventArgs args)
