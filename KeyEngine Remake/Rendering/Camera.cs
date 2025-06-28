@@ -135,12 +135,9 @@ namespace KeyEngine.Rendering
 
         private void RefreshView()
         {
-            Matrix4 transform = Matrix4.Identity;
+            //Matrix4 transform = Matrix4.Identity;
 
-            transform *= Matrix4.CreateTranslation(-_position.X, -_position.Y, 0);
-            transform *= Matrix4.CreateRotationZ(-_rotation * Mathf.Deg2Rad);
-
-            _view = transform;
+            _view = Matrix4.CreateTranslation(-_position.X, -_position.Y, 0) * Matrix4.CreateRotationZ(-_rotation * Mathf.DEG_2_RAD);
 
             viewIsDirty = false;
         }
@@ -190,11 +187,24 @@ namespace KeyEngine.Rendering
         /// <summary>
         /// Converts screen coordinates to world coordinates
         /// </summary>
-        /// <param name="screenX">Screen X coordinate</param>
-        /// <param name="screenY">Screen Y coordinate</param>
-        public Vector2 ScreenToWorldCoords(float screenX, float screenY)
+        /// <param name="x">Screen X coordinate</param>
+        /// <param name="y">Screen Y coordinate</param>
+        public Vector2 ScreenToWorldCoords(float x, float y)
         {
-            return ScreenToWorldCoords(new Vector2(screenX, screenY));
+            return ScreenToWorldCoords(new Vector2(x, y));
+        }
+
+        public Vector2 WorldToScreenCoords(Vector2 worldPos)
+        {
+            Matrix4 viewProjection = ViewProjection;
+            Vector4 clipPos = Vector4.TransformRow(new Vector4(worldPos.X, worldPos.Y, 0, 1), viewProjection);
+
+            Vector3 ndc = new Vector3(clipPos.X, clipPos.Y, clipPos.Z) / clipPos.W;
+
+            float screenX = (ndc.X + 1.0f) * 0.5f * MainWindow.Instance.ClientSize.X;
+            float screenY = (1.0f - ndc.Y) * 0.5f * MainWindow.Instance.ClientSize.Y;
+
+            return new Vector2(screenX, screenY);
         }
     }
 }
