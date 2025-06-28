@@ -4,7 +4,7 @@
     {
         private static void Main()
         {
-            MainWindow.Initialize(new PhysicsScene());
+            MainWindow.Initialize(new AudioScene());
         }
     }
 }

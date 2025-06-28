@@ -8,7 +8,7 @@ namespace KeyEngine
     //
     public class TestScene : IScene
     {
-        //private AssetReference<AudioSample> audioSample = new AssetReference<AudioSample>(@"Assets/Audio/Vigilantism 2.wav");
+        private AssetReference<AudioSample> audioSample = new AssetReference<AudioSample>(@"Assets/Audio/Vigilantism.wav");
 
         public void Load()
         {
@@ -27,13 +27,13 @@ namespace KeyEngine
             audioListener.AddComponent<SpriteRenderer>();
             audioListener.AddComponent<Player>();
 
-            //AudioSource audSource = lol.AddComponent<AudioSource>();
+            AudioSource audSource = lol.AddComponent<AudioSource>();
             //audSource.Looping = true;
             //audSource.PanSmoothness = 3.5f;
             //audSource.MaxDistance = 20;
             //audSource.Volume = 100;
-            //audSource.SetAudioSample(audioSample.Value);
-            //audSource.Play();
+            audSource.SetAudioSample(audioSample.Value);
+            audSource.Play();
             ////for (int i = 0; i < 100; i++)
             ////{
 

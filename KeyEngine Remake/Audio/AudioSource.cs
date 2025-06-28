@@ -1,6 +1,4 @@
-﻿using KeyEngine.Editor;
-using OpenTK.Audio.OpenAL;
-using System.Diagnostics;
+﻿using OpenTK.Audio.OpenAL;
 
 namespace KeyEngine.Audio
 {
@@ -113,13 +111,6 @@ namespace KeyEngine.Audio
         private void OnOwnerTransformChanged()
         {
             SetSourcePos();
-            Log.Print("Changed");
-        }
-
-        public override void Update(float deltaTime)
-        {
-            if (Input.IsKeyPressed(KeyCode.Space))
-                Play();
         }
 
         public void Play()
@@ -182,14 +173,10 @@ namespace KeyEngine.Audio
 
         private void SetCalculatedGain()
         {
-            Stopwatch sw = new Stopwatch();
-            sw.Start();
             if (AudioListener.Instance != null && EnableRolloff)
                 AL.Source(SourceHandle, ALSourcef.Gain, CalculateGain(Vector2.Distance(Owner.Position, AudioListener.Instance.Owner.Position)));
             else
                 AL.Source(SourceHandle, ALSourcef.Gain, _volume / 100);
-            sw.Stop();
-            //Log.Print(sw.Elapsed.TotalMilliseconds);
         }
 
         private void SetSourcePos()
