@@ -1,6 +1,6 @@
 ﻿using KeyEngine.Graphics;
 
-namespace KeyEngine.Editor
+namespace KeyEngine
 {
     public class AssetReference<T> where T : class, IAsset
     {

@@ -1,7 +1,7 @@
 ﻿using KeyEngine.Audio;
 using KeyEngine.Graphics;
 
-namespace KeyEngine.Editor
+namespace KeyEngine
 {
     // TODO: Сделать чтобы все ассеты загружались не сразу, только после вызова метода GetAsset, если таковой ассет не был загружен.
     public static class AssetsManager

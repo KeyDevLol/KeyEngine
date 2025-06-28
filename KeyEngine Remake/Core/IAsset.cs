@@ -1,4 +1,4 @@
-﻿namespace KeyEngine.Editor
+﻿namespace KeyEngine
 {
     public interface IAsset
     {
