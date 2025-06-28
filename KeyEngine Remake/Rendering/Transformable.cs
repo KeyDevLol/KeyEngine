@@ -15,6 +15,7 @@ namespace KeyEngine.Rendering
                 {
                     _position = value;
                     isDirty = true;
+                    TransformChanged();
                 }
             }
         }
@@ -29,6 +30,7 @@ namespace KeyEngine.Rendering
                 {
                     _scale = value;
                     isDirty = true;
+                    TransformChanged();
                 }
             }
         }
@@ -43,6 +45,7 @@ namespace KeyEngine.Rendering
                 {
                     _rotation = value;
                     isDirty = true;
+                    TransformChanged();
                 }
             }
         }
@@ -59,6 +62,7 @@ namespace KeyEngine.Rendering
         protected Matrix4 _model;
 
         public event Action? OnTransformChanged;
+        public bool quietChange;
 
         public Transformable()
         {
@@ -76,13 +80,27 @@ namespace KeyEngine.Rendering
             Matrix4 transform = Matrix4.Identity;
 
             transform *= Matrix4.CreateScale(_scale.X, _scale.Y, 0);
-            transform *= Matrix4.CreateRotationZ(_rotation * Mathf.Deg2Rad);
+            transform *= Matrix4.CreateRotationZ(_rotation * Mathf.DEG_2_RAD);
             transform *= Matrix4.CreateTranslation(_position.X, _position.Y, 1);
 
             _model = transform;
             isDirty = false;
+        }
 
-            OnTransformChanged?.Invoke();
+        private void TransformChanged()
+        {
+            if (quietChange == false)
+                OnTransformChanged?.Invoke();
+        }
+
+        public void BeginQuiteMode()
+        {
+            quietChange = true;
+        }
+
+        public void EndQuiteMode()
+        {
+            quietChange = false;
         }
     }
 }
