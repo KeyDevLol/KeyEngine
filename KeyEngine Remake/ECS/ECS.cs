@@ -7,6 +7,7 @@ namespace KeyEngine
         private readonly static EntityCollection entityCollection = new EntityCollection();
         //private readonly static Queue<Entity> addEntitiesQueue = new Queue<Entity>();
         //private readonly static Queue<Entity> removeEntitiesQueue = new Queue<Entity>();
+        public static int EntitiesCount => entityCollection.Count;
 
         #region Add Entity
         public static void AddEntity(Entity entity)
