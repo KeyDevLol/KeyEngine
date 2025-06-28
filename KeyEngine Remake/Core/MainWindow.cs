@@ -43,9 +43,10 @@ namespace KeyEngine
         {
             if (IsFocused == false)
                 return;
-            base.OnUpdateFrame(args);
+
             float deltaTime = (float)args.Time;
 
+            PhysicsManager.Update(deltaTime);
             ECS.CallUpdate(deltaTime);
 #if ENABLE_EDITOR
             Editor.Editor.Update(deltaTime);

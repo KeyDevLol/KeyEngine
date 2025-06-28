@@ -36,6 +36,10 @@
     <PackageReference Include="StbImageWriteSharp" Version="1.16.7" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\External\VelcroPhysics\VelcroPhysics.csproj" />
+  </ItemGroup>
+
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
     <Exec Command="xcopy &quot;$(SolutionDir)Content\&quot; &quot;$(ProjectDir)$(OutDir)&quot; /E /Y" />
   </Target>

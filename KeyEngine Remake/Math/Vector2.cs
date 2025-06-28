@@ -2,6 +2,7 @@
 using System.Runtime.CompilerServices;
 using TKVector2 = OpenTK.Mathematics.Vector2;
 using NUMVector2 = System.Numerics.Vector2;
+using XNAVector2 = Microsoft.Xna.Framework.Vector2;
 using KeyEngine.Editor.Serialization;
 
 namespace KeyEngine
@@ -121,6 +122,16 @@ namespace KeyEngine
         public static implicit operator NUMVector2(Vector2 value)
         {
             return Unsafe.BitCast<Vector2, NUMVector2>(value);
+        }    
+        
+        public static implicit operator Vector2(XNAVector2 value)
+        {
+            return Unsafe.BitCast<XNAVector2, Vector2>(value);
+        }
+
+        public static implicit operator XNAVector2(Vector2 value)
+        {
+            return Unsafe.BitCast<Vector2, XNAVector2>(value);
         }
 
         public static Vector2 Lerp(Vector2 a, Vector2 b, float t)
