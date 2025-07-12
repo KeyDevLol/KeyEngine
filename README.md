@@ -12,8 +12,8 @@ The engine is not finished yet, it is under active development.
 > Copy the contents of the "Content" folder to the build folder
 
 # Supported O/S
-✔️ Windows 10
-❌ MacOS
-✔️ Ubuntu
-✔️ Linux Mint
-✔️ Fedora
+- ✔️ Windows 10
+- ✔️ Ubuntu
+- ✔️ Linux Mint
+- ✔️ Fedora
+- ❌ MacOS
