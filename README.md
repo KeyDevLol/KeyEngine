@@ -18,3 +18,5 @@ The engine is not finished yet, it is under active development.
 - ✔️ Ubuntu
 - ✔️ Linux Mint
 - ✔️ Fedora
+- ✔️ Arch (KDE Plasma)
+- ✔️ CachyOS (KDE Plasma)
