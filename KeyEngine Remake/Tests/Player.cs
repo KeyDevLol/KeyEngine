@@ -1,13 +1,8 @@
-﻿using KeyEngine.Rendering;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using KeyEngine.Mathematics;
+using KeyEngine.Rendering;
 
 namespace KeyEngine.Tests
 {
-    //
     public class Player : Component
     {
         private Camera? camera;
@@ -32,7 +27,6 @@ namespace KeyEngine.Tests
             //camera.RefreshProjection();
             //camera.RefreshView();
             //camera.RefreshProjectionView();
-            Log.Print(camera.Position);
 
             //if (camera != null)
             //{

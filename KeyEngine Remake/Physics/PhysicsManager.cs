@@ -1,4 +1,6 @@
 ﻿using Genbox.VelcroPhysics.Dynamics;
+using KeyEngine.Mathematics;
+using System.Diagnostics.CodeAnalysis;
 using PVector2 = Microsoft.Xna.Framework.Vector2;
 
 namespace KeyEngine
@@ -30,7 +32,7 @@ namespace KeyEngine
             World.IsLocked = false;
         }
 
-        public static bool RayCast(Vector2 point1, Vector2 point2, out RigidBody? rb)
+        public static bool RayCast(Vector2 point1, Vector2 point2, [NotNullWhen(true)] out RigidBody? rb)
         {
             List<Fixture> fixtures = World.RayCast(point1, point2);
 

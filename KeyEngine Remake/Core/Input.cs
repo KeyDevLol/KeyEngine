@@ -1,4 +1,5 @@
-﻿using OpenTK.Windowing.GraphicsLibraryFramework;
+﻿using KeyEngine.Mathematics;
+using OpenTK.Windowing.GraphicsLibraryFramework;
 
 namespace KeyEngine
 {
@@ -10,12 +11,12 @@ namespace KeyEngine
         /// <summary>
         /// Called when something is typed on the keyboard
         /// </summary>
-        public static Action<TextInputArgs> OnTextInput;
+        public static Action<TextInputArgs>? OnTextInput { get; set; }
 #if ENABLE_EDITOR
         public static bool enableInput = true;
 #endif // ENABLE_EDITOR
 
-        public static void Init()
+        static Input()
         {
             MainWindow.Instance.TextInput += TextInputed;
         }
@@ -118,12 +119,12 @@ namespace KeyEngine
         /// <summary>
         /// If any key is pressed
         /// </summary>
-        public static bool isAnyKeyDown => MainWindow.Instance.KeyboardState.IsAnyKeyDown;
+        public static bool IsAnyKeyDown => MainWindow.Instance.KeyboardState.IsAnyKeyDown;
 
         /// <summary>
         /// Gets or sets the clipboard string
         /// </summary>
-        public static string clipboard
+        public static string Clipboard
         {
             get { return MainWindow.Instance.ClipboardString; }
             set { MainWindow.Instance.ClipboardString = value; }
@@ -132,6 +133,7 @@ namespace KeyEngine
         #endregion // Keyboard
 
         #region Mouse
+
         /// <summary>
         /// The mouse button was pressed
         /// </summary>
@@ -169,19 +171,19 @@ namespace KeyEngine
         /// <summary>
         /// Mouse wheel scrolling delta
         /// </summary>
-        public static Vector2 mouseScrollDelta => MainWindow.Instance.MouseState.ScrollDelta;
+        public static Vector2 MouseScrollDelta => MainWindow.Instance.MouseState.ScrollDelta;
         /// <summary>
         /// Mouse cursor position in screen coordinates
         /// </summary>
-        public static Vector2 mousePosition => MainWindow.Instance.MouseState.Position;
+        public static Vector2 MousePosition => MainWindow.Instance.MouseState.Position;
         /// <summary>
         /// Mouse movement delta
         /// </summary>
-        public static Vector2 mousePositionDelta => MainWindow.Instance.MouseState.Delta;
+        public static Vector2 MousePositionDelta => MainWindow.Instance.MouseState.Delta;
         /// <summary>
         /// Mouse cursor state
         /// </summary>
-        public static CursorState cursorState
+        public static CursorState CursorState
         {
             get { return (CursorState)MainWindow.Instance.CursorState; }
             set { MainWindow.Instance.CursorState = (OpenTK.Windowing.Common.CursorState)value; }
@@ -189,7 +191,7 @@ namespace KeyEngine
         /// <summary>
         /// If any mouse button is pressed
         /// </summary>
-        public static bool isAnyMouseButtonDown => MainWindow.Instance.MouseState.IsAnyButtonDown;
+        public static bool IsAnyMouseButtonPressed => MainWindow.Instance.MouseState.IsAnyButtonDown;
 #endregion // Mouse
 
         #region Other
@@ -197,7 +199,7 @@ namespace KeyEngine
         /// <summary>
         /// Called when files have been dropped into the program window
         /// </summary>
-        public static Action<string[]>? onFileDropped;
+        public static Action<string[]>? OnFileDropped;
 
         #endregion // Other
     }

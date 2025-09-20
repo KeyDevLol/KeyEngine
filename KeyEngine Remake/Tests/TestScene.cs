@@ -1,7 +1,8 @@
-﻿using KeyEngine.Editor.Serialization;
+﻿using KeyEngine.Serialization;
 using System.Diagnostics;
 using KeyEngine.Audio;
 using KeyEngine.Tests;
+using KeyEngine.Mathematics;
 
 namespace KeyEngine 
 {
@@ -14,17 +15,17 @@ namespace KeyEngine
         {
             Entity grass = ECS.AddEntity("Grass");
             grass.Layer = -1;
-            SpriteRenderer spriteRenderer = grass.AddComponent<SpriteRenderer>();
-            spriteRenderer.Color = Color.Green;
+            InstanceRendering spriteRenderer = grass.AddComponent<InstanceRendering>();
+            spriteRenderer.Color = Color32.Green;
             grass.Scale = new Vector2(200, 200);
 
             Entity lol = ECS.AddEntity("Lol");
             lol.Scale = new Vector2(3, 3);
-            lol.AddComponent<SpriteRenderer>();
+            lol.AddComponent<InstanceRendering>();
 
             Entity audioListener = ECS.AddEntity("Audio Listener (Player)");
             audioListener.AddComponent<AudioListener>();
-            audioListener.AddComponent<SpriteRenderer>();
+            audioListener.AddComponent<InstanceRendering>();
             audioListener.AddComponent<Player>();
 
             AudioSource audSource = lol.AddComponent<AudioSource>();
@@ -206,8 +207,11 @@ namespace KeyEngine
             }
         }
 
-        public static void WriteByCode(int code, object value, ref BinaryWriter writer)
+        public static void WriteByCode(int code, object? value, ref BinaryWriter writer)
         {
+            if (value == null)
+                return;
+
             switch (code)
             {
                 case 3: writer.Write((bool)value); break;

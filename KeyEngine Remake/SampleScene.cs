@@ -1,4 +1,6 @@
-﻿namespace KeyEngine
+﻿using KeyEngine.Mathematics;
+
+namespace KeyEngine
 {
     public class SampleScene : IScene
     {
@@ -8,12 +10,12 @@
             Entity entity = ECS.AddEntity("Entity Name");
 
             // Adding new component to entity
-            entity.AddComponent<SpriteRenderer>();
+            entity.AddComponent<InstanceRendering>();
 
             // Getting a component and changing its variable
-            SpriteRenderer? spriteRenderer = entity.GetComponent<SpriteRenderer>();
+            InstanceRendering? spriteRenderer = entity.GetComponent<InstanceRendering>();
             if (spriteRenderer != null)
-                spriteRenderer.Color = Color.Red;
+                spriteRenderer.Color = Color32.Red;
             else
                 Log.Print("SpriteRenderer is null!", LogType.Error);
 

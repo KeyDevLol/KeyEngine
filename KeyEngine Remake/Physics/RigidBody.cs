@@ -5,6 +5,7 @@ using Genbox.VelcroPhysics.Dynamics;
 using Genbox.VelcroPhysics.Factories;
 using Genbox.VelcroPhysics.Utilities;
 using KeyEngine.Editor.GUI;
+using KeyEngine.Mathematics;
 using PBodyType = Genbox.VelcroPhysics.Dynamics.BodyType;
 
 namespace KeyEngine
@@ -182,7 +183,8 @@ namespace KeyEngine
 
         private void TransformChanged()
         {
-            body.SetTransform(Owner.Position, Owner.Rotation);
+            body.Position = Owner.Position;
+            body.Rotation = Owner.Rotation * Mathf.DEG_2_RAD;
 
             if (lastScale != Owner.Scale)
             {

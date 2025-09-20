@@ -3,10 +3,11 @@ using System.Runtime.CompilerServices;
 using TKVector2 = OpenTK.Mathematics.Vector2;
 using NUMVector2 = System.Numerics.Vector2;
 using XNAVector2 = Microsoft.Xna.Framework.Vector2;
-using KeyEngine.Editor.Serialization;
+using KeyEngine.Serialization;
 
-namespace KeyEngine
+namespace KeyEngine.Mathematics
 {
+    [Serializable]
     public struct Vector2 : IEquatable<Vector2>, IFormattable, ISerializable
     {
         public float X;
@@ -158,7 +159,7 @@ namespace KeyEngine
 
             float sqDist = toVector_x * toVector_x + toVector_y * toVector_y;
 
-            if (sqDist == 0 || (maxDistanceDelta >= 0 && sqDist <= maxDistanceDelta * maxDistanceDelta))
+            if (sqDist == 0 || maxDistanceDelta >= 0 && sqDist <= maxDistanceDelta * maxDistanceDelta)
                 return target;
 
             float dist = (float)Math.Sqrt(sqDist);
@@ -236,7 +237,7 @@ namespace KeyEngine
             Y = reader.ReadSingle();
         }
 
-        public void SerializeWrite(ref BinaryWriter writer)
+        public readonly void SerializeWrite(ref BinaryWriter writer)
         {
             writer.Write(X);
             writer.Write(Y);

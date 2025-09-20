@@ -1,4 +1,4 @@
-﻿namespace KeyEngine
+﻿namespace KeyEngine.Mathematics
 {
     public struct Mathf
     {

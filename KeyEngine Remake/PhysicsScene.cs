@@ -1,4 +1,5 @@
-﻿using KeyEngine.Rendering;
+﻿using KeyEngine.Mathematics;
+using KeyEngine.Rendering;
 
 namespace KeyEngine
 {
@@ -22,8 +23,8 @@ namespace KeyEngine
 
             lWall.AddComponent<RigidBody>().BodyType = BodyType.Kinematic;
             rWall.AddComponent<RigidBody>().BodyType = BodyType.Kinematic;
-            lWall.AddComponent<SpriteRenderer>();
-            rWall.AddComponent<SpriteRenderer>();
+            lWall.AddComponent<InstanceRendering>();
+            rWall.AddComponent<InstanceRendering>();
 
             Entity ground = ECS.AddEntity("Ground");
 
@@ -31,7 +32,7 @@ namespace KeyEngine
             ground.Position = new Vector2(0, -10);
 
             ground.AddComponent<RigidBody>().BodyType = BodyType.Kinematic;
-            ground.AddComponent<SpriteRenderer>();
+            ground.AddComponent<InstanceRendering>();
         }
 
         public void Unload() { }
@@ -47,7 +48,7 @@ namespace KeyEngine
                 RigidBody rb = entity.AddComponent<RigidBody>();
                 rb.BodyType = BodyType.Dynamic;
                 rb.SleepingAllowed = true;
-                SpriteRenderer sp = entity.AddComponent<SpriteRenderer>();
+                InstanceRendering sp = entity.AddComponent<InstanceRendering>();
                 entity.Position = new Vector2(random.Next(0, 4), 10);
                 entity.Scale = new Vector2(0.25f, 0.25f);
                 colorCounter = (int)Mathf.Repeat(colorCounter, 4);
@@ -55,16 +56,16 @@ namespace KeyEngine
                 switch (colorCounter)
                 {
                     case 0:
-                        sp.Color = Color.Blue;
+                        sp.Color = Color32.Blue;
                         break;                    
                     case 1:
-                        sp.Color = Color.Green;
+                        sp.Color = Color32.Green;
                         break;                    
                     case 2:
-                        sp.Color = Color.Red;
+                        sp.Color = Color32.Red;
                         break;                    
                     case 3:
-                        sp.Color = new Color(255, 255, 0);
+                        sp.Color = new Color32(255, 255, 0);
                         break;
                 }
 

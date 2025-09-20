@@ -1,4 +1,6 @@
-﻿namespace KeyEngine.Editor.SupportedTypes
+﻿using KeyEngine.Mathematics;
+
+namespace KeyEngine.Editor.SupportedTypes
 {
     public static class Supported
     {
@@ -9,7 +11,7 @@
             { typeof(uint), new UIntTypeSupport() },
             { typeof(float), new FloatTypeSupport() },
             { typeof(double), new DoubleTypeSupport() },
-            { typeof(Color), new ColorTypeSupport() },
+            { typeof(Color32), new ColorTypeSupport() },
             { typeof(Vector2), new Vector2TypeSupport() },
         };
 

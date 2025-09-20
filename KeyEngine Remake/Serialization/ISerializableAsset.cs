@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace KeyEngine.Editor.Serialization
+namespace KeyEngine.Serialization
 {
     public interface ISerializableAsset
     {

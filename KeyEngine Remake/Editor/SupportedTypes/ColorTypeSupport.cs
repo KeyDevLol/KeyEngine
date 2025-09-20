@@ -1,4 +1,5 @@
 ﻿using ImGuiNET;
+using KeyEngine.Mathematics;
 using System.Numerics;
 
 namespace KeyEngine.Editor.SupportedTypes
@@ -7,12 +8,11 @@ namespace KeyEngine.Editor.SupportedTypes
     {
         public override object Render(TypeSupportRenderArgs args)
         {
-            Color value = (Color)args.value!;
+            Color01 value = ((Color32)args.value!).AsColor01();
 
-            Vector4 vector = new Vector4(Color.ToFloat(value.R), Color.ToFloat(value.G),
-                Color.ToFloat(value.B), Color.ToFloat(value.A));
+            Vector4 vector = new Vector4(value.R, value.G, value.B, value.A);
             ImGui.ColorEdit4(args.name, ref vector, ImGuiColorEditFlags.AlphaPreview);
-            return new Color(vector.X, vector.Y, vector.Z, vector.W);
+            return new Color32(vector.X, vector.Y, vector.Z, vector.W);
         }
 
         private float Get01Color(byte value)

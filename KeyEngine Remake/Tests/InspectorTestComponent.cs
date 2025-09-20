@@ -1,13 +1,10 @@
-﻿using KeyEngine.Editor;
-using KeyEngine.Editor.GUI;
-using KeyEngine.Editor.Serialization;
+﻿using KeyEngine.Editor.GUI;
+using KeyEngine.Serialization;
 using KeyEngine.Graphics;
-using KeyEngine.Rendering;
-using KeyEngine.Tests;
+using KeyEngine.Mathematics;
 
 namespace KeyEngine
 {
-    //
     public class InspectorTestComponent : Component, IAsset
     {
         static int count;
@@ -20,7 +17,7 @@ namespace KeyEngine
         public uint uiiint = 228;
         public double doublee = 228;
         public float zalupa = 90.1f;
-        public Color color = Color.Blue;
+        public Color32 color = Color32.Blue;
         public Entity? entity = null;
 
         public bool AssetLoaded => throw new NotImplementedException();
@@ -33,11 +30,11 @@ namespace KeyEngine
 
         public override void Start()
         {
-            SpriteRenderer spriteRenderer = Owner.AddComponent<SpriteRenderer>();
+            InstanceRendering spriteRenderer = Owner.AddComponent<InstanceRendering>();
 
             //var tex = ;
 
-            spriteRenderer.Texture = AssetsManager.GetAsset<Texture>("Assets/Textures/test.png");
+            //spriteRenderer.Texture = AssetsManager.GetAsset<Texture>("Assets/Textures/test.png");
         }
 
         public override void SceneDeserialize(SerializeData serializeData)

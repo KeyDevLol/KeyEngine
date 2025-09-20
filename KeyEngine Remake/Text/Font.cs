@@ -4,6 +4,7 @@ using OpenTK.Graphics.OpenGL;
 using System.Runtime.InteropServices;
 using KeyEngine.Graphics;
 using KeyEngine.Editor;
+using KeyEngine.Mathematics;
 
 namespace KeyEngine
 {

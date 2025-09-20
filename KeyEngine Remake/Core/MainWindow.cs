@@ -27,8 +27,9 @@ namespace KeyEngine
                 Profile = ContextProfile.Core,
                 Flags = ContextFlags.ForwardCompatible,
                 API = ContextAPI.OpenGL,
-                Vsync = VSyncMode.On,
+                Vsync = VSyncMode.Off,
                 Title = "KeyEngine window",
+                WindowState = WindowState.Normal
             };
 
             instance = new MainWindow(nativeWindowSettings);

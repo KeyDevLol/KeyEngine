@@ -1,5 +1,7 @@
-﻿using OpenTK.Mathematics;
+﻿using KeyEngine.Mathematics;
+using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
+using Vector2 = KeyEngine.Mathematics.Vector2;
 
 namespace KeyEngine.Rendering
 {

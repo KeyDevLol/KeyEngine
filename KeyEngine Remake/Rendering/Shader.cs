@@ -1,5 +1,6 @@
 ﻿using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
+using Vector2 = KeyEngine.Mathematics.Vector2;
 
 namespace KeyEngine.Rendering
 {
@@ -11,6 +12,7 @@ namespace KeyEngine.Rendering
         private bool disposed;
 
         private readonly Dictionary<string, int> cachedUniformLocations;
+        public string? Name { get; private set; }
 
         public Shader()
         {
@@ -56,6 +58,7 @@ namespace KeyEngine.Rendering
         public void LoadFromFile(in string vertexPath, in string fragmentPath)
         {
             LoadFromSource(LoadFileSource(vertexPath), LoadFileSource(fragmentPath));
+            Name = Path.GetFileNameWithoutExtension(vertexPath);
         }
 
         public void LoadFromSource(in string vertexSource, in string fragmentSource)
@@ -69,6 +72,9 @@ namespace KeyEngine.Rendering
             int fragmentShader = GL.CreateShader(ShaderType.FragmentShader);
             GL.ShaderSource(fragmentShader, fragmentSource);
             GL.CompileShader(fragmentShader);
+
+            if (!CheckShaderCompile(vertexShader) || !CheckShaderCompile(fragmentShader))
+                return;
 
             GL.AttachShader(Handle, vertexShader);
             GL.AttachShader(Handle, fragmentShader);
@@ -101,14 +107,87 @@ namespace KeyEngine.Rendering
             disposed = true;
         }
 
+        private bool CheckShaderCompile(int handler)
+        {
+            GL.GetShader(handler, ShaderParameter.CompileStatus, out int success);
+
+            if (success == 0)
+            {
+                Log.Print($"{nameof(Shader)} {Name}: compile error\n{GL.GetShaderInfoLog(handler)}", LogType.Error);
+                GL.DeleteShader(handler);
+                return false;
+            }
+
+            return true;
+        }
+
         public void SetMatrix4(in string name, in bool transpose, Matrix4 value)
         {
             if (!TryGetUniformLocation(name, out int location))
             {
-                Log.Print($"{nameof(Shader)}.{nameof(SetMatrix4)} failed to set ({name}) value.", LogType.Error);
+                PrintUniformNotFoundedError(name);
                 return;
             }
             GL.UniformMatrix4(location, transpose, ref value);
+        }
+
+        public void SetMatrix4(in string name, in bool transpose, Matrix4[] value)
+        {
+            if (!TryGetUniformLocation(name, out int location))
+            {
+                PrintUniformNotFoundedError(name);
+                return;
+            }
+            float[] values = new float[value.Length * 16];
+            for (int i = 0; i < value.Length; i++)
+            {
+                values[i    ] = value[i].M11;
+                values[i + 1] = value[i].M12;
+                values[i + 2] = value[i].M13;
+                values[i + 3] = value[i].M14;
+
+                values[i + 4] = value[i].M21;
+                values[i + 5] = value[i].M22;
+                values[i + 6] = value[i].M23;
+                values[i + 7] = value[i].M24;
+
+                values[i + 8] = value[i].M31;
+                values[i + 9] = value[i].M32;
+                values[i + 10] = value[i].M33;
+                values[i + 11] = value[i].M34;
+
+                values[i + 12] = value[i].M41;
+                values[i + 13] = value[i].M42;
+                values[i + 14] = value[i].M43;
+                values[i + 15] = value[i].M44;
+            }
+            GL.UniformMatrix4(location, value.Length, transpose, values);
+        }
+
+        public void SetVector2(in string name, Vector2 value)
+        {
+            if (!TryGetUniformLocation(name, out int location))
+            {
+                PrintUniformNotFoundedError(name);
+                return;
+            }
+            GL.Uniform2(location, value.X, value.Y);
+        }
+
+        public void SetVector2(in string name, params Vector2[] value)
+        {
+            if (!TryGetUniformLocation(name, out int location))
+            {
+                PrintUniformNotFoundedError(name);
+                return;
+            }
+            float[] values = new float[value.Length * 2];
+            for (int i = 0; i < value.Length; i++)
+            {
+                values[i] = value[i].X;
+                values[i+1] = value[i].Y;
+            }
+            GL.Uniform2(location, value.Length, values);
         }
 
         private bool TryGetUniformLocation(in string name, out int location)
@@ -124,6 +203,11 @@ namespace KeyEngine.Rendering
             }
 
             return true;
+        }
+
+        private void PrintUniformNotFoundedError(string uniformName)
+        {
+            Log.Print($"{nameof(Shader)} {Name}: failed to set ({uniformName}) value.", LogType.Error);
         }
     }
 }

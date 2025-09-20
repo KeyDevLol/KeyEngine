@@ -1,4 +1,5 @@
 ﻿using KeyEngine.Graphics;
+using KeyEngine.Mathematics;
 using OpenTK.Graphics.OpenGL;
 
 namespace KeyEngine.Rendering
@@ -8,7 +9,7 @@ namespace KeyEngine.Rendering
         public Texture? Texture = Texture.Square;
         public Shader? Shader = Shader.Default;
 
-        public Color Color;
+        public Color32 Color;
 
         protected readonly VertexAttributeObject vao;
         protected readonly VertexBufferObject vbo;

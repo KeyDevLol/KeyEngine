@@ -1,4 +1,5 @@
-﻿using KeyEngine.Rendering;
+﻿using KeyEngine.Mathematics;
+using KeyEngine.Rendering;
 
 namespace KeyEngine.Editor.Systems
 {
@@ -19,7 +20,7 @@ namespace KeyEngine.Editor.Systems
                 isDragged = true;
 
                 if (Camera.Main != null)
-                    origin = Camera.Main.ScreenToWorldCoords(Input.mousePosition);
+                    origin = Camera.Main.ScreenToWorldCoords(Input.MousePosition);
             }
             else if (Input.IsMouseButtonUp(MouseButtonCode.Right))
             {
@@ -30,7 +31,7 @@ namespace KeyEngine.Editor.Systems
             {
                 if (isDragged)
                 {
-                    Vector2 diff = Camera.Main.ScreenToWorldCoords(Input.mousePosition) - Camera.Main.Position;
+                    Vector2 diff = Camera.Main.ScreenToWorldCoords(Input.MousePosition) - Camera.Main.Position;
                     Camera.Main.Position = origin - diff;
                 }
             }

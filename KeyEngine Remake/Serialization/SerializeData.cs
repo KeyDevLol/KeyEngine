@@ -1,13 +1,7 @@
-﻿using KeyEngine.Graphics;
-using System;
+﻿using System.Reflection;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace KeyEngine.Editor.Serialization
+namespace KeyEngine.Serialization
 {
     public readonly struct SerializeData : IEquatable<SerializeData>
     {
@@ -16,39 +10,50 @@ namespace KeyEngine.Editor.Serialization
 
         public SerializeData() { }
 
-        public void AddData(string key, object value)
+        public void AddData(string key, object? value)
         {
             ArgumentNullException.ThrowIfNull(key, nameof(key));
             Data.Add(key, new Pair(value));
         }
 
-        public object? GetData<T>(string key, ref T? outData)
+        public void GetData<T>(string key, ref T? outData)
         {
-            ArgumentNullException.ThrowIfNull(key);
+            ArgumentNullException.ThrowIfNull(key, nameof(key));
             object? data = Data[key].Instance;
 
             if (data != null)
                 outData = (T)data;
+            else
+                outData = default;
+        }
 
-            return data;
+        public T? GetData<T>(string key)
+        {
+            ArgumentNullException.ThrowIfNull(key, nameof(key));
+            object? data = Data[key].Instance;
+
+            if (data != null)
+                return (T)data;
+            else
+                return default;
         }
 
         public bool TryGetData(string key, out object? data)
         {
-            ArgumentNullException.ThrowIfNull(key);
+            ArgumentNullException.ThrowIfNull(key, nameof(key));
+            if (Data.TryGetValue(key, out Pair value))
+            {
+                data = value;
+                return true;
+            }
+
             data = Data[key];
-            return data != null;
+            return false;
         }
 
-        public IEnumerator GetKeys()
-        {
-            return Data.Keys.GetEnumerator();
-        }
+        public IEnumerator GetKeys() => Data.Keys.GetEnumerator();
 
-        public IEnumerator GetValues()
-        {
-            return Data.Values.GetEnumerator();
-        }
+        public IEnumerator GetValues() => Data.Values.GetEnumerator();
 
         public bool Equals(SerializeData other)
         {
@@ -77,7 +82,7 @@ namespace KeyEngine.Editor.Serialization
             return Data.GetHashCode();
         }
 
-        public struct Pair
+        public readonly struct Pair
         {
             public readonly Type? Type;
             public readonly object? Instance;

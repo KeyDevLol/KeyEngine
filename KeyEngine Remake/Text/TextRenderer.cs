@@ -1,11 +1,13 @@
-﻿using KeyEngine.Rendering;
+﻿using KeyEngine.Mathematics;
+using KeyEngine.Rendering;
 using OpenTK.Graphics.OpenGL;
 
 namespace KeyEngine
 {
     public class TextRenderer : Component
     {
-        protected readonly static Shader textShader =  new Shader("Assets/Shaders/Text/Text.vert", "Assets/Shaders/Text/Text.frag");
+        protected readonly static Shader textShader = new Shader("Assets/Shaders/Text/Text.vert", "Assets/Shaders/Text/Text.frag");
+        public static Shader TextShader { get => textShader; }
 
         public string Text
         {
@@ -30,12 +32,12 @@ namespace KeyEngine
 
         private bool needRefreshBuffer;
 
-        public Color Color
+        public Color32 Color
         {
             get { return _color; }
             set { _color = value; }
         }
-        protected Color _color = Color.White;
+        protected Color32 _color = Color32.White;
 
         //private void ColorChanged()
         //{

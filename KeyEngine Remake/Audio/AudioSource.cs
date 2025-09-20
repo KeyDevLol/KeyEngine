@@ -1,4 +1,5 @@
-﻿using OpenTK.Audio.OpenAL;
+﻿using KeyEngine.Mathematics;
+using OpenTK.Audio.OpenAL;
 
 namespace KeyEngine.Audio
 {

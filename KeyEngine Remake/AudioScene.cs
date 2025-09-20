@@ -1,4 +1,7 @@
 ﻿using KeyEngine.Audio;
+using KeyEngine.GUI;
+using KeyEngine.Mathematics;
+using KeyEngine.Tests;
 
 namespace KeyEngine
 {
@@ -10,7 +13,7 @@ namespace KeyEngine
         {
             Entity audioListener = ECS.AddEntity("Audio Listener");
             audioListener.AddComponent<AudioListener>();
-            audioListener.AddComponent<SpriteRenderer>().Color = new Color(255, 0, 255);
+            audioListener.AddComponent<InstanceRendering>().Color = new Color32(255, 0, 255);
             audioListener.AddComponent<ListenerRotation>();
 
             Entity audioSourceEntity = ECS.AddEntity("Audio Source");
@@ -19,8 +22,16 @@ namespace KeyEngine
             audioSource.PanSmoothness = 2.5f;
             audioSource.SetAudioSample(audio.Value);
             audioSource.Play();
-            audioSourceEntity.AddComponent<SpriteRenderer>();
+            audioSourceEntity.AddComponent<InstanceRendering>();
             audioSourceEntity.Scale = new Vector2(0.5f, 0.5f);
+
+            Entity batch = ECS.AddEntity("Batch");
+            //batch.AddComponent<BatchRendering>();
+
+            //Entity button = ECS.AddEntity();
+            //button.AddComponent<SpriteRenderer>();
+            //button.Position = new Vector2(10, 0);
+            //button.AddComponent<Button>().Init();
         }
 
         public void Unload() { }

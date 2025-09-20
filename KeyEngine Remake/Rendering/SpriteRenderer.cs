@@ -1,5 +1,6 @@
 ﻿using KeyEngine.Editor;
 using KeyEngine.Graphics;
+using KeyEngine.Mathematics;
 using KeyEngine.Rendering;
 using OpenTK.Graphics.OpenGL;
 
@@ -22,7 +23,7 @@ namespace KeyEngine
 
         public Shader? Shader = Shader.Default;
 
-        public Color Color
+        public Color32 Color
         {
             get => _color;
             set
@@ -34,7 +35,7 @@ namespace KeyEngine
                 }
             }
         }
-        private Color _color = Color.White;
+        private Color32 _color = Color32.White;
 
         public Vector2 TileSize
         {
@@ -70,7 +71,7 @@ namespace KeyEngine
             1, 2, 3
         ];
 
-        public SpriteRenderer(Entity owner) : base(owner) 
+        public SpriteRenderer(Entity owner) : base(owner)
         {
             vao = new VertexAttributeObject();
             vbo = new VertexBufferObject();
@@ -144,10 +145,11 @@ namespace KeyEngine
 
         private void ColorChanged()
         {
-            float r = Color.ToFloat(_color.R),
-                  g = Color.ToFloat(_color.G),
-                  b = Color.ToFloat(_color.B),
-                  a = Color.ToFloat(_color.A);
+            Color01 converted = _color.AsColor01();
+            float r = converted.R,
+                  g = converted.G,
+                  b = converted.B,
+                  a = converted.A;
 
             for (int i = 0; i < 4; i++)
             {

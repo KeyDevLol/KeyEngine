@@ -1,5 +1,4 @@
-﻿
-namespace KeyEngine.Editor.Serialization
+﻿namespace KeyEngine.Serialization
 {
     public interface ISerializable
     {

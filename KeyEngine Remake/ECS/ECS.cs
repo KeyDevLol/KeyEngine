@@ -98,10 +98,6 @@ namespace KeyEngine
 
         internal static void CallStart()
         {
-            Log.Print("Called start");
-            Log.Print(entityCollection.Count);
-            Log.Print(SceneManager.SceneIsRunning);
-
             for (int i = entityCollection.Count; i-- > 0;)
             {
                 Entity entity = entityCollection[i];
@@ -109,7 +105,6 @@ namespace KeyEngine
                 if (!entity.Active)
                     continue;
 
-                Log.Print($"{entity.Name} called start");
                 entity.CallStart();
             }
         }

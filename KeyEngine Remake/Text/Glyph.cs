@@ -1,4 +1,5 @@
-﻿using OpenTK.Graphics.OpenGL;
+﻿using KeyEngine.Mathematics;
+using OpenTK.Graphics.OpenGL;
 
 namespace KeyEngine
 {
