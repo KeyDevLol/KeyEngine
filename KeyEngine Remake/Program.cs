@@ -1,6 +1,4 @@
-﻿using KeyEngine.Game;
-using KeyEngine.Tests;
-
+﻿
 namespace KeyEngine
 {
     class Program
