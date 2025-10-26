@@ -1,12 +1,7 @@
 ﻿using ImGuiNET;
 using KeyEngine.Graphics;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
+using System.Numerics;
 
 namespace KeyEngine.Editor.GUI
 {
@@ -19,6 +14,8 @@ namespace KeyEngine.Editor.GUI
 
         private string[] directories = [];
         private string[] files = [];
+
+        private int iconsSize = 64;
 
         public FileBrowser()
         {
@@ -39,8 +36,7 @@ namespace KeyEngine.Editor.GUI
         public override void Render()
         {
             float padding = 16f;
-            float thumbnailSize = 64f;
-            float cellSize = thumbnailSize + padding;
+            float cellSize = iconsSize + padding;
 
             int columnCount = (int)(ImGui.GetContentRegionAvail().X / cellSize);
             if (columnCount < 1)
@@ -57,17 +53,17 @@ namespace KeyEngine.Editor.GUI
 
             ImGui.SameLine();
             ImGui.Text(currentFolder);
-
+            ImGui.BeginChild("ColumnsPanel_FileBrowser", new Vector2(ImGui.GetWindowWidth(), ImGui.GetWindowHeight() - 85));
             ImGui.Columns(columnCount, $"{nameof(FileBrowser)}_Columns", false);
 
-            ImGui.PushStyleColor(ImGuiCol.Button, new System.Numerics.Vector4(0, 0, 0, 0));
+            ImGui.PushStyleColor(ImGuiCol.Button, new Vector4(0, 0, 0, 0));
             bool folderChanged = false;
 
             foreach (string directory in directories)
             {
                 DirectoryInfo directoryInfo = new DirectoryInfo(directory);
 
-                ImGui.ImageButton(directory, folderIcon.Handle, new System.Numerics.Vector2(thumbnailSize, thumbnailSize), new System.Numerics.Vector2(0, 1), new System.Numerics.Vector2(1, 0));
+                ImGui.ImageButton(directory, folderIcon.Handle, new System.Numerics.Vector2(iconsSize, iconsSize), new Vector2(0, 1), new System.Numerics.Vector2(1, 0));
 
                 if (ImGui.IsItemHovered())
                 {
@@ -91,7 +87,7 @@ namespace KeyEngine.Editor.GUI
 
                     string fileName = Path.GetFileName(file);
 
-                    ImGui.ImageButton(currentFolder, FileIconHelper.GetFileIcon(fileInfo.Extension).Handle, new System.Numerics.Vector2(thumbnailSize, thumbnailSize), new System.Numerics.Vector2(0, 1), new System.Numerics.Vector2(1, 0));
+                    ImGui.ImageButton(currentFolder, FileIconHelper.GetFileIcon(fileInfo.Extension).Handle, new System.Numerics.Vector2(iconsSize, iconsSize), new System.Numerics.Vector2(0, 1), new System.Numerics.Vector2(1, 0));
 
                     if (ImGui.IsItemHovered())
                     {
@@ -113,6 +109,11 @@ namespace KeyEngine.Editor.GUI
             }
 
             ImGui.PopStyleColor();
+            ImGui.EndChild();
+
+            ImGui.SetCursorPosX(ImGui.GetWindowWidth() - 128);
+            ImGui.PushItemWidth(128);
+            ImGui.SliderInt("##IconsScale_FileBrowser", ref iconsSize, 16, 64);
         }
 
         private void FileChanged(object sender, FileSystemEventArgs e)
