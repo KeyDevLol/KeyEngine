@@ -35,7 +35,7 @@ namespace KeyEngine.Editor.GUI
 
         public override void Render()
         {
-            float padding = 16f;
+            float padding = 32f;
             float cellSize = iconsSize + padding;
 
             int columnCount = (int)(ImGui.GetContentRegionAvail().X / cellSize);
@@ -53,7 +53,7 @@ namespace KeyEngine.Editor.GUI
 
             ImGui.SameLine();
             ImGui.Text(currentFolder);
-            ImGui.BeginChild("ColumnsPanel_FileBrowser", new Vector2(ImGui.GetWindowWidth(), ImGui.GetWindowHeight() - 85));
+            ImGui.BeginChild("ColumnsPanel_FileBrowser", new Vector2(ImGui.GetWindowWidth() - 13, ImGui.GetWindowHeight() - 85));
             ImGui.Dummy(new Vector2(0, 5));
             ImGui.Columns(columnCount, $"{nameof(FileBrowser)}_Columns", false);
 
@@ -149,6 +149,7 @@ namespace KeyEngine.Editor.GUI
 
                 // Audio files
                 { ".wav", audioFileIcon },
+                { ".ogg", audioFileIcon },
 
                 // Shader files
                 { ".frag", shaderFileIcon },

@@ -10,6 +10,7 @@ namespace KeyEngine.Editor.Systems
     {
         private readonly ImGuiController imGuiController;
         private static readonly List<EditorWindow> editorWindows = new List<EditorWindow>();
+        private ITheme currentTheme;
 
         public static bool IsMouseOnGUI { get; private set; }
 
@@ -20,6 +21,7 @@ namespace KeyEngine.Editor.Systems
             RegisterWindow<Hierarchy>();
             RegisterWindow<FileBrowser>();
             RegisterWindow<PlaybackStateWindow>();
+            RegisterWindow<DebugInfo>();
         }
 
         public EditorGuiSystem()
@@ -33,7 +35,8 @@ namespace KeyEngine.Editor.Systems
             RegisterWindows();
 
             // Delete
-            new DefaultTheme().Apply();
+            currentTheme = new DefaultTheme();
+            currentTheme.Apply(imGuiController);
         }
 
         public override void Update(float deltaTime)
@@ -43,6 +46,8 @@ namespace KeyEngine.Editor.Systems
 
         public override void Render()
         {
+            ImGui.PushFont(currentTheme.Font);
+
             ImGui.DockSpaceOverViewport(ImGui.GetMainViewport(), ImGuiDockNodeFlags.PassthruCentralNode | 
                 ImGuiDockNodeFlags.NoDockingInCentralNode);
 

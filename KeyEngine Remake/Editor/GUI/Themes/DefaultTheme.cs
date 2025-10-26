@@ -1,11 +1,20 @@
 ﻿using ImGuiNET;
+using KeyEngine.Rendering;
 
 namespace KeyEngine.Editor.GUI
 {
     public class DefaultTheme : ITheme
     {
-        public void Apply()
+        private ImFontPtr font;
+
+        ImFontPtr ITheme.Font => font;
+
+        public void Apply(ImGuiController controller)
         {
+            font = ImGui.GetIO().Fonts.AddFontFromFileTTF("Editor/Pixel KeyDev font.ttf", 12,
+    null, ImGui.GetIO().Fonts.GetGlyphRangesCyrillic());
+            controller.RecreateFontDeviceTexture();
+
             ImGuiStylePtr style = ImGui.GetStyle();
             var colors = style.Colors;
 
