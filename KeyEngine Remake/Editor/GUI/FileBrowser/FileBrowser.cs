@@ -54,6 +54,7 @@ namespace KeyEngine.Editor.GUI
             ImGui.SameLine();
             ImGui.Text(currentFolder);
             ImGui.BeginChild("ColumnsPanel_FileBrowser", new Vector2(ImGui.GetWindowWidth(), ImGui.GetWindowHeight() - 85));
+            ImGui.Dummy(new Vector2(0, 5));
             ImGui.Columns(columnCount, $"{nameof(FileBrowser)}_Columns", false);
 
             ImGui.PushStyleColor(ImGuiCol.Button, new Vector4(0, 0, 0, 0));
@@ -63,7 +64,7 @@ namespace KeyEngine.Editor.GUI
             {
                 DirectoryInfo directoryInfo = new DirectoryInfo(directory);
 
-                ImGui.ImageButton(directory, folderIcon.Handle, new System.Numerics.Vector2(iconsSize, iconsSize), new Vector2(0, 1), new System.Numerics.Vector2(1, 0));
+                ImGui.ImageButton(directory, folderIcon.Handle, new Vector2(iconsSize, iconsSize), new Vector2(0, 1), new Vector2(1, 0), Vector4.Zero, new Vector4(1, 0.737f, 0.847f, 1));
 
                 if (ImGui.IsItemHovered())
                 {
