@@ -1,4 +1,5 @@
 ﻿using KeyEngine.Mathematics;
+using System.Diagnostics.CodeAnalysis;
 
 namespace KeyEngine.Editor.SupportedTypes
 {
@@ -13,6 +14,7 @@ namespace KeyEngine.Editor.SupportedTypes
             { typeof(double), new DoubleTypeSupport() },
             { typeof(Color32), new ColorTypeSupport() },
             { typeof(Vector2), new Vector2TypeSupport() },
+            { typeof(object), new ObjectTypeSupport() },
         };
 
         public static TypeSupport? GetTypeSupport(Type type)
@@ -25,7 +27,8 @@ namespace KeyEngine.Editor.SupportedTypes
             return null;
         }
 
-        public static bool TryGetTypeSupport(Type type, out TypeSupport? typeSupport)
+        
+        public static bool TryGetTypeSupport(Type type, [MaybeNullWhen(false)] out TypeSupport typeSupport)
         {
             return supportedTypesDict.TryGetValue(type, out typeSupport);
         }

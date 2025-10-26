@@ -13,7 +13,7 @@ namespace KeyEngine
         {
             Entity audioListener = ECS.AddEntity("Audio Listener");
             audioListener.AddComponent<AudioListener>();
-            audioListener.AddComponent<InstanceRendering>().Color = new Color32(255, 0, 255);
+            audioListener.AddComponent<SpriteRenderer>().Color = new Color32(255, 0, 255);
             audioListener.AddComponent<ListenerRotation>();
 
             Entity audioSourceEntity = ECS.AddEntity("Audio Source");
@@ -22,7 +22,7 @@ namespace KeyEngine
             audioSource.PanSmoothness = 2.5f;
             audioSource.SetAudioSample(audio.Value);
             audioSource.Play();
-            audioSourceEntity.AddComponent<InstanceRendering>();
+            audioSourceEntity.AddComponent<SpriteRenderer>();
             audioSourceEntity.Scale = new Vector2(0.5f, 0.5f);
 
             Entity batch = ECS.AddEntity("Batch");

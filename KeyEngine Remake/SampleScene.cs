@@ -10,10 +10,10 @@ namespace KeyEngine
             Entity entity = ECS.AddEntity("Entity Name");
 
             // Adding new component to entity
-            entity.AddComponent<InstanceRendering>();
+            entity.AddComponent<SpriteRenderer>();
 
             // Getting a component and changing its variable
-            InstanceRendering? spriteRenderer = entity.GetComponent<InstanceRendering>();
+            SpriteRenderer? spriteRenderer = entity.GetComponent<SpriteRenderer>();
             if (spriteRenderer != null)
                 spriteRenderer.Color = Color32.Red;
             else

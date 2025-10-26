@@ -12,6 +12,7 @@ namespace KeyEngine.Editor.Systems
         private static readonly List<EditorWindow> editorWindows = new List<EditorWindow>();
         private ITheme currentTheme;
 
+        public static bool EnableRenderingGUI = true;
         public static bool IsMouseOnGUI { get; private set; }
 
         private static void RegisterWindows()
@@ -37,6 +38,8 @@ namespace KeyEngine.Editor.Systems
             // Delete
             currentTheme = new DefaultTheme();
             currentTheme.Apply(imGuiController);
+
+            ImGui.GetIO().ConfigFlags |= ImGuiConfigFlags.NavEnableKeyboard;
         }
 
         public override void Update(float deltaTime)
@@ -46,6 +49,9 @@ namespace KeyEngine.Editor.Systems
 
         public override void Render()
         {
+            if (!EnableRenderingGUI)
+                return;
+
             ImGui.PushFont(currentTheme.Font);
 
             ImGui.DockSpaceOverViewport(ImGui.GetMainViewport(), ImGuiDockNodeFlags.PassthruCentralNode | 

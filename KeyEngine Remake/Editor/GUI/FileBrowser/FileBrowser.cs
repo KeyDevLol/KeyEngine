@@ -57,7 +57,10 @@ namespace KeyEngine.Editor.GUI
             ImGui.Dummy(new Vector2(0, 5));
             ImGui.Columns(columnCount, $"{nameof(FileBrowser)}_Columns", false);
 
-            ImGui.PushStyleColor(ImGuiCol.Button, new Vector4(0, 0, 0, 0));
+            ImGui.PushStyleColor(ImGuiCol.Button, Vector4.Zero);
+            ImGui.PushStyleColor(ImGuiCol.ButtonHovered, Vector4.Zero);
+            //ImGui.PushStyleColor(ImGuiCol.ButtonActive, Vector4.Zero);
+
             bool folderChanged = false;
 
             foreach (string directory in directories)
@@ -90,6 +93,8 @@ namespace KeyEngine.Editor.GUI
 
                     ImGui.ImageButton(currentFolder, FileIconHelper.GetFileIcon(fileInfo.Extension).Handle, new System.Numerics.Vector2(iconsSize, iconsSize), new System.Numerics.Vector2(0, 1), new System.Numerics.Vector2(1, 0));
 
+                    Log.Print(ImGui.IsItemFocused());
+
                     if (ImGui.IsItemHovered())
                     {
                         if (ImGui.IsMouseDoubleClicked(ImGuiMouseButton.Left))
@@ -110,6 +115,8 @@ namespace KeyEngine.Editor.GUI
             }
 
             ImGui.PopStyleColor();
+            ImGui.PopStyleColor();
+            //ImGui.PopStyleColor();
             ImGui.EndChild();
 
             ImGui.SetCursorPosX(ImGui.GetWindowWidth() - 128);

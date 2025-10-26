@@ -14,7 +14,7 @@ namespace KeyEngine.Game
 
         public override void Start()
         {
-            Owner.AddComponent<InstanceRendering>();
+            Owner.AddComponent<SpriteRenderer>();
             rb = Owner.AddComponent<RigidBody>();
             rb.BodyType = BodyType.Dynamic;
             rb.FreezeRotation = true;

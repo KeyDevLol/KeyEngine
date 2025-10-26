@@ -9,7 +9,7 @@ namespace KeyEngine.Game
 {
     public class SpriteChanger : Component
     {
-        private InstanceRendering spriteRenderer = null!;
+        private SpriteRenderer spriteRenderer = null!;
         public static int CurrentSprite
         {
             get => currentSprite;
@@ -25,7 +25,7 @@ namespace KeyEngine.Game
 
         public override void Start()
         {
-            spriteRenderer = Owner.AddComponent<InstanceRendering>();
+            spriteRenderer = Owner.AddComponent<SpriteRenderer>();
             Owner.Scale = new Vector2(4, 4);
             Owner.Position = new Vector2(10, -7);
         }

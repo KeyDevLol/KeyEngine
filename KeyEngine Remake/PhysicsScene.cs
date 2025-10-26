@@ -23,8 +23,8 @@ namespace KeyEngine
 
             lWall.AddComponent<RigidBody>().BodyType = BodyType.Kinematic;
             rWall.AddComponent<RigidBody>().BodyType = BodyType.Kinematic;
-            lWall.AddComponent<InstanceRendering>();
-            rWall.AddComponent<InstanceRendering>();
+            lWall.AddComponent<SpriteRenderer>();
+            rWall.AddComponent<SpriteRenderer>();
 
             Entity ground = ECS.AddEntity("Ground");
 
@@ -32,7 +32,7 @@ namespace KeyEngine
             ground.Position = new Vector2(0, -10);
 
             ground.AddComponent<RigidBody>().BodyType = BodyType.Kinematic;
-            ground.AddComponent<InstanceRendering>();
+            ground.AddComponent<SpriteRenderer>();
         }
 
         public void Unload() { }
@@ -48,7 +48,7 @@ namespace KeyEngine
                 RigidBody rb = entity.AddComponent<RigidBody>();
                 rb.BodyType = BodyType.Dynamic;
                 rb.SleepingAllowed = true;
-                InstanceRendering sp = entity.AddComponent<InstanceRendering>();
+                SpriteRenderer sp = entity.AddComponent<SpriteRenderer>();
                 entity.Position = new Vector2(random.Next(0, 4), 10);
                 entity.Scale = new Vector2(0.25f, 0.25f);
                 colorCounter = (int)Mathf.Repeat(colorCounter, 4);

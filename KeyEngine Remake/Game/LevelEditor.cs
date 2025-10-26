@@ -34,7 +34,7 @@ namespace KeyEngine.Game
                     {
                         Entity entity = ECS.AddEntity("Tile");
                         entity.Position = roundedPos;
-                        InstanceRendering sp = entity.AddComponent<InstanceRendering>();
+                        SpriteRenderer sp = entity.AddComponent<SpriteRenderer>();
                         entity.AddComponent<RigidBody>().BodyType = BodyType.Kinematic;
 
                         tiles.Add(roundedVec, new Tile(roundedPos, SpriteChanger.CurrentSprite, entity));
@@ -68,7 +68,7 @@ namespace KeyEngine.Game
                 {
                     Entity entity = ECS.AddEntity("Tile");
                     entity.Position = l.Value.Position.ToVec();
-                    InstanceRendering spriteRenderer = entity.AddComponent<InstanceRendering>();
+                    SpriteRenderer spriteRenderer = entity.AddComponent<SpriteRenderer>();
                     entity.AddComponent<RigidBody>().BodyType = BodyType.Kinematic;
 
                     //spriteRenderer.Texture = TileSprites.Sprites[l.Value.Sprite].Value;

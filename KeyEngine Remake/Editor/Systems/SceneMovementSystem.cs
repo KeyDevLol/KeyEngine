@@ -8,6 +8,8 @@ namespace KeyEngine.Editor.Systems
         private static bool isDragged;
         private static Vector2 origin;
 
+        private float wasdMoveSpeed = 22;
+
         public override void Update(float deltaTime)
         {
             UpdateMouseMovement();
@@ -27,13 +29,32 @@ namespace KeyEngine.Editor.Systems
                 isDragged = false;
             }
 
-            if (EditorGuiSystem.IsMouseOnGUI == false && Camera.Main != null)
+            if (EditorGuiSystem.IsMouseOnGUI || Camera.Main == null)
+                return;
+
+
+            if (Input.MouseScrollDelta != Vector2.Zero)
             {
-                if (isDragged)
-                {
-                    Vector2 diff = Camera.Main.ScreenToWorldCoords(Input.MousePosition) - Camera.Main.Position;
-                    Camera.Main.Position = origin - diff;
-                }
+                Camera.Main.Zoom -= Input.MouseScrollDelta.Y * 1.2f;
+            }
+
+            if (Input.IsKeyDown(KeyCode.LeftAlt) && Input.IsKeyPressed(KeyCode.Q))
+            {
+                EditorGuiSystem.EnableRenderingGUI = !EditorGuiSystem.EnableRenderingGUI;
+            }
+
+            if (Input.IsKeyDown(KeyCode.LeftShift))
+            {
+                float xAxis = Input.GetAxisRaw(KeyCode.A, KeyCode.D);
+                float yAxis = Input.GetAxisRaw(KeyCode.S, KeyCode.W);
+
+                Camera.Main.Position += new Vector2(xAxis, yAxis) * wasdMoveSpeed * MainWindow.DeltaTime;
+            }
+
+            if (isDragged)
+            {
+                Vector2 diff = Camera.Main.ScreenToWorldCoords(Input.MousePosition) - Camera.Main.Position;
+                Camera.Main.Position = origin - diff;
             }
         }
     }

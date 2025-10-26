@@ -1,4 +1,5 @@
 ﻿using KeyEngine.Game;
+using KeyEngine.Tests;
 
 namespace KeyEngine
 {
@@ -6,7 +7,7 @@ namespace KeyEngine
     {
         private static void Main()
         {
-            MainWindow.Initialize(new GameScene());
+            MainWindow.Initialize(new SampleScene());
         }
     }
 }
