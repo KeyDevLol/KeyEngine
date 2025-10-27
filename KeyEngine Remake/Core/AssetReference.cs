@@ -1,10 +1,11 @@
-﻿using KeyEngine.Graphics;
+﻿using System.Diagnostics.CodeAnalysis;
 
 namespace KeyEngine
 {
     public class AssetReference<T> where T : class, IAsset
     {
         private readonly WeakReference weakReference;
+        [MemberNotNullWhen(true, nameof(IsLoaded))]
         public T? Value
         {
             get => weakReference.Target as T;

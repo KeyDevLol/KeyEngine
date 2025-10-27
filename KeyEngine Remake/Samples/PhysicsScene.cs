@@ -39,6 +39,12 @@ namespace KeyEngine.Samples
 
         private class SquareSpawner(Entity owner) : Component(owner)
         {
+            public bool ContinuousPhysicsEnabled 
+            {
+                get => PhysicsManager.ContinuousPhysicsEnabled;
+                set => PhysicsManager.ContinuousPhysicsEnabled = value;
+            }
+
             private readonly Random random = new Random();
             private int colorCounter;
 
@@ -48,7 +54,9 @@ namespace KeyEngine.Samples
                 RigidBody rb = entity.AddComponent<RigidBody>();
                 rb.BodyType = BodyType.Dynamic;
                 rb.SleepingAllowed = true;
+
                 SpriteRenderer sp = entity.AddComponent<SpriteRenderer>();
+
                 entity.Position = new Vector2(random.Next(0, 4), 10);
                 entity.Scale = new Vector2(0.25f, 0.25f);
                 colorCounter = (int)Mathf.Repeat(colorCounter, 4);
@@ -65,12 +73,11 @@ namespace KeyEngine.Samples
                         sp.Color = Color32.Red;
                         break;                    
                     case 3:
-                        sp.Color = new Color32(255, 255, 0);
+                        sp.Color = Color32.Yellow;
                         break;
                 }
 
                 colorCounter++;
-                Log.Print(ECS.EntitiesCount);
             }
         }
     }
