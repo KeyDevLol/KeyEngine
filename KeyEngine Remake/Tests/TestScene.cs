@@ -6,7 +6,6 @@ using KeyEngine.Mathematics;
 
 namespace KeyEngine 
 {
-    //
     public class TestScene : IScene
     {
         private AssetReference<AudioSample> audioSample = new AssetReference<AudioSample>(@"Assets/Audio/Vigilantism.wav");

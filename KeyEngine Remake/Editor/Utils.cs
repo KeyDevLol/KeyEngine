@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using KeyEngine.Editor.GUI;
+using System.Reflection;
 
 namespace KeyEngine.Editor
 {
@@ -43,6 +44,12 @@ namespace KeyEngine.Editor
 
         public static bool ShouldBeRendered(MemberInfo variable)
         {
+            if (variable.GetCustomAttribute<HideInInspectorAttribute>() != null)
+                return false;
+
+            if (variable.GetCustomAttribute<ShowInInspectorAttribute>() != null)
+                return true;
+
             if (variable is FieldInfo field)
             {
                 return field.IsPublic && !field.IsInitOnly;

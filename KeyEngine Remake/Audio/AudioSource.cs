@@ -194,7 +194,7 @@ namespace KeyEngine.Audio
             }
         }
 
-        public override void Deleted()
+        public override void OnDeleted()
         {
             shouldTaskClose = true;
         }

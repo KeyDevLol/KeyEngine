@@ -10,6 +10,7 @@ namespace KeyEngine
     {
         private static MainWindow instance = null!;
         public static MainWindow Instance { get => instance; }
+        public static float DeltaTime { get; private set; }
 
         private MainWindow(NativeWindowSettings nativeWindowSettings) : base(GameWindowSettings.Default, nativeWindowSettings) 
         {
@@ -34,9 +35,8 @@ namespace KeyEngine
 
             instance = new MainWindow(nativeWindowSettings);
             GL.ClearColor(0.39f, 0.58f, 0.93f, 1.0f);
-            instance.WindowState = WindowState.Normal;
-            SceneManager.LoadScene(startScene);
 
+            SceneManager.LoadScene(startScene, false);
             instance.Run();
         }
 
@@ -46,6 +46,7 @@ namespace KeyEngine
                 return;
 
             float deltaTime = (float)args.Time;
+            DeltaTime = deltaTime;
 
             PhysicsManager.Update(deltaTime);
             ECS.CallUpdate(deltaTime);
@@ -53,7 +54,7 @@ namespace KeyEngine
             Editor.Editor.Update(deltaTime);
 #endif
 
-            Title = $"KeyEngine IV Remake {Math.Round(1 / deltaTime)}";
+            Title = $"KeyEngine IV Remake by KeyDev {Math.Round(1 / deltaTime)}";
         }
 
         protected override void OnRenderFrame(FrameEventArgs args)

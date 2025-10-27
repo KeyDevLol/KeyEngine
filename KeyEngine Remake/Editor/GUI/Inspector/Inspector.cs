@@ -59,8 +59,12 @@ namespace KeyEngine.Editor.GUI
                 {
                     CachedComponent cachedComponent = cachedComponents[i];
 
-                    if (ImGui.CollapsingHeader(cachedComponent.ComponentType.Name))
+                    NUMVector2 pos = ImGui.GetCursorPos();
+
+                    if (ImGui.CollapsingHeader(cachedComponent.ComponentType.Name, ImGuiTreeNodeFlags.AllowOverlap))
                     {
+                        DrawEnabled(cachedComponent.ComponentType.Name, ref cachedComponent.Component.Enabled);
+
                         foreach (VariableInfo variable in cachedComponent.Variables)
                         {
                             MemberInfo member = variable.MemberInfo;
@@ -75,8 +79,14 @@ namespace KeyEngine.Editor.GUI
                             if (Supported.TryGetTypeSupport(variable.Type, out TypeSupport? typeSupport))
                             {
                                 object? startValue = variable.GetValue(cachedComponent.Component);
-                                object value = typeSupport!.Render(new TypeSupportRenderArgs(GetVariableName(variable),
+                                object? value = typeSupport.Render(new TypeSupportRenderArgs(GetVariableName(variable),
                                     cachedComponent.Component, startValue, variable.MemberInfo));
+
+                                if (value == null)
+                                {
+                                    ImGui.Text($"{variable.MemberInfo.Name} is NULL");
+                                    continue;
+                                }
 
                                 if (!value.Equals(startValue))
                                 {
@@ -92,6 +102,10 @@ namespace KeyEngine.Editor.GUI
                         ImGui.Separator();
                         ImGui.Dummy(new NUMVector2(0, 25));
                     }
+                    else
+                    {
+                        DrawEnabled(cachedComponent.ComponentType.Name, ref cachedComponent.Component.Enabled);
+                    }
                 }
             }
         }
@@ -99,6 +113,13 @@ namespace KeyEngine.Editor.GUI
         private static string GetVariableName(VariableInfo variableInfo)
         {
             return $"{variableInfo.MemberInfo.Name}##{variableInfo.ReflectedType?.Name}";
+        }
+
+        private void DrawEnabled(string componentName, ref bool enabled)
+        {
+            ImGui.SameLine();
+            ImGui.SetCursorPosX(ImGui.GetWindowWidth() - 25);
+            ImGui.Checkbox($"##{componentName}", ref enabled);
         }
 
         private void DrawTransform()

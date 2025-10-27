@@ -5,7 +5,7 @@ namespace KeyEngine.Serialization
 {
     public readonly struct SerializeData : IEquatable<SerializeData>
     {
-        public readonly Dictionary<string, Pair> Data = new Dictionary<string, Pair>();
+        public readonly Dictionary<string, Pair> Data = [];
         public bool IsEmpty => Data.Count == 0;
 
         public SerializeData() { }

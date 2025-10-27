@@ -1,5 +1,4 @@
-﻿
-namespace KeyEngine
+﻿namespace KeyEngine.Samples
 {
     class Program
     {

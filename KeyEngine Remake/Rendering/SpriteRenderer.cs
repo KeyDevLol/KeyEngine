@@ -1,5 +1,4 @@
-﻿using KeyEngine.Editor;
-using KeyEngine.Graphics;
+﻿using KeyEngine.Graphics;
 using KeyEngine.Mathematics;
 using KeyEngine.Rendering;
 using OpenTK.Graphics.OpenGL;
@@ -64,6 +63,7 @@ namespace KeyEngine
             -0.5f, -0.5f,   1, 1, 1, 1,     0, 0, // Down left
             -0.5f,  0.5f,   1, 1, 1, 1,     0, 1, // Down right
         ];
+        protected Mesh<sbyte> mesh;
 
         protected sbyte[] indices =
         [
@@ -73,6 +73,26 @@ namespace KeyEngine
 
         public SpriteRenderer(Entity owner) : base(owner)
         {
+            mesh = new Mesh<sbyte>();
+            Color01 color = new Color01(1f, 1f, 1f, 1f);
+            mesh.AddVertex(new Vector2  (0.5f, 0.5f), color, new Vector2(1, 1));
+            mesh.AddVertex(new Vector2  (0.5f, -0.5f), color, new Vector2(1, 0));
+            mesh.AddVertex(new Vector2 (-0.5f, -0.5f), color, new Vector2(0, 0));
+            mesh.AddVertex(new Vector2  (-0.5f,  0.5f), color, new Vector2(0, 1));
+
+            int index = 0;
+
+            foreach (float f in mesh.VertexesArray)
+            {
+                if (index == 8)
+                {
+                    index = 0;
+                }
+
+                //Console.WriteLine(f);
+                index++;
+            }
+
             vao = new VertexAttributeObject();
             vbo = new VertexBufferObject();
             ebo = new ElementBufferObject();
@@ -109,7 +129,7 @@ namespace KeyEngine
             Shader.Unbind();
         }
 
-        public override void Deleted()
+        public override void OnDeleted()
         {
             vao.Dispose();
             vbo.Dispose();
@@ -119,7 +139,7 @@ namespace KeyEngine
         private void InitGlObjects()
         {
             vbo.Bind();
-            GL.BufferData(BufferTarget.ArrayBuffer, vertexData.Length * sizeof(float), vertexData, BufferUsageHint.DynamicDraw);
+            GL.BufferData(BufferTarget.ArrayBuffer, mesh.VertexesArray.Length * sizeof(float), mesh.VertexesArray, BufferUsageHint.DynamicDraw);
 
             vao.Bind();
 

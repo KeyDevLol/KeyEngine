@@ -1,6 +1,6 @@
 ﻿namespace KeyEngine
 {
-    public static class ApplicationSettings
+    public static class Application
     {
         
     }

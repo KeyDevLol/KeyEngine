@@ -269,7 +269,7 @@ namespace KeyEngine
             return width;
         }
 
-        public override void Deleted()
+        public override void OnDeleted()
         {
             vao.Dispose();
             vbo.Dispose();

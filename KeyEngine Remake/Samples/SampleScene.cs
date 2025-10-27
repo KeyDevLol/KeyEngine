@@ -1,6 +1,6 @@
 ﻿using KeyEngine.Mathematics;
 
-namespace KeyEngine
+namespace KeyEngine.Samples
 {
     public class SampleScene : IScene
     {

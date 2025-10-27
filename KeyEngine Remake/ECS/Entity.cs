@@ -128,7 +128,7 @@ namespace KeyEngine
             for (int i = 0; i < components.Count; i++)
             {
                 Component component = components[i];
-                component.Deleted();
+                component.OnDeleted();
             }
         }
 

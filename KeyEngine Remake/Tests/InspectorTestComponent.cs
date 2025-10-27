@@ -7,6 +7,8 @@ namespace KeyEngine
 {
     public class InspectorTestComponent : Component, IAsset
     {
+        public object Penis = null;
+
         static int count;
         private int currentCount;
 
@@ -20,7 +22,7 @@ namespace KeyEngine
         public Color32 color = Color32.Blue;
         public Entity? entity = null;
 
-        public bool AssetLoaded => throw new NotImplementedException();
+        public bool AssetLoaded => true;
 
         public InspectorTestComponent(Entity owner) : base(owner)
         {
@@ -67,30 +69,30 @@ namespace KeyEngine
             if (currentCount > 0)
                 return;
 
-            if (Input.IsKeyDown(KeyCode.Q))
-            {
-                TestScene.Serialize();
-            }
+            //if (Input.IsKeyDown(KeyCode.Q))
+            //{
+            //    TestScene.Serialize();
+            //}
 
-            if (Input.IsKeyDown(KeyCode.W))
-            {
-                TestScene.Deserialize();
-            }
+            //if (Input.IsKeyDown(KeyCode.W))
+            //{
+            //    TestScene.Deserialize();
+            //}
 
-            if (Input.IsKeyDown(KeyCode.E))
-            {
-                AssetsManager.UnloadAllAssets();
-                //Entity entity = new Entity();
-                //entity.AddComponent<SpriteRenderer>();
+            //if (Input.IsKeyDown(KeyCode.E))
+            //{
+            //    AssetsManager.UnloadAllAssets();
+            //    //Entity entity = new Entity();
+            //    //entity.AddComponent<SpriteRenderer>();
 
-                //ECS.AddEntity(entity);
-            }
+            //    //ECS.AddEntity(entity);
+            //}
 
-            if (Input.IsKeyDown(KeyCode.R))
-            {
-                //ECS.DeleteAllEntities();
-                GC.Collect();
-            }
+            //if (Input.IsKeyDown(KeyCode.R))
+            //{
+            //    //ECS.DeleteAllEntities();
+            //    GC.Collect();
+            //}
         }
 
         public void LoadAsset(string path)

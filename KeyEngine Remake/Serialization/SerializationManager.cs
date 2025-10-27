@@ -1,9 +1,139 @@
 ﻿using System.Diagnostics;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace KeyEngine.Serialization
 {
     public static class SerializationManager
     {
+        public class DataConverter : JsonConverter<SerializableData>
+        {
+            public override SerializableData Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+            {
+                reader.Read();
+                reader.Skip();
+                SerializableData serializableData = new SerializableData();
+                TypeCode typeCode = (TypeCode)reader.GetByte();
+
+                serializableData.TypeCode = typeCode;
+
+                switch (typeCode)
+                {
+                    case TypeCode.Byte: serializableData.Data = reader.GetByte(); break;
+                    case TypeCode.SByte: serializableData.Data = reader.GetSByte(); break;
+                    case TypeCode.Boolean: serializableData.Data = reader.GetBoolean(); break;
+                    case TypeCode.Char: string? str = reader.GetString(); serializableData.Data = str?[0]; break;
+
+                    case TypeCode.Int16: serializableData.Data = reader.GetInt16(); break;
+                    case TypeCode.Int32: serializableData.Data = reader.GetInt32(); break;
+                    case TypeCode.Int64: serializableData.Data = reader.GetInt64(); break;
+
+                    case TypeCode.UInt16: serializableData.Data = reader.GetUInt16(); break;
+                    case TypeCode.UInt32: serializableData.Data = reader.GetUInt32(); break;
+                    case TypeCode.UInt64: serializableData.Data = reader.GetUInt64(); break;
+
+                    case TypeCode.Single: serializableData.Data = reader.GetSingle(); break;
+                    case TypeCode.Double: serializableData.Data = reader.GetDouble(); break;
+                }
+
+                return serializableData;
+            }
+
+            public override void Write(Utf8JsonWriter writer, SerializableData value, JsonSerializerOptions options)
+            {
+                writer.WriteStartObject();
+                writer.WriteNumber("T", (byte)value.TypeCode);
+
+                if (value.Data == null)
+                {
+                    writer.WriteNullValue();
+                    return;
+                }    
+
+                switch (value.TypeCode)
+                {
+                    case TypeCode.Byte: writer.WriteNumberValue((int)value.Data); break;
+                    case TypeCode.SByte: writer.WriteNumberValue((sbyte)value.Data); break;
+                    case TypeCode.Boolean: writer.WriteBooleanValue((bool)value.Data); break;
+                    case TypeCode.Char: writer.WriteStringValue((string)value.Data); break;
+
+                    case TypeCode.Int16: writer.WriteNumberValue((short)value.Data); break;
+                    case TypeCode.Int32: writer.WriteNumberValue((int)value.Data); break;
+                    case TypeCode.Int64: writer.WriteNumberValue((long)value.Data); break;
+
+                    case TypeCode.UInt16: writer.WriteNumberValue((ushort)value.Data); break;
+                    case TypeCode.UInt32: writer.WriteNumberValue((uint)value.Data); break;
+                    case TypeCode.UInt64: writer.WriteNumberValue((ulong)value.Data); break;
+
+                    case TypeCode.Single: writer.WriteNumberValue((float)value.Data); break;
+                    case TypeCode.Double: writer.WriteNumberValue((double)value.Data); break;
+                }
+
+                writer.WriteEndObject();
+            }
+        }
+
+        public class SerializableEntity
+        {
+            public string Name { get; set; }
+            public List<SerializableComponent> components = new List<SerializableComponent>();
+
+            public SerializableEntity(Entity entity)
+            {
+
+            }
+        }
+
+        public class SerializableComponent
+        {
+            public List<SerializableVariable> variables = new List<SerializableVariable>();
+
+            public SerializableComponent(Component component)
+            {
+
+            }
+        }
+
+        public class SerializableVariable
+        {
+            public SerializableData? Data { get; set; }
+            public char l { get; set; } = 'S';
+
+            //public SerializableVariable(object variable)
+            //{
+            //    TypeCode typeCode = Type.GetTypeCode(variable.GetType());
+
+            //    if (typeCode == TypeCode.Object || typeCode == TypeCode.Empty || typeCode == TypeCode.DBNull)
+            //        throw new ArgumentException("Unsupported variable type.", nameof(variable));
+
+            //    //Log.Print(typeCode);
+            //}
+        }
+
+        [JsonConverter(typeof(DataConverter))]
+        public class SerializableData
+        {
+            public TypeCode TypeCode;
+            public object? Data;
+        }
+
+        public static void SerializeSceneJson()
+        {
+            SerializableVariable dsd = new SerializableVariable();
+            SerializableData data = new SerializableData();
+            data.TypeCode = TypeCode.Int32;
+            data.Data = 502;
+            dsd.Data = data;
+
+            string json = JsonSerializer.Serialize(dsd);
+
+            Log.Print(json);
+
+            SerializableVariable lol = JsonSerializer.Deserialize<SerializableVariable>(json);
+
+            Log.Print(lol.Data.Data);
+        }
+
         public static void SerializeScene()
         {
             Stopwatch sw = new Stopwatch();

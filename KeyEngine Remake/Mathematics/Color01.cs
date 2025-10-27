@@ -25,22 +25,6 @@ namespace KeyEngine.Mathematics
             A = 1;
         }
 
-        public Color01(byte r, byte g, byte b, byte a)
-        {
-            R = ColorUtilities.ToFloat(r);
-            G = ColorUtilities.ToFloat(g);
-            B = ColorUtilities.ToFloat(b);
-            A = ColorUtilities.ToFloat(a);
-        }
-
-        public Color01(byte r, byte g, byte b)
-        {
-            R = ColorUtilities.ToFloat(r);
-            G = ColorUtilities.ToFloat(g);
-            B = ColorUtilities.ToFloat(b);
-            A = 1;
-        }
-
         public Color01(Color32 color)
         {
             R = ColorUtilities.ToFloat(color.R);

@@ -216,7 +216,7 @@ namespace KeyEngine
             //}
         }
 
-        public override void Deleted()
+        public override void OnDeleted()
         {
             Owner.OnTransformChanged -= TransformChanged;
             PhysicsManager.World.RemoveBody(body);

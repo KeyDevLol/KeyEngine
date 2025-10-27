@@ -3,7 +3,7 @@ using KeyEngine.GUI;
 using KeyEngine.Mathematics;
 using KeyEngine.Tests;
 
-namespace KeyEngine
+namespace KeyEngine.Samples
 {
     public class AudioScene : IScene
     {

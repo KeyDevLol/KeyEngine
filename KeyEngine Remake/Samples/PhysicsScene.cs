@@ -1,7 +1,7 @@
 ﻿using KeyEngine.Mathematics;
 using KeyEngine.Rendering;
 
-namespace KeyEngine
+namespace KeyEngine.Samples
 {
     public class PhysicsScene : IScene
     {
