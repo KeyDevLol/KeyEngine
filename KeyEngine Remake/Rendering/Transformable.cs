@@ -64,7 +64,8 @@ namespace KeyEngine.Rendering
         protected Matrix4 _model;
 
         public event Action? OnTransformChanged;
-        public bool quietChange;
+
+        private bool quiteModeEnabled;
 
         public Transformable()
         {
@@ -91,18 +92,18 @@ namespace KeyEngine.Rendering
 
         private void TransformChanged()
         {
-            if (quietChange == false)
+            if (!quiteModeEnabled)
                 OnTransformChanged?.Invoke();
         }
 
         public void BeginQuiteMode()
         {
-            quietChange = true;
+            quiteModeEnabled = true;
         }
 
         public void EndQuiteMode()
         {
-            quietChange = false;
+            quiteModeEnabled = false;
         }
     }
 }
