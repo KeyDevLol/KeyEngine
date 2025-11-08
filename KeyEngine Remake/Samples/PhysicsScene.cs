@@ -16,6 +16,7 @@ namespace KeyEngine.Samples
             Entity lWall = ECS.AddEntity("Left Wall");
             Entity rWall = ECS.AddEntity("Right Wall");
 
+
             lWall.Scale = new Vector2(0.5f, 20f);
             rWall.Scale = new Vector2(0.5f, 20f);
             lWall.Position = new Vector2(14.750f, 0);
@@ -33,9 +34,6 @@ namespace KeyEngine.Samples
 
             ground.AddComponent<RigidBody>().BodyType = BodyType.Kinematic;
             ground.AddComponent<SpriteRenderer>();
-
-            Entity test = ECS.AddEntity("Test");
-            test.AddComponent<RigidBody>();
         }
 
         public void Unload() { }
