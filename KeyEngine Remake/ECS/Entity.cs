@@ -26,6 +26,7 @@ namespace KeyEngine
         private readonly List<Component> components;
 
         protected event Action<Component>? OnComponentAdded;
+        protected event Action<Component>? OnComponentRemoved;
 
         public Entity(string? name = null)
         {
@@ -65,6 +66,27 @@ namespace KeyEngine
             OnComponentAdded?.Invoke(component);
 
             return component;
+        }
+
+        public void RemoveComponent(Type type)
+        {
+            for (int i = 0; i < components.Count; i++)
+            {
+                Component component = components[i];
+
+                if (component.GetType() == type)
+                {
+                    components.RemoveAt(i);
+                    component.OnDeleted();
+                    OnComponentRemoved?.Invoke(component);
+                    break;
+                }
+            }
+        }
+
+        public void RemoveComponent<T>() where T : Component
+        {
+            RemoveComponent(typeof(T));
         }
 
         public T? GetComponent<T>() where T : Component
