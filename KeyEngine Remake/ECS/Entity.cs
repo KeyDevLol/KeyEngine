@@ -1,11 +1,4 @@
 ﻿using KeyEngine.Rendering;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Emit;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 
 namespace KeyEngine
 {
@@ -129,6 +122,24 @@ namespace KeyEngine
             {
                 Component component = components[i];
                 component.OnDeleted();
+            }
+        }
+
+        internal virtual void CallRenderSelectedGizmos()
+        {
+            for (int i = 0; i < components.Count; i++)
+            {
+                Component component = components[i];
+                component.RenderSelectedGizmos();
+            }
+        }
+
+        internal virtual void CallRenderGizmos()
+        {
+            for (int i = 0; i < components.Count; i++)
+            {
+                Component component = components[i];
+                component.RenderGizmos();
             }
         }
 

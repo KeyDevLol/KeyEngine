@@ -20,6 +20,8 @@ namespace KeyEngine
         public virtual void OnDeleted() { }
         public virtual void OnDisabled() { }
         public virtual void OnEnabled() { }
+        public virtual void RenderSelectedGizmos() { }
+        public virtual void RenderGizmos() { }
 
         public virtual SerializeData SceneSerialize() => SerializeData.Empty;
         public virtual void SceneDeserialize(SerializeData serializeData) { }

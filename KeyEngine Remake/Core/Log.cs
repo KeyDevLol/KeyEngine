@@ -8,10 +8,9 @@ namespace KeyEngine
     /// </summary>
     public static class Log
     {
-        public static bool ShowTime { get; set; } = true;
+        public static bool PrintTime { get; set; } = true;
         public static string TimeFormat { get; set; } = "H:mm:ss";
 
-        public static bool LogToFile { get; set; } = true;
         private static StreamWriter? streamWriter = null;
 
         [Conditional("DEBUG")]
@@ -65,7 +64,7 @@ namespace KeyEngine
         [Conditional("DEBUG")]
         private static void WriteLine(string? value, string? suffix)
         {
-            string formatted = ShowTime ?
+            string formatted = PrintTime ?
             /* True  */ string.Format("[{0}] {1}: {2}", DateTime.Now.ToString(TimeFormat), suffix, value) :
             /* False */ string.Format("{0}: {1}", suffix, value);
 

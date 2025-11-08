@@ -33,6 +33,9 @@ namespace KeyEngine.Samples
 
             ground.AddComponent<RigidBody>().BodyType = BodyType.Kinematic;
             ground.AddComponent<SpriteRenderer>();
+
+            Entity test = ECS.AddEntity("Test");
+            test.AddComponent<RigidBody>();
         }
 
         public void Unload() { }
@@ -50,15 +53,19 @@ namespace KeyEngine.Samples
 
             public override void Update(float deltaTime)
             {
+                if (!Input.IsKeyDown(KeyCode.Space))
+                    return;
+
                 Entity entity = ECS.AddEntity();
+                entity.Position = new Vector2(random.Next(0, 4), 10);
+                entity.Scale = new Vector2(0.25f, 0.25f);
+
                 RigidBody rb = entity.AddComponent<RigidBody>();
                 rb.BodyType = BodyType.Dynamic;
-                rb.SleepingAllowed = true;
+                rb.SleepingAllowed = false;
 
                 SpriteRenderer sp = entity.AddComponent<SpriteRenderer>();
 
-                entity.Position = new Vector2(random.Next(0, 4), 10);
-                entity.Scale = new Vector2(0.25f, 0.25f);
                 colorCounter = (int)Mathf.Repeat(colorCounter, 4);
 
                 switch (colorCounter)

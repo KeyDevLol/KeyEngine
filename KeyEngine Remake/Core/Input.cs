@@ -13,7 +13,7 @@ namespace KeyEngine
         /// </summary>
         public static Action<TextInputArgs>? OnTextInput { get; set; }
 #if ENABLE_EDITOR
-        public static bool enableInput = true;
+        public static bool EnableInput = true;
 #endif // ENABLE_EDITOR
 
         static Input()
@@ -111,6 +111,11 @@ namespace KeyEngine
             axis = Mathf.Lerp(axis, 0, acceleration);
         }
 
+        public static KeyCode GetKeyCodeFromString(string str)
+        {
+            return (KeyCode)Enum.Parse(typeof(KeyCode), str);
+        }
+
         private static void TextInputed(OpenTK.Windowing.Common.TextInputEventArgs e)
         {
             OnTextInput?.Invoke(new TextInputArgs(e.Unicode));
@@ -142,7 +147,7 @@ namespace KeyEngine
         public static bool IsMouseButtonDown(MouseButtonCode mouseButton)
         {
 #if ENABLE_EDITOR
-            return MainWindow.Instance.IsMouseButtonPressed((MouseButton)mouseButton) && enableInput;
+            return MainWindow.Instance.IsMouseButtonPressed((MouseButton)mouseButton) && EnableInput;
 #else
             return MainWindow.Instance.IsMouseButtonPressed((MouseButton)mouseButton);
 #endif

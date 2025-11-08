@@ -23,6 +23,8 @@ namespace KeyEngine.Editor.GUI
             title = "Inspector";
         }
 
+        public static Entity? GetCurrentEntity() => instance.currentEntity;
+
         public static void RefreshEntity(Entity? entity)
         {
             if (entity == null)

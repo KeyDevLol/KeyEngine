@@ -4,17 +4,17 @@ namespace KeyEngine
 {
     public static class ECS
     {
-        private readonly static EntityCollection entityCollection = new EntityCollection();
+        public readonly static EntityCollection EntityCollection = [];
         //private readonly static Queue<Entity> addEntitiesQueue = new Queue<Entity>();
         //private readonly static Queue<Entity> removeEntitiesQueue = new Queue<Entity>();
-        public static int EntitiesCount => entityCollection.Count;
+        public static int EntitiesCount => EntityCollection.Count;
 
         #region Add Entity
         public static void AddEntity(Entity entity)
         {
             ArgumentNullException.ThrowIfNull(entity);
             //addEntitiesQueue.Enqueue(entity);
-            entityCollection.Add(entity);
+            EntityCollection.Add(entity);
         }
 
         public static Entity AddEntity(string? name = null)
@@ -45,7 +45,7 @@ namespace KeyEngine
             //removeEntitiesQueue.Enqueue(entity);
 
             entity.CallDeleted();
-            entityCollection.Remove(entity);
+            EntityCollection.Remove(entity);
         }
 
         public static void ClearRemoveQueue() { } //=> removeEntitiesQueue.Clear();
@@ -64,7 +64,7 @@ namespace KeyEngine
 
         public static Entity? FindEntityByName(string name)
         {
-            foreach (Entity entity in entityCollection)
+            foreach (Entity entity in EntityCollection)
             {
                 if (entity.Name == name)
                     return entity;
@@ -75,32 +75,32 @@ namespace KeyEngine
 
         public static Entity[] GetAllEntities()
         {
-            return [.. entityCollection.Entities];
+            return [.. EntityCollection.Entities];
         }
 
         public static Entity Get()
         {
-            return entityCollection.Entities[0];
+            return EntityCollection.Entities[0];
         }
 
         public static void DeleteAllEntities()
         {
-            while (entityCollection.Count > 0)
+            while (EntityCollection.Count > 0)
             {
-                RemoveEntity(entityCollection[0]);
+                RemoveEntity(EntityCollection[0]);
             }
         }
 
         internal static void RefreshLayer(Entity entity)
         {
-            entityCollection.RefreshLayer(entity);
+            EntityCollection.RefreshLayer(entity);
         }
 
         internal static void CallStart()
         {
-            for (int i = entityCollection.Count; i-- > 0;)
+            for (int i = EntityCollection.Count; i-- > 0;)
             {
-                Entity entity = entityCollection[i];
+                Entity entity = EntityCollection[i];
 
                 if (!entity.Active)
                     continue;
@@ -116,9 +116,9 @@ namespace KeyEngine
 
             try
             {
-                for (int i = entityCollection.Count; i-- > 0;)
+                for (int i = EntityCollection.Count; i-- > 0;)
                 {
-                    Entity entity = entityCollection[i];
+                    Entity entity = EntityCollection[i];
 
                     if (!entity.Active)
                         continue;
@@ -134,9 +134,9 @@ namespace KeyEngine
 
         internal static void CallRender()
         {
-            for (int i = entityCollection.Count; i-- > 0;)
+            for (int i = EntityCollection.Count; i-- > 0;)
             {
-                Entity entity = entityCollection[i];
+                Entity entity = EntityCollection[i];
 
                 if (!entity.Active)
                     continue;

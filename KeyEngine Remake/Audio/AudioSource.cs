@@ -1,4 +1,5 @@
 ﻿using KeyEngine.Mathematics;
+using KeyEngine.Rendering.Gizmos;
 using OpenTK.Audio.OpenAL;
 
 namespace KeyEngine.Audio
@@ -26,7 +27,7 @@ namespace KeyEngine.Audio
         public float Volume
         {
             get => _volume;
-            set { _volume = value; VolumeChanged(); }
+            set { _volume = value; SetCalculatedGain(); }
         }
         private float _volume = 100;
         public float Pitch
@@ -47,21 +48,21 @@ namespace KeyEngine.Audio
         public float MaxDistance
         {
             get => _maxDistance;
-            set { _maxDistance = value; MaxDistanceChanged(); }
+            set { _maxDistance = value; SetCalculatedGain(); }
         }
         private float _maxDistance = 5;
 
         public float ReferenceDistance
         {
             get => _referenceDistance;
-            set { _referenceDistance = value; ReferenceDistanceChanged(); }
+            set { _referenceDistance = value; SetCalculatedGain(); }
         }
         private float _referenceDistance = 1;
 
         public float Rolloff
         {
             get => _rolloff;
-            set { _rolloff = value; RolloffChanged(); }
+            set { _rolloff = value; SetCalculatedGain(); }
         }
         private float _rolloff = 1;
 
@@ -97,11 +98,19 @@ namespace KeyEngine.Audio
             });
         }
 
+#if ENABLE_EDITOR
+        public override void RenderSelectedGizmos()
+        {
+            GizmosRendering.DrawCircle(Owner.Position, new Vector2(MaxDistance * 2));
+            GizmosRendering.DrawCircle(Owner.Position, new Vector2(ReferenceDistance * 2), Color01.Yellow);
+        }
+#endif
+
         public float CalculateGain(float distance)
         {
             float volume = _volume / 100f;
-            volume = Math.Clamp(volume, 0.0f, 1.0f);
-            distance = Math.Clamp(distance, ReferenceDistance, MaxDistance);
+            volume = Mathf.Clamp(volume, 0.0f, 1.0f);
+            distance = Mathf.Clamp(distance, ReferenceDistance, MaxDistance);
 
             float distanceAttenuation = 1.0f - Rolloff * (distance - ReferenceDistance) / (MaxDistance - ReferenceDistance);
             float gain = volume * Math.Clamp(distanceAttenuation, 0.0f, 1.0f);
@@ -133,13 +142,8 @@ namespace KeyEngine.Audio
             }
             else
             {
-                throw new Exception("AudioSample data is not loaded.");
+                throw new ArgumentException("AudioSample data is not loaded.");
             }
-        }
-
-        private void VolumeChanged()
-        {
-            SetCalculatedGain();
         }
 
         private void PitchChanged()
@@ -151,21 +155,6 @@ namespace KeyEngine.Audio
         {
             AL.Source(SourceHandle, ALSourceb.Looping, _looping);
         }
-
-        private void MaxDistanceChanged()
-        {
-            SetCalculatedGain();
-        }
-
-        private void ReferenceDistanceChanged()
-        {
-            SetCalculatedGain();
-        }       
-        
-        private void RolloffChanged()
-        {
-            SetCalculatedGain();
-        }        
 
         private void PanSmoothnessChanged()
         {

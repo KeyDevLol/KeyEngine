@@ -1,4 +1,5 @@
-﻿using OpenTK.Graphics.OpenGL;
+﻿using KeyEngine.Mathematics;
+using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using Vector2 = KeyEngine.Mathematics.Vector2;
 
@@ -172,6 +173,16 @@ namespace KeyEngine.Rendering
                 return;
             }
             GL.Uniform2(location, value.X, value.Y);
+        }
+
+        public void SetVector4(in string name, Vector4 value)
+        {
+            if (!TryGetUniformLocation(name, out int location))
+            {
+                PrintUniformNotFoundedError(name);
+                return;
+            }
+            GL.Uniform4(location, value.X, value.Y, value.Z, value.W);
         }
 
         public void SetVector2(in string name, params Vector2[] value)

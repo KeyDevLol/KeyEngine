@@ -35,7 +35,7 @@ namespace KeyEngine.Editor.Systems
 
             if (Input.MouseScrollDelta != Vector2.Zero)
             {
-                Camera.Main.Zoom -= Input.MouseScrollDelta.Y * 1.2f;
+                Camera.Main.Zoom = Mathf.Clamp(Camera.Main.Zoom - Input.MouseScrollDelta.Y * 1.2f, 0.5f, float.MaxValue);
             }
 
             if (Input.IsKeyDown(KeyCode.LeftAlt) && Input.IsKeyPressed(KeyCode.Q))

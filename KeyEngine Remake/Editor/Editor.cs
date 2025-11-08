@@ -6,7 +6,7 @@ namespace KeyEngine.Editor
 {
     public static class Editor
     {
-        private static readonly List<EditorSystem> systems = new List<EditorSystem>();
+        private static readonly List<EditorSystem> systems = [];
 
         static Editor()
         {
@@ -15,6 +15,7 @@ namespace KeyEngine.Editor
 
         private static void RegisterSystems()
         {
+            RegisterSystem<GizmosSystem>();
             RegisterSystem<EditorGuiSystem>();
             RegisterSystem<SceneMovementSystem>();
         }

@@ -25,11 +25,10 @@ namespace KeyEngine
         public static void Update(float deltaTime)
         {
             World.EnableDiagnostics = false;
+            float dt = 1 / 60f;
 
             if (World.BodyList.Count > 0)
                 World.Step(deltaTime);
-
-            World.IsLocked = false;
         }
 
         public static bool RayCast(Vector2 point1, Vector2 point2, [NotNullWhen(true)] out RigidBody? rb)

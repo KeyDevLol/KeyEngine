@@ -9,7 +9,7 @@ namespace KeyEngine.Editor.Systems
     public class EditorGuiSystem : EditorSystem
     {
         private readonly ImGuiController imGuiController;
-        private static readonly List<EditorWindow> editorWindows = new List<EditorWindow>();
+        private static readonly List<EditorWindow> editorWindows = [];
         private ITheme currentTheme;
 
         public static bool EnableRenderingGUI = true;
@@ -74,6 +74,8 @@ namespace KeyEngine.Editor.Systems
                 }
                 window.End();
             }
+
+            ImGui.PopFont();
 
             IsMouseOnGUI = anyWindowHovered;
             imGuiController.Render();
