@@ -21,51 +21,48 @@ namespace KeyEngine
         }
         private int _layer;
 
+        public readonly Guid Id;
+
         private readonly List<Component> components;
 
-        public Guid Id { get; private set; }
+        protected event Action<Component>? OnComponentAdded;
 
         public Entity(string? name = null)
         {
             Name = name ?? "My name is Edwin";
-            components = new List<Component>();
+            components = [];
             Id = Guid.NewGuid();
         }
 
         public object AddComponent(Type type)
         {
-            Component? component = Activator.CreateInstance(type, [this]) as Component;
-
-            Log.Assert(component != null, $"{nameof(Entity)}.{nameof(AddComponent)} failed to add component.", LogType.Error);
+            if (Activator.CreateInstance(type, [this]) is not Component component)
+                throw new NullReferenceException($"{nameof(component)} is null. Failed to add component.");
 
             components.Add(component);
 
             if (SceneManager.SceneIsRunning)
                 component.Start();
+
+            OnComponentAdded?.Invoke(component);
 
             return component;
         }
 
         public T AddComponent<T>() where T : Component
         {
-            Component? component = Activator.CreateInstance(typeof(T), [this]) as Component;
-
-            Log.Assert(component != null, $"{nameof(Entity)}.{nameof(AddComponent)} failed to add component.", LogType.Error);
-
-            components.Add(component);
-
-            if (SceneManager.SceneIsRunning)
-                component.Start();
-
-            return (T)component;
+            return (T)AddComponent(typeof(T));
         }
 
         public Component AddComponent(Component component)
         {
+            ArgumentNullException.ThrowIfNull(component, nameof(component));
             components.Add(component);
 
             if (SceneManager.SceneIsRunning)
                 component.Start();
+
+            OnComponentAdded?.Invoke(component);
 
             return component;
         }
