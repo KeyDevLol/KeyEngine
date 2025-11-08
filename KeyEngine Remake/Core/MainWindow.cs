@@ -1,4 +1,5 @@
-﻿using KeyEngine.Rendering;
+﻿using KeyEngine.Audio;
+using KeyEngine.Rendering;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
@@ -12,7 +13,7 @@ namespace KeyEngine
         public static MainWindow Instance { get => instance; }
         public static float DeltaTime { get; private set; }
 
-        private MainWindow(NativeWindowSettings nativeWindowSettings) : base(GameWindowSettings.Default, nativeWindowSettings) 
+        private MainWindow(NativeWindowSettings nativeWindowSettings) : base(GameWindowSettings.Default, nativeWindowSettings)
         {
 
         }
@@ -28,9 +29,11 @@ namespace KeyEngine
                 Profile = ContextProfile.Core,
                 Flags = ContextFlags.ForwardCompatible,
                 API = ContextAPI.OpenGL,
-                Vsync = VSyncMode.Off,
-                Title = "KeyEngine window",
-                WindowState = WindowState.Normal
+                Vsync = VSyncMode.On,
+                Title = Application.WindowTitle,
+                WindowState = (WindowState)Application.WindowState,
+                WindowBorder = WindowBorder.Resizable,
+                NumberOfSamples = Application.MsaaEnabled ? (int)Application.MsaaSamplesCount : 0
             };
 
             instance = new MainWindow(nativeWindowSettings);
@@ -42,7 +45,7 @@ namespace KeyEngine
 
         protected override void OnUpdateFrame(FrameEventArgs args)
         {
-            if (IsFocused == false)
+            if (!IsFocused && !Application.RunInBackground)
                 return;
 
             float deltaTime = (float)args.Time;
@@ -59,28 +62,29 @@ namespace KeyEngine
 
         protected override void OnRenderFrame(FrameEventArgs args)
         {
-            if (IsFocused)
+            if (!IsFocused && !Application.RunInBackground)
+                return;
+
+            base.OnRenderFrame(args);
+
+            GL.Clear(ClearBufferMask.ColorBufferBit);
+
+            // Render
+            if (Camera.Main != null)
             {
-                base.OnRenderFrame(args);
-
-                GL.Clear(ClearBufferMask.ColorBufferBit);
-
-                //Render
-                if (Camera.Main != null)
-                {
-                    ECS.CallRender();
+                ECS.CallRender();
 #if ENABLE_EDITOR
-                    Editor.Editor.Render();
+                Editor.Editor.Render();
 #endif
-                }
+            }
 
-                Context.SwapBuffers();
-            }
-            else
-            {
-                //Sleeping ZzZ
-                GLFW.WaitEvents();
-            }
+            Context.SwapBuffers();
+        }
+
+        protected override void OnFocusedChanged(FocusedChangedEventArgs e)
+        {
+            base.OnFocusedChanged(e);
+            //AudioManager.SetPause(!e.IsFocused);
         }
 
         protected override void OnResize(ResizeEventArgs e)
