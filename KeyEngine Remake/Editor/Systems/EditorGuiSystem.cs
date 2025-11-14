@@ -3,6 +3,7 @@ using KeyEngine.Editor.GUI.Windows;
 using KeyEngine.Editor.GUI;
 using KeyEngine.Rendering;
 using OpenTK.Windowing.Common;
+using KeyEngine.Editor.GUI.Themes;
 
 namespace KeyEngine.Editor.Systems
 {

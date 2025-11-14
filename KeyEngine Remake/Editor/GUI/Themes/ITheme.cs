@@ -1,7 +1,7 @@
 ﻿using ImGuiNET;
 using KeyEngine.Rendering;
 
-namespace KeyEngine.Editor.GUI
+namespace KeyEngine.Editor.GUI.Themes
 {
     public interface ITheme
     {

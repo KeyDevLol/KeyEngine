@@ -2,7 +2,7 @@
 using KeyEngine.Rendering;
 using System.Numerics;
 
-namespace KeyEngine.Editor.GUI
+namespace KeyEngine.Editor.GUI.Themes
 {
     public class DefaultTheme : ITheme
     {
@@ -14,11 +14,9 @@ namespace KeyEngine.Editor.GUI
         {
             font = ImGui.GetIO().Fonts.AddFontFromFileTTF("Editor/Pixel KeyDev font.ttf", 12, null, ImGui.GetIO().Fonts.GetGlyphRangesCyrillic());
             controller.RecreateFontDeviceTexture();
-    //null, ImGui.GetIO().Fonts.GetGlyphRangesCyrillic());
-    //        controller.RecreateFontDeviceTexture();
 
             ImGuiStylePtr style = ImGui.GetStyle();
-            var colors = style.Colors;
+            RangeAccessor<Vector4> colors = style.Colors;
 
             colors[(int)ImGuiCol.Text] = new Vector4(0.860f, 0.930f, 0.890f, 0.78f);
             colors[(int)ImGuiCol.TextDisabled] = new Vector4(0.860f, 0.930f, 0.890f, 0.28f);
