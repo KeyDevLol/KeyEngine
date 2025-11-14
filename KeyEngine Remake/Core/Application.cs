@@ -11,14 +11,19 @@ namespace KeyEngine
         #region RunInBackground
 
         /// <summary>
-        /// Default is true
+        /// Determines whether the program should run in the background.
+        /// Default value: <c>true</c>.
         /// </summary>
-        public static bool RunInBackground { get; set; } = true;
+        public static bool RunInBackground { get; set; } = false;
 
-        #endregion // RunInBackground
+        #endregion RunInBackground
 
         #region VSync
 
+        /// <summary>
+        /// Determines whether to enable Vertical Sync.
+        /// Default value: <c>true</c>.
+        /// </summary>
         public static bool VSync
         {
             get => _vSync;
@@ -30,10 +35,15 @@ namespace KeyEngine
             window.VSync = _vSync ? VSyncMode.On : VSyncMode.Off;
         }
 
-        #endregion // VSync
+        #endregion VSync
 
         #region MsaaEnabled
 
+        /// <summary>
+        /// Determines whether MSAA antialiasing should be enabled.
+        /// To set the number of samples use <see cref="MsaaSamplesCount"/>.
+        /// Default value: <c>true</c>.
+        /// </summary>
         public static bool MsaaEnabled 
         {
             get => _msaaEnabled;
@@ -49,10 +59,16 @@ namespace KeyEngine
                 GL.Disable(EnableCap.Multisample);
         }
 
-        #endregion // MsaaEnabled
+        #endregion MsaaEnabled
 
         #region MsaaSamplesCount
 
+        /// <summary>
+        /// Determines how many samples to use for MSAA antialiasing. 
+        /// To enable MSAA antialiasing use <see cref="MsaaEnabled"/>.
+        /// Cannot be changed at runtime.
+        /// Default value: <see cref="MsaaSamples.SamplesX2"/>.
+        /// </summary>
         public const MsaaSamples MsaaSamplesCount = MsaaSamples.SamplesX2;
         public enum MsaaSamples
         {
@@ -62,10 +78,15 @@ namespace KeyEngine
             SamplesX16 = 16,
         }
 
-        #endregion // MsaaSamplesCount
+        #endregion MsaaSamplesCount
 
         #region MaxFramerate
 
+        /// <summary>
+        /// Gets or sets the FPS limit.
+        /// Set the value to 0 to remove the FPS limit.
+        /// Default value: <c>0</c>
+        /// </summary>
         public static int MaxFramerate
         {
             get => _maxFramerate;
@@ -77,10 +98,13 @@ namespace KeyEngine
             window.UpdateFrequency = _maxFramerate;
         }
 
-        #endregion // MaxFramerate
+        #endregion MaxFramerate
 
         #region WindowTitle
 
+        /// <summary>
+        /// Gets or sets the window title
+        /// </summary>
         public static string WindowTitle
         {
             get => _windowTitle;
@@ -92,10 +116,14 @@ namespace KeyEngine
             window.Title = _windowTitle;
         }
 
-        #endregion // WindowTitle
+        #endregion WindowTitle
 
         #region WindowState
 
+        /// <summary>
+        /// Gets or sets the window state
+        /// Default value: <see cref="WindowStateMode.Normal"/>.
+        /// </summary>
         public static WindowStateMode WindowState
         {
             get => _windowState;
@@ -114,10 +142,14 @@ namespace KeyEngine
             Fullscreen,
         }
 
-        #endregion // WindowState
+        #endregion WindowState
 
         #region WindowBorder
 
+        /// <summary>
+        /// Gets or sets the window border.
+        /// Default value: <see cref="WindowBorderMode.Resizable"/>.
+        /// </summary>
         public static WindowBorderMode WindowBorder
         {
             get => _windowBorder;
@@ -128,17 +160,30 @@ namespace KeyEngine
         {
             window.WindowBorder = (OpenTK.Windowing.Common.WindowBorder)_windowBorder;
         }
+
         public enum WindowBorderMode
         {
+            /// <summary>
+            /// The window has a resizable border. A window with a resizable border can be resized by the user or programmatically.
+            /// </summary>
             Resizable = 0,
+            /// <summary>
+            /// The window has a fixed border. A window with a fixed border can only be resized programmatically.
+            /// </summary>
             Fixed,
+            /// <summary>
+            /// The window does not have a border. A window with a hidden border can only be resized programmatically.
+            /// </summary>
             Hidden
         }
 
-        #endregion // WindowBorder
+        #endregion WindowBorder
 
         #region CurrentOS
 
+        /// <summary>
+        /// Gets current Operating System platform.
+        /// </summary>
         public static CurrentOSEnum CurrentOS
         {
             get
@@ -153,20 +198,26 @@ namespace KeyEngine
                     return CurrentOSEnum.FreeBSD;
 
                 // How??
-                return CurrentOSEnum.Undefined;
+                return CurrentOSEnum.Unidentified;
             }
         }
         public enum CurrentOSEnum
         {
-            Undefined,
+            /// <summary>
+            /// Unsupported (how?) or unidentified OS
+            /// </summary>
+            Unidentified,
             Windows,
             Linux,
             MacOS,
             FreeBSD
         }
 
-        #endregion // CurrentOS
+        #endregion CurrentOS
 
+        /// <summary>
+        /// Gets current system language.
+        /// </summary>
         public static CultureInfo SystemLanguage => CultureInfo.CurrentUICulture;
     }
 }
