@@ -35,6 +35,8 @@ namespace KeyEngine.Rendering
         private readonly int GLVersion;
         private readonly bool CompatibilityProfile;
 
+        private readonly Dictionary<Keys, ImGuiKey> convertedOpenTkToImGuiKeys;
+
         /// <summary>
         /// Constructs a new ImGuiController.
         /// </summary>
@@ -42,6 +44,8 @@ namespace KeyEngine.Rendering
         {
             _windowWidth = width;
             _windowHeight = height;
+
+            convertedOpenTkToImGuiKeys = [];
 
             int major = GL.GetInteger(GetPName.MajorVersion);
             int minor = GL.GetInteger(GetPName.MinorVersion);
@@ -60,13 +64,13 @@ namespace KeyEngine.Rendering
             io.BackendFlags |= ImGuiBackendFlags.RendererHasVtxOffset;
 
             CreateDeviceResources();
-            SetKeyMappings();
+            InitializeKeys();
 
             SetPerFrameImGuiData(1f / 60f);
             io.ConfigFlags = ImGuiConfigFlags.DockingEnable;
 
-            ImGui.NewFrame();
-            _frameBegun = true;
+            //ImGui.NewFrame();
+            //_frameBegun = true;
         }
 
         ~ImGuiController()
@@ -263,7 +267,7 @@ void main()
             io.MouseDown[3] = MouseState[MouseButton.Button4];
             io.MouseDown[4] = MouseState[MouseButton.Button5];
 
-            var screenPoint = new OpenTK.Mathematics.Vector2i((int)MouseState.X, (int)MouseState.Y);
+            var screenPoint = new Vector2i((int)MouseState.X, (int)MouseState.Y);
             var point = screenPoint;//wnd.PointToClient(screenPoint);
             io.MousePos = new System.Numerics.Vector2(point.X, point.Y);
 
@@ -273,7 +277,8 @@ void main()
                 {
                     continue;
                 }
-                io.KeysDown[(int)key] = KeyboardState.IsKeyDown(key);
+                if (convertedOpenTkToImGuiKeys.TryGetValue(key, out ImGuiKey imKey))
+                    io.AddKeyEvent(imKey, KeyboardState.IsKeyDown(key));
             }
 
             foreach (var c in PressedChars)
@@ -282,10 +287,10 @@ void main()
             }
             PressedChars.Clear();
 
-            io.KeyCtrl = KeyboardState.IsKeyDown(Keys.LeftControl) || KeyboardState.IsKeyDown(Keys.RightControl);
-            io.KeyAlt = KeyboardState.IsKeyDown(Keys.LeftAlt) || KeyboardState.IsKeyDown(Keys.RightAlt);
-            io.KeyShift = KeyboardState.IsKeyDown(Keys.LeftShift) || KeyboardState.IsKeyDown(Keys.RightShift);
-            io.KeySuper = KeyboardState.IsKeyDown(Keys.LeftSuper) || KeyboardState.IsKeyDown(Keys.RightSuper);
+            io.AddKeyEvent(ImGuiKey.ModCtrl, KeyboardState.IsKeyDown(Keys.LeftControl) || KeyboardState.IsKeyDown(Keys.RightControl));
+            io.AddKeyEvent(ImGuiKey.ModShift, KeyboardState.IsKeyDown(Keys.LeftShift) || KeyboardState.IsKeyDown(Keys.RightShift));
+            io.AddKeyEvent(ImGuiKey.ModAlt, KeyboardState.IsKeyDown(Keys.LeftAlt) || KeyboardState.IsKeyDown(Keys.RightAlt));
+            io.AddKeyEvent(ImGuiKey.ModSuper, KeyboardState.IsKeyDown(Keys.LeftSuper) || KeyboardState.IsKeyDown(Keys.RightSuper));
         }
 
         internal void PressChar(char keyChar)
@@ -301,28 +306,46 @@ void main()
             io.MouseWheelH = offset.X;
         }
 
-        private static void SetKeyMappings()
+        private void InitializeKeys()
         {
-            ImGuiIOPtr io = ImGui.GetIO();
-            io.KeyMap[(int)ImGuiKey.Tab] = (int)Keys.Tab;
-            io.KeyMap[(int)ImGuiKey.LeftArrow] = (int)Keys.Left;
-            io.KeyMap[(int)ImGuiKey.RightArrow] = (int)Keys.Right;
-            io.KeyMap[(int)ImGuiKey.UpArrow] = (int)Keys.Up;
-            io.KeyMap[(int)ImGuiKey.DownArrow] = (int)Keys.Down;
-            io.KeyMap[(int)ImGuiKey.PageUp] = (int)Keys.PageUp;
-            io.KeyMap[(int)ImGuiKey.PageDown] = (int)Keys.PageDown;
-            io.KeyMap[(int)ImGuiKey.Home] = (int)Keys.Home;
-            io.KeyMap[(int)ImGuiKey.End] = (int)Keys.End;
-            io.KeyMap[(int)ImGuiKey.Delete] = (int)Keys.Delete;
-            io.KeyMap[(int)ImGuiKey.Backspace] = (int)Keys.Backspace;
-            io.KeyMap[(int)ImGuiKey.Enter] = (int)Keys.Enter;
-            io.KeyMap[(int)ImGuiKey.Escape] = (int)Keys.Escape;
-            io.KeyMap[(int)ImGuiKey.A] = (int)Keys.A;
-            io.KeyMap[(int)ImGuiKey.C] = (int)Keys.C;
-            io.KeyMap[(int)ImGuiKey.V] = (int)Keys.V;
-            io.KeyMap[(int)ImGuiKey.X] = (int)Keys.X;
-            io.KeyMap[(int)ImGuiKey.Y] = (int)Keys.Y;
-            io.KeyMap[(int)ImGuiKey.Z] = (int)Keys.Z;
+            foreach (Keys tkKey in Enum.GetValues<Keys>())
+            {
+                if (Enum.TryParse(tkKey.ToString(), out ImGuiKey imKey))
+                {
+                    convertedOpenTkToImGuiKeys.TryAdd(tkKey, imKey);
+                }
+            }
+
+            #region Manually Mapping
+
+            convertedOpenTkToImGuiKeys.Add(Keys.Left, ImGuiKey.LeftArrow);
+            convertedOpenTkToImGuiKeys.Add(Keys.Right, ImGuiKey.RightArrow);
+            convertedOpenTkToImGuiKeys.Add(Keys.Up, ImGuiKey.UpArrow);
+            convertedOpenTkToImGuiKeys.Add(Keys.Down, ImGuiKey.DownArrow);
+
+            convertedOpenTkToImGuiKeys.Add(Keys.D0, ImGuiKey._0);
+            convertedOpenTkToImGuiKeys.Add(Keys.D1, ImGuiKey._1);
+            convertedOpenTkToImGuiKeys.Add(Keys.D2, ImGuiKey._2);
+            convertedOpenTkToImGuiKeys.Add(Keys.D3, ImGuiKey._3);
+            convertedOpenTkToImGuiKeys.Add(Keys.D4, ImGuiKey._4);
+            convertedOpenTkToImGuiKeys.Add(Keys.D5, ImGuiKey._5);
+            convertedOpenTkToImGuiKeys.Add(Keys.D6, ImGuiKey._6);
+            convertedOpenTkToImGuiKeys.Add(Keys.D7, ImGuiKey._7);
+            convertedOpenTkToImGuiKeys.Add(Keys.D8, ImGuiKey._8);
+            convertedOpenTkToImGuiKeys.Add(Keys.D9, ImGuiKey._9);
+
+            convertedOpenTkToImGuiKeys.Add(Keys.KeyPad0, ImGuiKey.Keypad0);
+            convertedOpenTkToImGuiKeys.Add(Keys.KeyPad1, ImGuiKey.Keypad1);
+            convertedOpenTkToImGuiKeys.Add(Keys.KeyPad2, ImGuiKey.Keypad2);
+            convertedOpenTkToImGuiKeys.Add(Keys.KeyPad3, ImGuiKey.Keypad3);
+            convertedOpenTkToImGuiKeys.Add(Keys.KeyPad4, ImGuiKey.Keypad4);
+            convertedOpenTkToImGuiKeys.Add(Keys.KeyPad5, ImGuiKey.Keypad5);
+            convertedOpenTkToImGuiKeys.Add(Keys.KeyPad6, ImGuiKey.Keypad6);
+            convertedOpenTkToImGuiKeys.Add(Keys.KeyPad7, ImGuiKey.Keypad7);
+            convertedOpenTkToImGuiKeys.Add(Keys.KeyPad8, ImGuiKey.Keypad8);
+            convertedOpenTkToImGuiKeys.Add(Keys.KeyPad9, ImGuiKey.Keypad9);
+
+            #endregion Manually Mapping
         }
 
         private void RenderImDrawData(ImDrawDataPtr draw_data)

@@ -51,11 +51,11 @@ namespace KeyEngine.Editor.Systems
         {
             if (!EnableRenderingGUI)
                 return;
-
+            ImGui.ShowStyleEditor();
             ImGui.PushFont(currentTheme.Font);
 
-            ImGui.DockSpaceOverViewport(ImGui.GetMainViewport(), ImGuiDockNodeFlags.PassthruCentralNode | 
-                ImGuiDockNodeFlags.NoDockingInCentralNode);
+            ImGui.DockSpaceOverViewport(0, ImGui.GetMainViewport(), ImGuiDockNodeFlags.PassthruCentralNode | 
+                ImGuiDockNodeFlags.NoDockingOverCentralNode);
 
             bool anyWindowHovered = false;
 
