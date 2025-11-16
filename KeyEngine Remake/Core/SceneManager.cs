@@ -1,6 +1,4 @@
 ﻿
-using System.Reflection;
-
 namespace KeyEngine
 {
     public static class SceneManager
@@ -13,9 +11,9 @@ namespace KeyEngine
             CurrentScene?.Unload();
             SceneIsRunning = false;
             
-            ECS.DeleteAllEntities();
-            ECS.ClearAddQueue();
-            ECS.ClearRemoveQueue();
+            ECS.RemoveAllEntities();
+            //ECS.ClearAddQueue();
+            //ECS.ClearRemoveQueue();
             if (callGC)
                 GC.Collect();
 
@@ -24,8 +22,8 @@ namespace KeyEngine
 
             SceneIsRunning = true;
 
-            ECS.PassAddQueue();
-            ECS.PassRemoveQueue();
+            //ECS.PassAddQueue();
+            //ECS.PassRemoveQueue();
             ECS.CallStart();
         }
 
@@ -34,9 +32,9 @@ namespace KeyEngine
             CurrentScene?.Unload();
             SceneIsRunning = false;
 
-            ECS.DeleteAllEntities();
-            ECS.ClearAddQueue();
-            ECS.ClearRemoveQueue();
+            ECS.RemoveAllEntities();
+            //ECS.ClearAddQueue();
+            //ECS.ClearRemoveQueue();
             if (callGC)
                 GC.Collect();
 
@@ -45,8 +43,8 @@ namespace KeyEngine
 
             SceneIsRunning = true;
 
-            ECS.PassAddQueue();
-            ECS.PassRemoveQueue();
+            //ECS.PassAddQueue();
+            //ECS.PassRemoveQueue();
             ECS.CallStart();
         }
     }
