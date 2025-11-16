@@ -10,6 +10,7 @@ namespace KeyEngine
         public static int EntitiesCount => EntityCollection.Count;
 
         #region Add Entity
+
         public static void AddEntity(Entity entity)
         {
             ArgumentNullException.ThrowIfNull(entity);
@@ -26,17 +27,18 @@ namespace KeyEngine
         }
 
 
-        public static void ClearAddQueue() { } //=> addEntitiesQueue.Clear();
+        //public static void ClearAddQueue() { } //=> addEntitiesQueue.Clear();
 
-        public static void PassAddQueue()
-        {
-            //while (addEntitiesQueue.Count > 0)
-            //{
-            //    Entity entity = addEntitiesQueue.Dequeue();
-            //    entityCollection.Add(entity);
-            //}
-        }
-        #endregion
+        //public static void PassAddQueue()
+        //{
+        //    //while (addEntitiesQueue.Count > 0)
+        //    //{
+        //    //    Entity entity = addEntitiesQueue.Dequeue();
+        //    //    entityCollection.Add(entity);
+        //    //}
+        //}
+
+        #endregion Add Entity
 
         #region Remove Entity
 
@@ -48,19 +50,20 @@ namespace KeyEngine
             EntityCollection.Remove(entity);
         }
 
-        public static void ClearRemoveQueue() { } //=> removeEntitiesQueue.Clear();
+        //public static void ClearRemoveQueue() { } //=> removeEntitiesQueue.Clear();
 
-        public static void PassRemoveQueue()
-        {
-            //while (removeEntitiesQueue.Count > 0)
-            //{
-            //    Entity entity = removeEntitiesQueue.Dequeue();
+        //public static void PassRemoveQueue()
+        //{
+        //    //while (removeEntitiesQueue.Count > 0)
+        //    //{
+        //    //    Entity entity = removeEntitiesQueue.Dequeue();
 
-            //    entity.CallDeleted();
-            //    entityCollection.Remove(entity);
-            //}
-        }
-        #endregion
+        //    //    entity.CallDeleted();
+        //    //    entityCollection.Remove(entity);
+        //    //}
+        //}
+
+        #endregion Remove Entities
 
         public static Entity? FindEntityByName(string name)
         {
@@ -78,12 +81,7 @@ namespace KeyEngine
             return [.. EntityCollection.Entities];
         }
 
-        public static Entity Get()
-        {
-            return EntityCollection.Entities[0];
-        }
-
-        public static void DeleteAllEntities()
+        public static void RemoveAllEntities()
         {
             while (EntityCollection.Count > 0)
             {
@@ -91,22 +89,28 @@ namespace KeyEngine
             }
         }
 
-        internal static void RefreshLayer(Entity entity)
-        {
-            EntityCollection.RefreshLayer(entity);
-        }
+        #region Internal Calls
 
         internal static void CallStart()
         {
-            for (int i = EntityCollection.Count; i-- > 0;)
+
+#if ENABLE_EDITOR
+            try
             {
-                Entity entity = EntityCollection[i];
+#endif
+                for (int i = EntityCollection.Count; i-- > 0;)
+                {
+                    Entity entity = EntityCollection[i];
 
-                if (!entity.Active)
-                    continue;
+                    if (!entity.Active)
+                        continue;
 
-                entity.CallStart();
+                    entity.CallStart();
+                }
+#if ENABLE_EDITOR
             }
+            catch (Exception exc) { Log.Print(exc, LogType.Error); }
+#endif
         }
 
         internal static void CallUpdate(float deltaTime)
@@ -114,8 +118,10 @@ namespace KeyEngine
             if (!SceneManager.SceneIsRunning)
                 return;
 
+#if ENABLE_EDITOR
             try
             {
+#endif
                 for (int i = EntityCollection.Count; i-- > 0;)
                 {
                     Entity entity = EntityCollection[i];
@@ -125,24 +131,40 @@ namespace KeyEngine
 
                     entity.CallUpdate(deltaTime);
                 }
-
-                PassAddQueue();
-                PassRemoveQueue();
+#if ENABLE_EDITOR
+                //PassAddQueue();
+                //PassRemoveQueue();
             }
-            catch(Exception exc) { Log.Print(exc, LogType.Error); }
+            catch (Exception exc) { Log.Print(exc, LogType.Error); }
+#endif
         }
 
         internal static void CallRender()
         {
-            for (int i = EntityCollection.Count; i-- > 0;)
+#if ENABLE_EDITOR
+            try
             {
-                Entity entity = EntityCollection[i];
+#endif
+                for (int i = EntityCollection.Count; i-- > 0;)
+                {
+                    Entity entity = EntityCollection[i];
 
-                if (!entity.Active)
-                    continue;
+                    if (!entity.Active)
+                        continue;
 
-                entity.CallRender();
+                    entity.CallRender();
+                }
+#if ENABLE_EDITOR
             }
+            catch (Exception exc) { Log.Print(exc, LogType.Error); }
+#endif
         }
+
+        internal static void RefreshLayer(Entity entity)
+        {
+            EntityCollection.RefreshLayer(entity);
+        }
+
+        #endregion Internal Calls
     }
 }
