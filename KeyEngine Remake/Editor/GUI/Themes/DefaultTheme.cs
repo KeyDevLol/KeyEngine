@@ -64,6 +64,10 @@ namespace KeyEngine.Editor.GUI.Themes
             colors[(int)ImGuiCol.TabDimmedSelected] = new Vector4(0.23f, 0.20f, 0.27f, 1.00f);
             colors[(int)ImGuiCol.DockingPreview] = new Vector4(0.82f, 0.34f, 0.53f, 0.39f);
             colors[(int)ImGuiCol.NavCursor] = new Vector4(0.82f, 0.34f, 0.53f, 1.00f);
+            colors[(int)ImGuiCol.SeparatorHovered] = new Vector4(0.45f, 0.20f, 0.30f, 0.78f);
+            colors[(int)ImGuiCol.SeparatorActive] = new Vector4(0.45f, 0.20f, 0.30f, 1.00f);
+
+
         }
     }
 }
