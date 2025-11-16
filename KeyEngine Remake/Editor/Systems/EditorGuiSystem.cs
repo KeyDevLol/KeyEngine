@@ -4,6 +4,7 @@ using KeyEngine.Editor.GUI;
 using KeyEngine.Rendering;
 using OpenTK.Windowing.Common;
 using KeyEngine.Editor.GUI.Themes;
+using KeyEngine.Editor.GUI.FileBrowser;
 
 namespace KeyEngine.Editor.Systems
 {
@@ -13,7 +14,7 @@ namespace KeyEngine.Editor.Systems
         private static readonly List<EditorWindow> editorWindows = [];
         private ITheme currentTheme;
 
-        public static bool EnableRenderingGUI = true;
+        public static bool EnableRenderingGUI { get; set; } = true;
         public static bool IsMouseOnGUI { get; private set; }
 
         private static void RegisterWindows()
