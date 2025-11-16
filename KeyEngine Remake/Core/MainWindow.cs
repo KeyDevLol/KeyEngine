@@ -29,7 +29,7 @@ namespace KeyEngine
                 Profile = ContextProfile.Core,
                 Flags = ContextFlags.ForwardCompatible,
                 API = ContextAPI.OpenGL,
-                Vsync = VSyncMode.On,
+                Vsync = Application.VSync ? VSyncMode.On : VSyncMode.Off,
                 Title = Application.WindowTitle,
                 WindowState = (WindowState)Application.WindowState,
                 WindowBorder = WindowBorder.Resizable,
