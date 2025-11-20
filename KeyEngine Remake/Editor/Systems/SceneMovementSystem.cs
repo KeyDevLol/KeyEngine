@@ -32,7 +32,6 @@ namespace KeyEngine.Editor.Systems
             if (EditorGuiSystem.IsMouseOnGUI || Camera.Main == null)
                 return;
 
-
             if (Input.MouseScrollDelta != Vector2.Zero)
             {
                 Camera.Main.Zoom = Mathf.Clamp(Camera.Main.Zoom - Input.MouseScrollDelta.Y * 1.2f, 0.5f, float.MaxValue);
