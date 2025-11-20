@@ -1,14 +1,15 @@
 ﻿using ImGuiNET;
 using KeyEngine.Graphics;
 using System.Diagnostics;
-using System.IO;
 using System.Numerics;
 
 namespace KeyEngine.Editor.GUI.FileBrowser
 {
+    // TODO: Optimise directory/file tree
     public partial class FileBrowser : EditorWindow
     {
         private string currentFolder = "Assets";
+        private string[] currentFolderPathElements = ["Assets"];
         private readonly string programFullPath = AppDomain.CurrentDomain.BaseDirectory;
 
         private readonly FileSystemWatcher fileWatcher;
@@ -45,7 +46,9 @@ namespace KeyEngine.Editor.GUI.FileBrowser
             if (columnCount < 1)
                 columnCount = 1;
 
-            if (ImGui.SmallButton("<"))
+            ImGui.PushStyleVar(ImGuiStyleVar.FrameRounding, 5);
+
+            if (ImGui.Button("<"))
             {
                 if (currentFolder != "Assets")
                 {
@@ -53,8 +56,25 @@ namespace KeyEngine.Editor.GUI.FileBrowser
                     Refresh();
                 }
             }
-            ImGui.SameLine();
-            ImGui.Text(currentFolder);
+
+            string path = string.Empty;
+
+            for (int i = 0; i < currentFolderPathElements.Length; i++)
+            {
+                string element = currentFolderPathElements[i] + "\\";
+                path += element;
+
+                ImGui.SameLine();
+                ImGui.PushID(path);
+                if (ImGui.Button(element))
+                {
+                    OpenFolder(path);
+                }
+                ImGui.PopID();
+            }
+
+            ImGui.PopStyleVar();
+            //ImGui.Text(currentFolder);
 
             RenderHierarchyTree();
 
@@ -101,15 +121,16 @@ namespace KeyEngine.Editor.GUI.FileBrowser
                 {
                     DirectoryInfo directoryInfo = new DirectoryInfo(directory);
 
-                    RenderHierarchyTreeFolder(directoryInfo);
+                    DrawHierarchyTreeFolder(directoryInfo);
                 }
 
-                ImGui.EndChild(); // Folders Hierarchy
             }
+
+            ImGui.EndChild(); // Folders Hierarchy
         }
 
 
-        private void RenderHierarchyTreeFolder(DirectoryInfo directory)
+        private void DrawHierarchyTreeFolder(DirectoryInfo directory)
         {
             Vector2 cursorPos = ImGui.GetCursorPos();
 
@@ -119,6 +140,10 @@ namespace KeyEngine.Editor.GUI.FileBrowser
             ImGui.SetCursorPosX(cursorPos.X + 25);
             bool treeIsOpened = ImGui.TreeNodeEx($"{directory.Name}", ImGuiTreeNodeFlags.OpenOnArrow | ImGuiTreeNodeFlags.NoAutoOpenOnLog);
 
+            Vector2 rectMax = ImGui.GetItemRectMax();
+            Vector2 rectMin = ImGui.GetItemRectMin();
+            Vector2 rectSize = ImGui.GetItemRectSize();
+
             if (treeIsOpened)
             {
                 FileInfo[] files = directory.GetFiles();
@@ -126,7 +151,7 @@ namespace KeyEngine.Editor.GUI.FileBrowser
 
                 foreach (DirectoryInfo nestedDirectory in directories)
                 {
-                    RenderHierarchyTreeFolder(nestedDirectory);
+                    DrawHierarchyTreeFolder(nestedDirectory);
                 }
 
                 foreach (FileInfo file in files)
@@ -147,7 +172,7 @@ namespace KeyEngine.Editor.GUI.FileBrowser
                 ImGui.TreePop();
             }
 
-            if (ImGui.IsMouseDown(ImGuiMouseButton.Left) && ImGui.IsItemHovered())
+            if (ImGui.IsMouseHoveringRect(new Vector2(rectMin.X + 20, rectMin.Y), new Vector2(rectMin.X + ImGui.GetWindowSize().X, rectMax.Y)) && ImGui.IsMouseReleased(ImGuiMouseButton.Left))
                 OpenFolder(GetProgramRelativePath(directory.FullName));
         }
 
@@ -166,13 +191,10 @@ namespace KeyEngine.Editor.GUI.FileBrowser
 
                 ImGui.ImageButton(directory, folderIcon.Handle, new Vector2(iconsSize, iconsSize), new Vector2(0, 1), new Vector2(1, 0), Vector4.Zero, new Vector4(1, 0.737f, 0.847f, 1));
 
-                if (ImGui.IsItemHovered())
+                if (ImGui.IsItemHovered() && ImGui.IsMouseDoubleClicked(ImGuiMouseButton.Left))
                 {
-                    if (ImGui.IsMouseDoubleClicked(ImGuiMouseButton.Left))
-                    {
-                        OpenFolder(GetProgramRelativePath(directory));
-                        folderChanged = true;
-                    }
+                    OpenFolder(GetProgramRelativePath(directory));
+                    folderChanged = true;
                 }
 
                 ImGui.TextWrapped(directoryInfo.Name);
@@ -242,6 +264,9 @@ namespace KeyEngine.Editor.GUI.FileBrowser
 
         private void OpenFolder(string relativePath)
         {
+            if (relativePath.EndsWith("\\"))
+                relativePath = relativePath[..^1];
+
             currentFolder = relativePath;
             Refresh();
         }
@@ -267,6 +292,7 @@ namespace KeyEngine.Editor.GUI.FileBrowser
             files = Directory.GetFiles(currentFolder);
 
             fileWatcher.Path = currentFolder;
+            currentFolderPathElements = currentFolder.Split('\\');
         }
 
         private string GetProgramRelativePath(string fullPath) => Path.GetRelativePath(programFullPath, fullPath);
