@@ -13,6 +13,8 @@ namespace KeyEngine
 
         private static StreamWriter? streamWriter = null;
 
+        public static event Action<string?, LogType>? OnMessageReceived;
+
         [Conditional("DEBUG")]
         public static void Print(string? value, LogType type = LogType.Info)
         {
@@ -28,6 +30,8 @@ namespace KeyEngine
             {
                 WriteLine(value, suffix);
             }
+
+            OnMessageReceived?.Invoke(value, type);
 
             if (type == LogType.FatalError)
                 throw new Exception("FATAL_ERROR");
