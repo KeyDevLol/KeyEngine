@@ -25,6 +25,7 @@ namespace KeyEngine.Editor.Systems
             RegisterWindow<FileBrowser>();
             RegisterWindow<PlaybackStateWindow>();
             RegisterWindow<DebugInfo>();
+            RegisterWindow<ConsoleWindow>();
         }
 
         public EditorGuiSystem()
