@@ -27,10 +27,10 @@ namespace KeyEngine.Mathematics
 
         public Color01(Color32 color)
         {
-            R = ColorUtilities.ToFloat(color.R);
-            G = ColorUtilities.ToFloat(color.G);
-            B = ColorUtilities.ToFloat(color.B);
-            A = ColorUtilities.ToFloat(color.A);
+            R = ToFloat(color.R);
+            G = ToFloat(color.G);
+            B = ToFloat(color.B);
+            A = ToFloat(color.A);
         }
 
         public float this[int index]
@@ -93,9 +93,11 @@ namespace KeyEngine.Mathematics
             return !(left == right);
         }
 
+        public static implicit operator Color01(Color32 color32) => color32.AsColor01();
+
         public readonly bool Equals(Color01 other)
         {
-            return R == other.R && G == other.G && B == other.B && A == other.A; ;
+            return R == other.R && G == other.G && B == other.B && A == other.A;
         }
 
         public override readonly bool Equals([NotNullWhen(true)] object? obj)
@@ -116,6 +118,12 @@ namespace KeyEngine.Mathematics
         public readonly string ToString(string? format, IFormatProvider? formatProvider)
         {
             return string.Format(formatProvider, "R:{0:F3} G:{1:F3} B:{2:F3} A:{3:F3}", R, G, B, A);
+        }
+
+        private static float ToFloat(byte component)
+        {
+            float value = (float)(component / 255f);
+            return value;
         }
 
         public readonly Color32 AsColor32() => new Color32(this);

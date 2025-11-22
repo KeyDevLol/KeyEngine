@@ -28,26 +28,26 @@ namespace KeyEngine.Mathematics
 
         public Color32(float r, float g, float b, float a)
         {
-            R = ColorUtilities.ToByte(r);
-            G = ColorUtilities.ToByte(g);
-            B = ColorUtilities.ToByte(b);
-            A = ColorUtilities.ToByte(a);
+            R = ToByte(r);
+            G = ToByte(g);
+            B = ToByte(b);
+            A = ToByte(a);
         }
 
         public Color32(float r, float g, float b)
         {
-            R = ColorUtilities.ToByte(r);
-            G = ColorUtilities.ToByte(g);
-            B = ColorUtilities.ToByte(b);
+            R = ToByte(r);
+            G = ToByte(g);
+            B = ToByte(b);
             A = 255;
         }
 
         public Color32(Color01 color)
         {
-            R = ColorUtilities.ToByte(color.R);
-            G = ColorUtilities.ToByte(color.G);
-            B = ColorUtilities.ToByte(color.B);
-            A = ColorUtilities.ToByte(color.A);
+            R = ToByte(color.R);
+            G = ToByte(color.G);
+            B = ToByte(color.B);
+            A = ToByte(color.A);
         }
 
         public byte this[int index]
@@ -102,6 +102,8 @@ namespace KeyEngine.Mathematics
             return !(left == right);
         }
 
+        public static implicit operator Color32(Color01 color01) => color01.AsColor32();
+
         public override readonly int GetHashCode()
         {
             return HashCode.Combine(R, G, B, A);
@@ -117,6 +119,12 @@ namespace KeyEngine.Mathematics
         public override readonly string ToString()
         {
             return string.Format("R:{0} G:{1} B:{2} A:{3}", R, G, B, A);
+        }
+
+        private static byte ToByte(float component)
+        {
+            int value = (int)(component * 255f);
+            return (byte)Mathf.Clamp(value, 0, 255);
         }
 
         public readonly Color01 AsColor01() => new Color01(this);

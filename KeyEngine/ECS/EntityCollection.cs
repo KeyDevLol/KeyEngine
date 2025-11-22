@@ -13,7 +13,7 @@ namespace KeyEngine
 
         public void Add(Entity entity)
         {
-            int index = Entities.BinarySearch(entity);
+            int index = Entities.BinarySearch(entity, EntityLayerComparer.Instance);
             if (index < 0)
                 index = ~index;
 
@@ -24,7 +24,7 @@ namespace KeyEngine
         {
             Remove(entity);
 
-            int index = Entities.BinarySearch(entity);
+            int index = Entities.BinarySearch(entity, EntityLayerComparer.Instance);
             if (index < 0)
                 index = ~index;
 
@@ -33,12 +33,12 @@ namespace KeyEngine
 
         public Entity? Get(Entity entity)
         {
-            int index = Entities.IndexOf(entity);
+            int index = Entities.BinarySearch(entity, EntityLayerComparer.Instance);
 
-            if (index != -1)
-                return Entities[index];
+            if (index < 0)
+                return null;
 
-            return null;
+            return Entities[index];
         }
 
         public bool Get(Entity entity, out Entity? result)
@@ -63,21 +63,19 @@ namespace KeyEngine
             set => Entities[index] = value;
         }
 
-        //private struct LayredEntity : IComparable<LayredEntity>
-        //{
-        //    public Entity Entity;
-        //    public int Layer;
+        private class EntityLayerComparer : IComparer<Entity>
+        {
+            public static readonly EntityLayerComparer Instance = new();
 
-        //    public LayredEntity(Entity entity, int layer)
-        //    {
-        //        Entity = entity;
-        //        Layer = layer;
-        //    }
+            public int Compare(Entity? first, Entity? second)
+            {
+                if (first == null || second == null)
+                    throw new NullReferenceException();
 
-        //    public int CompareTo(LayredEntity other)
-        //    {
-        //        return Layer.CompareTo(other.Layer);
-        //    }
-        //}
+                if (first.Layer > second.Layer) return -1;
+                if (first.Layer < second.Layer) return 1;
+                return -1;
+            }
+        }
     }
 }

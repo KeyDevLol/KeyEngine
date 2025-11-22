@@ -1,6 +1,7 @@
 ﻿using KeyEngine.Audio;
 using KeyEngine.Rendering;
 using OpenTK.Graphics.OpenGL;
+using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
@@ -21,18 +22,19 @@ namespace KeyEngine
         public static void Initialize(IScene startScene)
         {
             if (instance != null)
-                return;
+                throw new InvalidOperationException("MainWindow already initialized.");
 
             NativeWindowSettings nativeWindowSettings = new NativeWindowSettings()
             {
-                ClientSize = new OpenTK.Mathematics.Vector2i(640, 480),
+                ClientSize = new Vector2i(640, 480),
                 Profile = ContextProfile.Core,
                 Flags = ContextFlags.ForwardCompatible,
                 API = ContextAPI.OpenGL,
+
                 Vsync = Application.VSync ? VSyncMode.On : VSyncMode.Off,
                 Title = Application.WindowTitle,
                 WindowState = (WindowState)Application.WindowState,
-                WindowBorder = WindowBorder.Resizable,
+                WindowBorder = (WindowBorder)Application.WindowBorder,
                 NumberOfSamples = Application.MsaaEnabled ? (int)Application.MsaaSamplesCount : 0
             };
 

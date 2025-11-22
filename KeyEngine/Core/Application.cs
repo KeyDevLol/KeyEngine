@@ -1,4 +1,5 @@
-﻿using OpenTK.Graphics.OpenGL;
+﻿using KeyEngine.Mathematics;
+using OpenTK.Graphics.OpenGL;
 using OpenTK.Windowing.Common;
 using System.Globalization;
 
@@ -6,8 +7,6 @@ namespace KeyEngine
 {
     public static class Application
     {
-        private static readonly MainWindow window = MainWindow.Instance;
-
         #region RunInBackground
 
         /// <summary>
@@ -26,13 +25,12 @@ namespace KeyEngine
         /// </summary>
         public static bool VSync
         {
-            get => _vSync;
-            set { _vSync = value; VSyncChanged(); }
+            get => field;
+            set { field = value; VSyncChanged(); }
         }
-        private static bool _vSync = true;
         private static void VSyncChanged()
         {
-            window.VSync = _vSync ? VSyncMode.On : VSyncMode.Off;
+            MainWindow.Instance.VSync = VSync ? VSyncMode.On : VSyncMode.Off;
         }
 
         #endregion VSync
@@ -46,14 +44,13 @@ namespace KeyEngine
         /// </summary>
         public static bool MsaaEnabled 
         {
-            get => _msaaEnabled;
-            set { _msaaEnabled = value; MsaaEnabledChanged(); }
+            get => field;
+            set { field = value; MsaaEnabledChanged(); }
         }
-        private static bool _msaaEnabled = true;
 
         private static void MsaaEnabledChanged()
         {
-            if (_msaaEnabled == true)
+            if (MsaaEnabled == true)
                 GL.Enable(EnableCap.Multisample);
             else
                 GL.Disable(EnableCap.Multisample);
@@ -89,13 +86,13 @@ namespace KeyEngine
         /// </summary>
         public static int MaxFramerate
         {
-            get => _maxFramerate;
-            set { _maxFramerate = value; OnMaxFramerateChanged(); }
+            get => field;
+            set { field = value; OnMaxFramerateChanged(); }
         }
         private static int _maxFramerate;
         private static void OnMaxFramerateChanged()
         {
-            window.UpdateFrequency = _maxFramerate;
+            MainWindow.Instance.UpdateFrequency = MaxFramerate;
         }
 
         #endregion MaxFramerate
@@ -103,7 +100,7 @@ namespace KeyEngine
         #region WindowTitle
 
         /// <summary>
-        /// Gets or sets the window title
+        /// Gets or sets the main window title
         /// </summary>
         public static string WindowTitle
         {
@@ -113,7 +110,7 @@ namespace KeyEngine
         private static string _windowTitle = "KeyGayngine Window";
         private static void WindowTitleChanged()
         {
-            window.Title = _windowTitle;
+            MainWindow.Instance.Title = _windowTitle;
         }
 
         #endregion WindowTitle
@@ -121,7 +118,7 @@ namespace KeyEngine
         #region WindowState
 
         /// <summary>
-        /// Gets or sets the window state
+        /// Gets or sets the MainWindow.Instance state
         /// Default value: <see cref="WindowStateMode.Normal"/>.
         /// </summary>
         public static WindowStateMode WindowState
@@ -132,7 +129,7 @@ namespace KeyEngine
         private static WindowStateMode _windowState;
         private static void WindowStateChanged()
         {
-            window.WindowState = (OpenTK.Windowing.Common.WindowState)_windowState;
+            MainWindow.Instance.WindowState = (OpenTK.Windowing.Common.WindowState)_windowState;
         }
         public enum WindowStateMode
         {
@@ -147,7 +144,7 @@ namespace KeyEngine
         #region WindowBorder
 
         /// <summary>
-        /// Gets or sets the window border.
+        /// Gets or sets the main window border.
         /// Default value: <see cref="WindowBorderMode.Resizable"/>.
         /// </summary>
         public static WindowBorderMode WindowBorder
@@ -158,26 +155,44 @@ namespace KeyEngine
         private static WindowBorderMode _windowBorder;
         private static void WindowBorderChanged()
         {
-            window.WindowBorder = (OpenTK.Windowing.Common.WindowBorder)_windowBorder;
+            MainWindow.Instance.WindowBorder = (OpenTK.Windowing.Common.WindowBorder)_windowBorder;
         }
 
         public enum WindowBorderMode
         {
             /// <summary>
-            /// The window has a resizable border. A window with a resizable border can be resized by the user or programmatically.
+            /// The MainWindow.Instance has a resizable border. A MainWindow.Instance with a resizable border can be resized by the user or programmatically.
             /// </summary>
             Resizable = 0,
             /// <summary>
-            /// The window has a fixed border. A window with a fixed border can only be resized programmatically.
+            /// The MainWindow.Instance has a fixed border. A MainWindow.Instance with a fixed border can only be resized programmatically.
             /// </summary>
             Fixed,
             /// <summary>
-            /// The window does not have a border. A window with a hidden border can only be resized programmatically.
+            /// The MainWindow.Instance does not have a border. A MainWindow.Instance with a hidden border can only be resized programmatically.
             /// </summary>
             Hidden
         }
 
         #endregion WindowBorder
+
+        #region WindowSize
+
+        /// <summary>
+        /// Get or sets the window size.
+        /// </summary>
+        public static Vector2i WindowSize
+        {
+            get => field;
+            set { field = value; OnWindowSizeChanged(); }
+        }
+
+        private static void OnWindowSizeChanged()
+        {
+            MainWindow.Instance.Size = WindowSize;
+        }
+
+        #endregion WindowSize
 
         #region CurrentOS
 

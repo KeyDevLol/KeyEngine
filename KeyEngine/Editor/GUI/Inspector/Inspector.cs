@@ -63,7 +63,7 @@ namespace KeyEngine.Editor.GUI
 
                     NUMVector2 pos = ImGui.GetCursorPos();
 
-                    if (ImGui.CollapsingHeader(cachedComponent.ComponentType.Name, ImGuiTreeNodeFlags.AllowOverlap))
+                    if (ImGui.CollapsingHeader($"{cachedComponent.ComponentType.Name}##{currentEntity.Id}", ImGuiTreeNodeFlags.AllowOverlap))
                     {
                         DrawEnabled(cachedComponent.ComponentType.Name, ref cachedComponent.Component.Enabled);
 
@@ -126,24 +126,29 @@ namespace KeyEngine.Editor.GUI
 
         private void DrawTransform()
         {
-            ImGui.Text("Transform");
+            if (ImGui.CollapsingHeader($"Transform##{currentEntity!.Id}", ImGuiTreeNodeFlags.AllowOverlap | ImGuiTreeNodeFlags.DefaultOpen))
+            {
+                // Position
+                NUMVector2 position = currentEntity!.Position;
+                ImGui.DragFloat2("Position##Inspector", ref position, 0.1f);
+                currentEntity.Position = position;
 
-            // Position
-            NUMVector2 position = currentEntity!.Position;
-            ImGui.DragFloat2("Position##Inspector", ref position, 0.1f);
-            currentEntity.Position = position;
+                // Scale
+                NUMVector2 scale = currentEntity.Scale;
+                ImGui.DragFloat2("Scale##Inspector", ref scale, 0.1f);
+                currentEntity.Scale = scale;
 
-            // Scale
-            NUMVector2 scale = currentEntity.Scale;
-            ImGui.DragFloat2("Scale##Inspector", ref scale, 0.1f);
-            currentEntity.Scale = scale;
+                // Rotation
+                float rotation = currentEntity.Rotation;
+                ImGui.DragFloat("Rotation##Inspector", ref rotation, 0.1f);
+                currentEntity.Rotation = rotation;
 
-            // Rotation
-            float rotation = currentEntity.Rotation;
-            ImGui.DragFloat("Rotation##Inspector", ref rotation, 0.1f);
-            currentEntity.Rotation = rotation;
+                int layer = currentEntity.Layer;
+                ImGui.InputInt("Layer##Inspector", ref layer);
+                currentEntity.Layer = layer;
 
-            ImGui.Separator();
+                ImGui.Separator();
+            }
         }
     }
 }

@@ -34,6 +34,8 @@ namespace KeyEngine.Samples
 
             ground.AddComponent<RigidBody>().BodyType = BodyType.Kinematic;
             ground.AddComponent<SpriteRenderer>();
+
+            Application.WindowSize = new Vector2i(259, 259);
         }
 
         public void Unload() { }
