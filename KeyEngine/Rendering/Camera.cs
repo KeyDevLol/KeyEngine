@@ -5,10 +5,19 @@ using Vector2 = KeyEngine.Mathematics.Vector2;
 
 namespace KeyEngine.Rendering
 {
+    /// <summary>
+    /// Camera class. The camera is how the player sees the world.
+    /// </summary>
     public class Camera
     {
+        /// <summary>
+        /// The main camera through which everything is rendered.
+        /// </summary>
         public static Camera? Main { get; private set; } = new Camera();
 
+        /// <summary>
+        /// Gets or sets the camera world position.
+        /// </summary>
         public Vector2 Position
         {
             get => _position;
@@ -24,6 +33,9 @@ namespace KeyEngine.Rendering
         }
         private Vector2 _position;
 
+        /// <summary>
+        /// Gets or sets the camera world rotation.
+        /// </summary>
         public float Rotation
         {
             get => _rotation;
@@ -39,6 +51,9 @@ namespace KeyEngine.Rendering
         }
         private float _rotation;
 
+        /// <summary>
+        /// Gets or sets the camera zoom.
+        /// </summary>
         public float Zoom
         {
             get => _zoom;
@@ -54,6 +69,9 @@ namespace KeyEngine.Rendering
         }
         private float _zoom;
 
+        /// <summary>
+        /// Camera projection matrix. 
+        /// </summary>
         public Matrix4 Projection
         {
             get
@@ -66,6 +84,9 @@ namespace KeyEngine.Rendering
         }
         private Matrix4 _projection;
 
+        /// <summary>
+        /// Camera view matrix.
+        /// </summary>
         public Matrix4 View
         {
             get
@@ -78,6 +99,9 @@ namespace KeyEngine.Rendering
         }
         private Matrix4 _view;
 
+        /// <summary>
+        /// The view matrix multiplied by the projection matrix.
+        /// </summary>
         public Matrix4 ViewProjection
         {
             get
@@ -90,6 +114,9 @@ namespace KeyEngine.Rendering
         }
         private Matrix4 _viewProjection;
 
+        /// <summary>
+        /// The inverted view matrix multiplied by the projection matrix.
+        /// </summary>
         public Matrix4 InvertedViewProjection
         {
             get
@@ -152,6 +179,10 @@ namespace KeyEngine.Rendering
             viewProjectionIsDirty = false;
         }
 
+        /// <summary>
+        /// Sets or clears the main camera.
+        /// </summary>
+        /// <param name="camera"></param>
         public static void SetMainCamera(Camera? camera)
         {
             // Unsub old camera
@@ -171,7 +202,7 @@ namespace KeyEngine.Rendering
         }
 
         /// <summary>
-        /// Converts screen coordinates to world coordinates
+        /// Converts screen coordinates to world space.
         /// </summary>
         /// <param name="screenPosition">Screen coordinates</param>
         public Vector2 ScreenToWorldCoords(Vector2 screenPosition)
@@ -187,7 +218,7 @@ namespace KeyEngine.Rendering
         }
 
         /// <summary>
-        /// Converts screen coordinates to world coordinates
+        /// Converts screen coordinates to world space.
         /// </summary>
         /// <param name="x">Screen X coordinate</param>
         /// <param name="y">Screen Y coordinate</param>
@@ -196,6 +227,10 @@ namespace KeyEngine.Rendering
             return ScreenToWorldCoords(new Vector2(x, y));
         }
 
+        /// <summary>
+        /// Converts world coordinates to screen space.
+        /// </summary>
+        /// <param name="worldPos">World coordinates</param>
         public Vector2 WorldToScreenCoords(Vector2 worldPos)
         {
             Matrix4 viewProjection = ViewProjection;

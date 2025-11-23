@@ -1,5 +1,4 @@
-﻿using KeyEngine.Editor;
-using KeyEngine.Mathematics;
+﻿using KeyEngine.Mathematics;
 using KeyEngine.Rendering;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
@@ -8,6 +7,9 @@ using OpenTK.Windowing.Desktop;
 
 namespace KeyEngine
 {
+    /// <summary>
+    /// Application main window class.
+    /// </summary>
     public class MainWindow : GameWindow
     {
         private static MainWindow instance = null!;
