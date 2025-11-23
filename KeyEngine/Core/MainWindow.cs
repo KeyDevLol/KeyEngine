@@ -1,10 +1,10 @@
-﻿using KeyEngine.Audio;
+﻿using KeyEngine.Editor;
+using KeyEngine.Mathematics;
 using KeyEngine.Rendering;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
-using OpenTK.Windowing.GraphicsLibraryFramework;
 
 namespace KeyEngine
 {
@@ -14,10 +14,7 @@ namespace KeyEngine
         public static MainWindow Instance { get => instance; }
         public static float DeltaTime { get; private set; }
 
-        private MainWindow(NativeWindowSettings nativeWindowSettings) : base(GameWindowSettings.Default, nativeWindowSettings)
-        {
-
-        }
+        private MainWindow(NativeWindowSettings nativeWindowSettings) : base(GameWindowSettings.Default, nativeWindowSettings) { }
 
         public static void Initialize(IScene startScene)
         {
@@ -26,11 +23,11 @@ namespace KeyEngine
 
             NativeWindowSettings nativeWindowSettings = new NativeWindowSettings()
             {
-                ClientSize = new Vector2i(640, 480),
                 Profile = ContextProfile.Core,
                 Flags = ContextFlags.ForwardCompatible,
                 API = ContextAPI.OpenGL,
 
+                ClientSize = Application.WindowSize == Vector2Int.Zero ? new Vector2i(640, 480) : Application.WindowSize,
                 Vsync = Application.VSync ? VSyncMode.On : VSyncMode.Off,
                 Title = Application.WindowTitle,
                 WindowState = (WindowState)Application.WindowState,

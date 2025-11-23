@@ -27,7 +27,7 @@ namespace KeyEngine
         {
             get => field;
             set { field = value; VSyncChanged(); }
-        }
+        } = true;
         private static void VSyncChanged()
         {
             MainWindow.Instance.VSync = VSync ? VSyncMode.On : VSyncMode.Off;
@@ -42,11 +42,12 @@ namespace KeyEngine
         /// To set the number of samples use <see cref="MsaaSamplesCount"/>.
         /// Default value: <c>true</c>.
         /// </summary>
-        public static bool MsaaEnabled 
+        public static bool MsaaEnabled
         {
             get => field;
             set { field = value; MsaaEnabledChanged(); }
         }
+        = true;
 
         private static void MsaaEnabledChanged()
         {
@@ -89,7 +90,6 @@ namespace KeyEngine
             get => field;
             set { field = value; OnMaxFramerateChanged(); }
         }
-        private static int _maxFramerate;
         private static void OnMaxFramerateChanged()
         {
             MainWindow.Instance.UpdateFrequency = MaxFramerate;
@@ -104,13 +104,13 @@ namespace KeyEngine
         /// </summary>
         public static string WindowTitle
         {
-            get => _windowTitle;
-            set { _windowTitle = value; WindowTitleChanged(); }
+            get => field;
+            set { field = value; WindowTitleChanged(); }
         }
-        private static string _windowTitle = "KeyGayngine Window";
+        = "KeyGayngine Window";
         private static void WindowTitleChanged()
         {
-            MainWindow.Instance.Title = _windowTitle;
+            MainWindow.Instance.Title = WindowTitle;
         }
 
         #endregion WindowTitle
@@ -119,19 +119,18 @@ namespace KeyEngine
 
         /// <summary>
         /// Gets or sets the MainWindow.Instance state
-        /// Default value: <see cref="WindowStateMode.Normal"/>.
+        /// Default value: <see cref="WindowStateEnum.Normal"/>.
         /// </summary>
-        public static WindowStateMode WindowState
+        public static WindowStateEnum WindowState
         {
-            get => _windowState;
-            set { _windowState = value; WindowStateChanged(); }
+            get => field;
+            set { field = value; WindowStateChanged(); }
         }
-        private static WindowStateMode _windowState;
         private static void WindowStateChanged()
         {
-            MainWindow.Instance.WindowState = (OpenTK.Windowing.Common.WindowState)_windowState;
+            MainWindow.Instance.WindowState = (WindowState)WindowState;
         }
-        public enum WindowStateMode
+        public enum WindowStateEnum
         {
             Normal = 0,
             Minimized,
@@ -145,20 +144,19 @@ namespace KeyEngine
 
         /// <summary>
         /// Gets or sets the main window border.
-        /// Default value: <see cref="WindowBorderMode.Resizable"/>.
+        /// Default value: <see cref="WindowBorderEnum.Resizable"/>.
         /// </summary>
-        public static WindowBorderMode WindowBorder
+        public static WindowBorderEnum WindowBorder
         {
-            get => _windowBorder;
-            set { _windowBorder = value; WindowBorderChanged(); }
+            get => field;
+            set { field = value; WindowBorderChanged(); }
         }
-        private static WindowBorderMode _windowBorder;
         private static void WindowBorderChanged()
         {
-            MainWindow.Instance.WindowBorder = (OpenTK.Windowing.Common.WindowBorder)_windowBorder;
+            MainWindow.Instance.WindowBorder = (WindowBorder)WindowBorder;
         }
 
-        public enum WindowBorderMode
+        public enum WindowBorderEnum
         {
             /// <summary>
             /// The MainWindow.Instance has a resizable border. A MainWindow.Instance with a resizable border can be resized by the user or programmatically.
@@ -181,7 +179,7 @@ namespace KeyEngine
         /// <summary>
         /// Get or sets the window size.
         /// </summary>
-        public static Vector2i WindowSize
+        public static Vector2Int WindowSize
         {
             get => field;
             set { field = value; OnWindowSizeChanged(); }
