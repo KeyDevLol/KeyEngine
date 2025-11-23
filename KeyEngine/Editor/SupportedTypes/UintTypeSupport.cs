@@ -6,10 +6,10 @@ namespace KeyEngine.Editor.SupportedTypes
     {
         public override object Render(TypeSupportRenderArgs args)
         {
-            uint value = (uint)args.value!;
+            uint value = (uint)args.Value!;
             float floatValue = value;
 
-            ImGui.DragFloat(args.name, ref floatValue, 1, 0);
+            ImGui.DragFloat(args.VariableName, ref floatValue, 1, 0);
 
             return (uint)floatValue;
         }

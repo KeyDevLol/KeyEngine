@@ -6,9 +6,9 @@ namespace KeyEngine.Editor.SupportedTypes
     {
         public override object Render(TypeSupportRenderArgs args)
         {
-            bool value = (bool)args.value!;
+            bool value = (bool)args.Value!;
 
-            ImGui.Checkbox(args.name, ref value);
+            ImGui.Checkbox(args.VariableName, ref value);
 
             return value;
         }

@@ -7,10 +7,10 @@ namespace KeyEngine.Editor.SupportedTypes
     {
         public override object Render(TypeSupportRenderArgs args)
         {
-            Vector2 value = (Vector2)args.value!;
+            Vector2 value = (Vector2)args.Value!;
             System.Numerics.Vector2 vector = value;
 
-            ImGui.DragFloat2(args.name, ref vector, 0.1f);
+            ImGui.DragFloat2(args.VariableName, ref vector, 0.1f);
 
             return (Vector2)vector;
         }

@@ -4,17 +4,21 @@ namespace KeyEngine.Editor.SupportedTypes
 {
     public struct TypeSupportRenderArgs
     {
-        public string name;
-        public object componentInstance;
-        public object? value;
-        public MemberInfo memberInfo;
+        public readonly MemberInfo MemberInfo;
+        public readonly string VariableName => MemberInfo.Name;
+        public readonly string DisplayName;
+        public readonly string EntityId;
+        public readonly string? ClassName => MemberInfo.ReflectedType?.Name;
+        public readonly object? Value;
+        public readonly object ComponentInstance;
 
-        public TypeSupportRenderArgs(string name, object componentInstance, object? value, MemberInfo memberInfo)
+        public TypeSupportRenderArgs(string displayName, string entityId, object componentInstance, object? value, MemberInfo memberInfo)
         {
-            this.name = name;
-            this.componentInstance = componentInstance;
-            this.memberInfo = memberInfo;
-            this.value = value; 
+            DisplayName = displayName;
+            ComponentInstance = componentInstance;
+            MemberInfo = memberInfo;
+            Value = value;
+            EntityId = entityId;
         }
     }
 }

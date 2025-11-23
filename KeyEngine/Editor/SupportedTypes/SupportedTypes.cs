@@ -3,7 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace KeyEngine.Editor.SupportedTypes
 {
-    public static class Supported
+    public static class SupportedTypes
     {
         private static readonly Dictionary<Type, TypeSupport> supportedTypesDict = new Dictionary<Type, TypeSupport>()
         {
@@ -15,6 +15,7 @@ namespace KeyEngine.Editor.SupportedTypes
             { typeof(Color32), new ColorTypeSupport() },
             { typeof(Vector2), new Vector2TypeSupport() },
             { typeof(object), new ObjectTypeSupport() },
+            { typeof(KeyCode), new KeyCodeTypeSupport() },
         };
 
         public static TypeSupport? GetTypeSupport(Type type)

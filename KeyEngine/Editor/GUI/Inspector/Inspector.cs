@@ -2,7 +2,6 @@
 using System.Reflection;
 using KeyEngine.Editor.SupportedTypes;
 using NUMVector2 = System.Numerics.Vector2;
-using System.Diagnostics;
 
 namespace KeyEngine.Editor.GUI
 {
@@ -78,11 +77,17 @@ namespace KeyEngine.Editor.GUI
                                 disabled = true;
                             }
 
-                            if (Supported.TryGetTypeSupport(variable.Type, out TypeSupport? typeSupport))
+                            if (SupportedTypes.SupportedTypes.TryGetTypeSupport(variable.Type, out TypeSupport? typeSupport))
                             {
                                 object? startValue = variable.GetValue(cachedComponent.Component);
-                                object? value = typeSupport.Render(new TypeSupportRenderArgs(GetVariableName(variable),
-                                    cachedComponent.Component, startValue, variable.MemberInfo));
+                                TypeSupportRenderArgs args = new(
+                                    GetVariableDisplayName(variable, currentEntity), 
+                                    currentEntity.Id.ToString(),
+                                    cachedComponent.Component, 
+                                    startValue, 
+                                    variable.MemberInfo);
+
+                                object? value = typeSupport.Render(args);
 
                                 if (value == null)
                                 {
@@ -112,9 +117,9 @@ namespace KeyEngine.Editor.GUI
             }
         }
 
-        private static string GetVariableName(VariableInfo variableInfo)
+        private static string GetVariableDisplayName(VariableInfo variableInfo, Entity entity)
         {
-            return $"{variableInfo.MemberInfo.Name}##{variableInfo.ReflectedType?.Name}";
+            return $"{variableInfo.MemberInfo.Name}##{variableInfo.ReflectedType?.Name}_{entity.Id}";
         }
 
         private void DrawEnabled(string componentName, ref bool enabled)

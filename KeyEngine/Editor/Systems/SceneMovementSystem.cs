@@ -6,18 +6,19 @@ namespace KeyEngine.Editor.Systems
     public class SceneMovementSystem : EditorSystem
     {
         private bool isDragged;
-        private Vector2 origin;
-        private Vector2 originMouseScreenPosition;
-        private bool rightButtonIsDown;
-
         private bool isWasdMoving;
+        private Vector2 origin;
 
         private readonly float wasdMoveSpeed = 22;
 
         public override void Update(float deltaTime)
         {
             if (EditorGuiSystem.IsMouseOnGUI || Camera.Main == null)
+            {
+                isDragged = false;
+                isWasdMoving = false;
                 return;
+            }
 
             WasdMove();
             UpdateMouseMovement();

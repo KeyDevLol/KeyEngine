@@ -6,9 +6,9 @@ namespace KeyEngine.Editor.SupportedTypes
     {
         public override object Render(TypeSupportRenderArgs args)
         {
-            double value = (double)args.value!;
+            double value = (double)args.Value!;
 
-            ImGui.InputDouble(args.name, ref value, 0.1f);
+            ImGui.InputDouble(args.VariableName, ref value, 0.1f);
 
             return (double)value;
         }

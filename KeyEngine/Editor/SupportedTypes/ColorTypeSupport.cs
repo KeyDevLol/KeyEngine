@@ -8,10 +8,10 @@ namespace KeyEngine.Editor.SupportedTypes
     {
         public override object Render(TypeSupportRenderArgs args)
         {
-            Color01 value = ((Color32)args.value!).AsColor01();
+            Color01 value = ((Color32)args.Value!).AsColor01();
 
             Vector4 vector = new Vector4(value.R, value.G, value.B, value.A);
-            ImGui.ColorEdit4(args.name, ref vector, ImGuiColorEditFlags.AlphaPreview);
+            ImGui.ColorEdit4(args.VariableName, ref vector, ImGuiColorEditFlags.AlphaPreview);
             return new Color32(vector.X, vector.Y, vector.Z, vector.W);
         }
 

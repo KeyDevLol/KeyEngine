@@ -11,7 +11,7 @@ namespace KeyEngine.Editor.SupportedTypes
     {
         public override object Render(TypeSupportRenderArgs args)
         {
-            object? value = args.value;
+            object? value = args.Value;
 
             if (value == null)
             {
@@ -20,7 +20,7 @@ namespace KeyEngine.Editor.SupportedTypes
 
             Type type = value.GetType();
 
-            if (Supported.TryGetTypeSupport(type, out TypeSupport? result))
+            if (SupportedTypes.TryGetTypeSupport(type, out TypeSupport? result))
             {
                 value = result.Render(args);
             }

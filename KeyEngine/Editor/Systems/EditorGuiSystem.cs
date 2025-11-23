@@ -42,7 +42,12 @@ namespace KeyEngine.Editor.Systems
             currentTheme = new DefaultTheme();
             currentTheme.Apply(imGuiController);
 
-            ImGui.GetIO().ConfigFlags |= ImGuiConfigFlags.NavEnableKeyboard;
+            ImGuiIOPtr io = ImGui.GetIO();
+            io.ConfigFlags |= ImGuiConfigFlags.NavEnableKeyboard;
+            io.ConfigFlags |= ImGuiConfigFlags.ViewportsEnable;
+
+            io.ConfigViewportsNoAutoMerge = true;
+            io.ConfigViewportsNoTaskBarIcon = false;
         }
 
         public override void Update(float deltaTime)
@@ -68,12 +73,10 @@ namespace KeyEngine.Editor.Systems
 
                 window.Begin();
                 window.Render();
-                if (ImGui.IsWindowHovered() || ImGui.IsAnyItemHovered())
+                if (IsAnyWindowHovered())
                 {
                     if (anyWindowHovered == false)
-                    {
                         anyWindowHovered = true;
-                    }
                 }
                 window.End();
             }
@@ -82,6 +85,9 @@ namespace KeyEngine.Editor.Systems
 
             IsMouseOnGUI = anyWindowHovered;
             imGuiController.Render();
+
+            ImGui.UpdatePlatformWindows();
+            ImGui.RenderPlatformWindowsDefault();
         }
 
         private void OnResized(ResizeEventArgs args)
@@ -98,10 +104,11 @@ namespace KeyEngine.Editor.Systems
             imGuiController.MouseScroll(args.Offset);
         }
 
-        private static bool IsAnyWindowHovered()
-        {
-            return ImGui.IsWindowHovered() || ImGui.IsAnyItemHovered();
-        }
+        private static bool IsAnyWindowHovered() => 
+            ImGui.IsWindowHovered(ImGuiHoveredFlags.AnyWindow) ||
+            ImGui.IsAnyItemHovered() ||
+            ImGui.IsAnyItemFocused() ||
+            ImGui.IsPopupOpen(null, ImGuiPopupFlags.AnyPopup);
 
         public static void RegisterWindow<T>() where T : EditorWindow
         {
