@@ -1,5 +1,6 @@
 ﻿using KeyEngine.Mathematics;
 using KeyEngine.Rendering;
+using KeyEngine.Tests;
 
 namespace KeyEngine.Samples
 {
@@ -13,9 +14,10 @@ namespace KeyEngine.Samples
             Entity spawner = ECS.AddEntity("Square Spawner");
             spawner.AddComponent<SquareSpawner>();
 
+            spawner.AddComponent<InspectorTestComponent>();
+
             Entity lWall = ECS.AddEntity("Left Wall");
             Entity rWall = ECS.AddEntity("Right Wall");
-
 
             lWall.Scale = new Vector2(0.5f, 20f);
             rWall.Scale = new Vector2(0.5f, 20f);
@@ -35,7 +37,7 @@ namespace KeyEngine.Samples
             ground.AddComponent<RigidBody>().BodyType = BodyType.Kinematic;
             ground.AddComponent<SpriteRenderer>();
 
-            Application.WindowSize = new Vector2i(259, 259);
+            spawner.AddComponent<YamlSerializerTest>();
         }
 
         public void Unload() { }

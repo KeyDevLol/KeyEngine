@@ -5,12 +5,12 @@ namespace KeyEngine
     public class AssetReference<T> where T : class, IAsset
     {
         private readonly WeakReference weakReference;
-        [MemberNotNullWhen(true, nameof(IsLoaded))]
         public T? Value
         {
             get => weakReference.Target as T;
             set => weakReference.Target = value;
         }
+        [MemberNotNullWhen(true, nameof(Value))]
         public bool IsLoaded => weakReference.IsAlive;
 
 
@@ -24,9 +24,9 @@ namespace KeyEngine
             weakReference = new WeakReference(asset);
         }
 
-        public AssetReference(string filePath)
+        public static implicit operator T?(AssetReference<T> reference)
         {
-            weakReference = new WeakReference(AssetsManager.GetAsset<T>(filePath));
+            return reference.Value;
         }
     }
 }

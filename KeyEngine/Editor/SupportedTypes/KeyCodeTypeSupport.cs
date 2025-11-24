@@ -8,7 +8,6 @@ namespace KeyEngine.Editor.SupportedTypes
         private static string[]? keyCodeValues;
         private string? searchInput = string.Empty;
         private bool popupOpened;
-        private float windowHeight = 300;
 
         public override object Render(TypeSupportRenderArgs args)
         {

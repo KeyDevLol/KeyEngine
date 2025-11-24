@@ -28,7 +28,7 @@ namespace KeyEngine
             float dt = 1 / 60f;
 
             if (World.BodyList.Count > 0)
-                World.Step(deltaTime);
+                World.Step(Mathf.Clamp(deltaTime, 0, 0.1f));
         }
 
         public static bool RayCast(Vector2 point1, Vector2 point2, [NotNullWhen(true)] out RigidBody? rb)

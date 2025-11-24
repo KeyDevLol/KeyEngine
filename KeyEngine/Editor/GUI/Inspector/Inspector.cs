@@ -64,7 +64,9 @@ namespace KeyEngine.Editor.GUI
 
                     if (ImGui.CollapsingHeader($"{cachedComponent.ComponentType.Name}##{currentEntity.Id}", ImGuiTreeNodeFlags.AllowOverlap))
                     {
-                        DrawEnabled(cachedComponent.ComponentType.Name, ref cachedComponent.Component.Enabled);
+                        bool componentEnabled = cachedComponent.Component.Enabled;
+                        DrawEnabled(cachedComponent.ComponentType.Name, ref componentEnabled);
+                        cachedComponent.Component.Enabled = componentEnabled;
 
                         foreach (VariableInfo variable in cachedComponent.Variables)
                         {
@@ -111,7 +113,9 @@ namespace KeyEngine.Editor.GUI
                     }
                     else
                     {
-                        DrawEnabled(cachedComponent.ComponentType.Name, ref cachedComponent.Component.Enabled);
+                        bool componentEnabled = cachedComponent.Component.Enabled;
+                        DrawEnabled(cachedComponent.ComponentType.Name, ref componentEnabled);
+                        cachedComponent.Component.Enabled = componentEnabled;
                     }
                 }
             }

@@ -7,7 +7,7 @@ namespace KeyEngine
     {
         public readonly Entity Owner;
         [HideInInspector]
-        public bool Enabled = true;
+        public bool Enabled { get; set; } = true;
 
         public Component(Entity owner)
         {
@@ -28,12 +28,12 @@ namespace KeyEngine
 
         public void SerializeWrite(ref BinaryWriter writer)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
         public void SerializeRead(ref BinaryReader reader)
         {
-            throw new NotImplementedException();
+           // throw new NotImplementedException();
         }
     }
 }

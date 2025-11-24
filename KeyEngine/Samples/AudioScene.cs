@@ -5,11 +5,11 @@ namespace KeyEngine.Samples
 {
     public class AudioScene : IScene
     {
-        private readonly AssetReference<AudioSample> audio = new AssetReference<AudioSample>("Assets/Audio/Vigilantism.wav");
+        private readonly AssetReference<AudioSample>? audio = AssetsManager.GetAsset<AudioSample>("Assets/Audio/Vigilantism.wav");
 
         public void Load()
         {
-            if (audio.Value == null)
+            if (audio == null || audio.Value == null)
                 throw new NullReferenceException("Failed to load audio file. Check content folder.");
 
             Entity audioListener = ECS.AddEntity("Audio Listener");
@@ -21,6 +21,7 @@ namespace KeyEngine.Samples
             AudioSource audioSource = audioSourceEntity.AddComponent<AudioSource>();
             audioSource.ReferenceDistance = 4.4f;
             audioSource.PanSmoothness = 2.5f;
+
             audioSource.SetAudioSample(audio.Value);
             audioSource.Play();
 

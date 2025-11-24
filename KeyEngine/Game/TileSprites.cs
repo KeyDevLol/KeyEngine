@@ -12,7 +12,7 @@ namespace KeyEngine.Game
 
             foreach (string path in Directory.GetFiles("Assets/Tiles"))
             {
-                Sprites.Add(new AssetReference<Texture>(path));
+                //Sprites.Add(new AssetReference<Texture>(path));
             }
         }
     }

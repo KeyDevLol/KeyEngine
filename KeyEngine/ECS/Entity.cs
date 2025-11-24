@@ -4,8 +4,8 @@ namespace KeyEngine
 {
     public class Entity : Transformable, IComparable<Entity>
     {
-        public string Name;
-        public bool Active = true;
+        public string? Name { get; set; }
+        public bool Active { get; set; } = true;
 
         public int Layer
         {

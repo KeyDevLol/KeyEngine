@@ -21,21 +21,19 @@ namespace KeyEngine.Editor.Systems
             }
 
             WasdMove();
-            UpdateMouseMovement();
             ZoomScroll();
+            UpdateMouseMovement();
             HideGUI();
         }
 
         private void UpdateMouseMovement()
         {
-            //static bool lol = true;
-
-            if (Input.IsMouseButtonDown(MouseButtonCode.Right))
+            if (Input.IsMouseButtonPressed(MouseButtonCode.Right))
             {
                 isDragged = true;
                 origin = Camera.Main!.ScreenToWorldCoords(Input.MousePosition);
             }
-            else if (Input.IsMouseButtonUp(MouseButtonCode.Right))
+            else if (Input.IsMouseButtonReleased(MouseButtonCode.Right))
             {
                 isDragged = false;
             }
@@ -63,13 +61,21 @@ namespace KeyEngine.Editor.Systems
         {
             if (Input.MouseScrollDelta != Vector2.Zero)
             {
-                Camera.Main!.Zoom = Mathf.Clamp(Camera.Main.Zoom - Input.MouseScrollDelta.Y * 1.2f, 0.5f, float.MaxValue);
+                float oldZoom = Camera.Main!.Zoom;
+                Vector2 oldMouseWorldPos = Camera.Main.ScreenToWorldCoords(Input.MousePosition);
+
+                float newZoom = Mathf.Clamp(oldZoom - Input.MouseScrollDelta.Y * 1.2f, 0.5f, float.MaxValue);
+                Camera.Main.Zoom = newZoom;
+
+                Vector2 newMouseWorldPos = Camera.Main.ScreenToWorldCoords(Input.MousePosition);
+
+                Camera.Main.Position += oldMouseWorldPos - newMouseWorldPos;
             }
         }
 
         private void WasdMove()
         {
-            if (!Input.IsMouseButtonHold(MouseButtonCode.Right))
+            if (!Input.IsMouseButtonDown(MouseButtonCode.Right))
                 return;
 
             float xAxis = Input.GetAxisRaw(KeyCode.A, KeyCode.D);
