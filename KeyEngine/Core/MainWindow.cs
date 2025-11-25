@@ -23,6 +23,16 @@ namespace KeyEngine
             if (instance != null)
                 throw new InvalidOperationException("MainWindow already initialized.");
 
+            instance = CreateWindow();
+
+            GL.ClearColor(0.39f, 0.58f, 0.93f, 1.0f);
+
+            SceneManager.LoadScene(startScene, false);
+            instance.Run();
+        }
+
+        private static MainWindow CreateWindow()
+        {
             NativeWindowSettings nativeWindowSettings = new NativeWindowSettings()
             {
                 Profile = ContextProfile.Core,
@@ -37,11 +47,7 @@ namespace KeyEngine
                 NumberOfSamples = Application.MsaaEnabled ? (int)Application.MsaaSamplesCount : 0
             };
 
-            instance = new MainWindow(nativeWindowSettings);
-            GL.ClearColor(0.39f, 0.58f, 0.93f, 1.0f);
-
-            SceneManager.LoadScene(startScene, false);
-            instance.Run();
+            return new MainWindow(nativeWindowSettings);
         }
 
         protected override void OnUpdateFrame(FrameEventArgs args)

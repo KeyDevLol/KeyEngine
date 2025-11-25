@@ -1,17 +1,5 @@
-﻿using KeyEngine.Editor;
-using KeyEngine.Rendering;
-using OpenTK.Compute.OpenCL;
-using OpenTK.Graphics.OpenGL;
+﻿using OpenTK.Graphics.OpenGL;
 using StbImageSharp;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Reflection.Metadata;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace KeyEngine.Graphics
 {
