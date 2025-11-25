@@ -47,7 +47,7 @@ namespace KeyEngine
             get => field;
             set { field = value; MsaaEnabledChanged(); }
         }
-        = true;
+        = false;
 
         private static void MsaaEnabledChanged()
         {
@@ -107,7 +107,7 @@ namespace KeyEngine
             get => field;
             set { field = value; WindowTitleChanged(); }
         }
-        = "KeyGayngine Window";
+        = "KeyEngine Window";
         private static void WindowTitleChanged()
         {
             MainWindow.Instance.Title = WindowTitle;
