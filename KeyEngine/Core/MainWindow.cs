@@ -36,12 +36,13 @@ namespace KeyEngine
             NativeWindowSettings nativeWindowSettings = new NativeWindowSettings()
             {
                 Profile = ContextProfile.Core,
-                Flags = ContextFlags.ForwardCompatible,
+                Flags = Application.CurrentOS == Application.CurrentOSEnum.MacOS ? ContextFlags.ForwardCompatible : ContextFlags.Default,
                 API = ContextAPI.OpenGL,
 
                 ClientSize = Application.WindowSize == Vector2Int.Zero ? new Vector2i(640, 480) : Application.WindowSize,
                 Vsync = Application.VSync ? VSyncMode.On : VSyncMode.Off,
                 Title = Application.WindowTitle,
+
                 WindowState = (WindowState)Application.WindowState,
                 WindowBorder = (WindowBorder)Application.WindowBorder,
                 NumberOfSamples = Application.MsaaEnabled ? (int)Application.MsaaSamplesCount : 0
@@ -63,8 +64,6 @@ namespace KeyEngine
 #if ENABLE_EDITOR
             Editor.Editor.Update(deltaTime);
 #endif
-
-            Title = $"KeyEngine IV Remake by KeyDev {Math.Round(1 / deltaTime)}";
         }
 
         protected override void OnRenderFrame(FrameEventArgs args)
