@@ -24,9 +24,6 @@ namespace KeyEngine
 
         public static void Update(float deltaTime)
         {
-            World.EnableDiagnostics = false;
-            float dt = 1 / 60f;
-
             if (World.BodyList.Count > 0)
                 World.Step(Mathf.Clamp(deltaTime, 0, 0.1f));
         }

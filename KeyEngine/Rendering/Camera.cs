@@ -226,7 +226,6 @@ namespace KeyEngine.Rendering
         {
             return ScreenToWorldCoords(new Vector2(x, y));
         }
-
         /// <summary>
         /// Converts world coordinates to screen space.
         /// </summary>
