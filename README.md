@@ -1,7 +1,7 @@
-# KeyEngine Remake
+# KeyEngine
 KeyEngine is an open-source game engine/framework for creating 2D games, powered by the Unity-like ECS
 
-The engine is not finished yet, it is under active development.
+The engine is NOT finished yet, it is under active development.
 
 # Build Requiments
 1. **Latest [Git](https://git-scm.com/downloads)**
@@ -13,7 +13,7 @@ The engine is not finished yet, it is under active development.
 
 # Supported O/S
 - ✔️ Windows 10
-- ❌ MacOS
+- ❓ MacOS
 - Linux distros:
 - ✔️ Ubuntu
 - ✔️ Linux Mint
