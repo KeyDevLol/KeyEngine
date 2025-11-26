@@ -1,4 +1,4 @@
-﻿namespace KeyEngine
+﻿namespace KeyEngine.Physics
 {
     /// <summary>RigidBody the body type.</summary>
     public enum BodyType

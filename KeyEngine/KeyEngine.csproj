@@ -33,16 +33,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Aether.Physics2D" Version="2.2.0" />
     <PackageReference Include="FreeTypeSharp" Version="3.0.1" />
     <PackageReference Include="ImGui.NET" Version="1.91.6.1" />
     <PackageReference Include="NAudio" Version="2.2.1" />
     <PackageReference Include="OpenTK" Version="4.9.4" />
     <PackageReference Include="StbImageSharp" Version="2.30.15" />
     <PackageReference Include="StbImageWriteSharp" Version="1.16.7" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\External\VelcroPhysics\VelcroPhysics.csproj" />
+    <PackageReference Include="YamlDotNet" Version="16.3.0" />
   </ItemGroup>
 
 </Project>

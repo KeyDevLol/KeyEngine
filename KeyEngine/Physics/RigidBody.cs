@@ -1,25 +1,20 @@
-﻿using Genbox.VelcroPhysics.Collision.ContactSystem;
-using Genbox.VelcroPhysics.Collision.Shapes;
-using Genbox.VelcroPhysics.Definitions;
-using Genbox.VelcroPhysics.Dynamics;
-using Genbox.VelcroPhysics.Factories;
-using KeyEngine.Editor.GUI;
+﻿using KeyEngine.Editor.GUI;
 using KeyEngine.Mathematics;
+using KeyEngine.Physics.Extensions;
 using KeyEngine.Rendering.Gizmos;
-using PBodyType = Genbox.VelcroPhysics.Dynamics.BodyType;
+using nkast.Aether.Physics2D.Collision.Shapes;
+using nkast.Aether.Physics2D.Common;
+using nkast.Aether.Physics2D.Dynamics;
+using PBodyType = nkast.Aether.Physics2D.Dynamics.BodyType;
+using Vector2 = KeyEngine.Mathematics.Vector2;
 
-namespace KeyEngine
+namespace KeyEngine.Physics
 {
     // TODO: Добавить коллайдеры в виде компонентов
     public partial class RigidBody : Component
     {
-        private const float ENGINE_SCALE_DIVIDER = 2;
-
         private readonly Body body;
-        private Shape shape;
-
-        private CollisionArgs callCollisionEnter = new CollisionArgs();
-        private CollisionArgs callCollisionExit = new CollisionArgs();
+        private Fixture fixture;
 
         public Action<RigidBody>? CollisionEnter;
         public Action<RigidBody>? CollisionExit;
@@ -38,17 +33,14 @@ namespace KeyEngine
             {
                 if (body != null)
                 {
-                    return body.LinearVelocity;
+                    return body.LinearVelocity.AsEngineVector();
                 }
 
                 return Vector2.Zero;
             }
             set
             {
-                if (body != null)
-                {
-                    body.LinearVelocity = value;
-                }
+                body?.LinearVelocity = value.AsPhysicsVector();
             }
         }
 
@@ -75,24 +67,31 @@ namespace KeyEngine
 
         public Vector2 ColliderSize
         {
-            get { return _colliderSize; }
-            set { _colliderSize = value; ChangeShapeSize(_colliderSize.X, _colliderSize.Y); }
+            get 
+            { 
+                return _colliderSize; 
+            }
+            set 
+            { 
+                _colliderSize = value;
+                RefreshFixtureSizeAndOffset(); 
+            }
         }
         private Vector2 _colliderSize = Vector2.One;
 
-        public Vector2 ColliderOffset;
-
-        public bool IsTrigger
+        public Vector2 ColliderOffset
         {
-            get => body.FixtureList[0].IsSensor;
-            set => body.FixtureList[0].IsSensor = value;
+            get
+            {
+                return _colliderOffset;
+            }
+            set
+            {
+                _colliderOffset = value;
+                RefreshFixtureSizeAndOffset();
+            }
         }
-
-        public float GravityScale
-        {
-            get => body.GravityScale;
-            set => body.GravityScale = value;
-        }
+        private Vector2 _colliderOffset;
 
         public float Mass
         {
@@ -116,96 +115,77 @@ namespace KeyEngine
         { 
             get 
             {
-                return body.FixtureList[0].Friction;
+                return _friction;
             }
             set
             {
-                body.FixtureList[0].Friction = Mathf.Clamp(value, 0, float.MaxValue);
+                _friction = Mathf.Clamp(value, 0, float.MaxValue);
+                fixture.Friction = _friction;
             }
         }
+        private float _friction = 0.4f;
 
         public float Restitution
         {
             get
             {
-                return body.FixtureList[0].Restitution;
+                return _restitution;
             }
             set
             {
-                body.FixtureList[0].Restitution = Mathf.Clamp(value, 0, float.MaxValue);
+                _restitution = Mathf.Clamp(value, 0, float.MaxValue);
+                fixture.Restitution = _restitution;
             }
         }
+        private float _restitution = 1;
+
+        public bool IsSensor
+        {
+            get
+            {
+                return _isSensor;
+            }
+            set
+            {
+                _isSensor = value;
+                fixture.IsSensor = value;
+            }
+        }
+        private bool _isSensor;
 
         public RigidBody(Entity owner) : base(owner)
         {
-            BodyDef bodyDef = new BodyDef
-            {
-                Position = owner.Position,
-                Angle = owner.Rotation * Mathf.DEG_2_RAD,
-                Type = (PBodyType)BodyType,
-                UserData = this
-            };
-            body = BodyFactory.CreateFromDef(PhysicsManager.World, bodyDef);
+            body = new Body();
+            body.Position = owner.Position.AsPhysicsVector();
+            body.Rotation = owner.Rotation * Mathf.DEG_2_RAD;
 
-            _colliderSize = owner.Scale;
-            shape = new PolygonShape(1);
+            fixture = CreateRectangleFixture(_colliderSize, ColliderOffset, 1);
+            body.Add(fixture);
 
-            ((PolygonShape)shape).SetAsBox(Mathf.Clamp(_colliderSize.X / ENGINE_SCALE_DIVIDER, 0.01f, float.MaxValue),
-                Mathf.Clamp(_colliderSize.Y / ENGINE_SCALE_DIVIDER, 0.01f, float.MaxValue));
-
-            FixtureDef fixtureDef = new FixtureDef();
-            fixtureDef.Shape = shape;
-            fixtureDef.Friction = 0.5f;
-            fixtureDef.UserData = this;
-            body.AddFixture(fixtureDef);
+            PhysicsManager.World.Add(body);
+            FitSizeWithScale();
 
             owner.OnTransformChanged += TransformChanged;
-
-            body.OnCollision += OnCollisionEnter;
-            body.OnSeparation += OnCollisionExit;
-            body.Mass = 1;
-            body.IsBullet = true;
         }
 
         public override void Update(float deltaTime)
         {
             Owner.BeginQuiteMode();
-            Owner.Position = body.Position;
+            Owner.Position = body.Position.AsEngineVector();
             Owner.Rotation = Mathf.Repeat(body.Rotation * Mathf.RED_2_DEG, 360);
             Owner.EndQuiteMode();
-
-            //if (PhysicsManager.World.IsLocked == false)
-            //{
-            //    if (callCollisionEnter.Call == true)
-            //    {
-            //        onCollisionEnter?.Invoke((RigidBody)callCollisionEnter.FixtureB.UserData);
-            //        callCollisionEnter.Call = false;
-            //    }
-
-            //    if (callCollisionExit.Call == true)
-            //    {
-            //        onCollisionExit?.Invoke((RigidBody)callCollisionExit.FixtureB.UserData);
-            //        callCollisionExit.Call = false;
-            //    }
-            //}
         }
 
 #if ENABLE_EDITOR
         public override void RenderGizmos()
         {
-            GizmosRendering.DrawSquare(Owner.Position, ColliderSize, body.Rotation, Color01.Green);
+            GizmosRendering.DrawSquare(Owner.Position + _colliderOffset, _colliderSize, body.Rotation, Color01.Green);
         }
 #endif
         public override void OnDeleted()
         {
             Owner.OnTransformChanged -= TransformChanged;
-            PhysicsManager.World.RemoveBody(body);
-        }
-
-        public void RefreshColliderSize()
-        {
-            _colliderSize = Owner.Scale;
-            ChangeShapeSize(_colliderSize.X, _colliderSize.Y);
+            PhysicsManager.World.Remove(body);
         }
 
         public void ApplyAngularImpulse(float impulse)
@@ -215,12 +195,12 @@ namespace KeyEngine
 
         public void ApplyLinearImpulse(Vector2 impulse)
         {
-            body?.ApplyLinearImpulse(impulse);
+            body?.ApplyLinearImpulse(impulse.AsPhysicsVector());
         }      
         
         public void ApplyForce(Vector2 force)
         {
-            body?.ApplyForce(force);
+            body?.ApplyForce(force.AsPhysicsVector());
         }     
         
         public void ApplyTorque(float torque)
@@ -228,60 +208,40 @@ namespace KeyEngine
             body?.ApplyTorque(torque);
         }
 
-        private void ChangeShapeSize(float x, float y)
+        public void FitSizeWithScale()
         {
-            shape = new PolygonShape(1);
+            _colliderSize = Owner.Scale;
+            RefreshFixtureSizeAndOffset();
+        }
 
-            ((PolygonShape)shape).SetAsBox(Mathf.Clamp(x / ENGINE_SCALE_DIVIDER, 0.01f, float.MaxValue),
-                Mathf.Clamp(y / ENGINE_SCALE_DIVIDER, 0.01f, float.MaxValue));
+        private void RefreshFixtureSizeAndOffset()
+        {
+            body.Remove(fixture);
+            fixture = CreateRectangleFixture(_colliderSize, _colliderOffset, 1);
+            body.Add(fixture);
+        }
 
-            float mass = body.Mass;
+        private Fixture CreateRectangleFixture(Vector2 size, Vector2 offset, float density)
+        {
+            Vertices vertices = PolygonTools.CreateRectangle(size.X / 2f, size.Y / 2f);
+            vertices.Translate(offset.AsPhysicsVector());
+            PolygonShape shape = new PolygonShape(vertices, 1);
 
-            FixtureDef fixtureDef = new FixtureDef
+            Fixture fixture = new Fixture(shape)
             {
-                Shape = shape,
-                Friction = Friction,
-                Restitution = Restitution,
-                IsSensor = IsTrigger,
-                UserData = this,
+                Friction = _friction,
+                Restitution = _restitution,
+                IsSensor = _isSensor,
+                Tag = this
             };
 
-            body.RemoveFixture(body.FixtureList[0]);
-            body.AddFixture(fixtureDef);
-
-            //body.Mass = mass;
-        }
-
-        private void OnCollisionEnter(Fixture fixtureA, Fixture fixtureB, Contact contact)
-        {
-            callCollisionEnter.Call = true;
-
-            callCollisionEnter.FixtureA = fixtureA;
-            callCollisionEnter.FixtureB = fixtureB;
-            callCollisionEnter.Contact = contact;
-        }
-
-        private void OnCollisionExit(Fixture fixtureA, Fixture fixtureB, Contact contact)
-        {
-            callCollisionExit.Call = true;
-
-            callCollisionExit.FixtureA = fixtureA;
-            callCollisionExit.FixtureB = fixtureB;
-            callCollisionExit.Contact = contact;
+            return fixture;
         }
 
         private void TransformChanged()
         {
-            body.Position = Owner.Position;
+            body.Position = Owner.Position.AsPhysicsVector();
             body.Rotation = Owner.Rotation * Mathf.DEG_2_RAD;
-        }
-
-        private struct CollisionArgs
-        {
-            public bool Call;
-            public Fixture FixtureA;
-            public Fixture FixtureB;
-            public Contact Contact;
         }
     }
 }

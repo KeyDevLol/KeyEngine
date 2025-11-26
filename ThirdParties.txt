@@ -13,8 +13,8 @@ https://github.com/StbSharp/StbImageSharp
 StbImageWriteSharp (Public Domain)
 https://github.com/StbSharp/StbImageWriteSharp
 
-VelcroPhysics (MIT License)
-https://github.com/Genbox/VelcroPhysics
+AetherPhysics (Ms-PL License)
+https://github.com/nkast/Aether.Physics2D
 
 NAudio (MIT License)
 https://github.com/naudio/NAudio

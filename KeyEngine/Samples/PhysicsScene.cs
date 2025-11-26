@@ -1,4 +1,5 @@
 ﻿using KeyEngine.Mathematics;
+using KeyEngine.Physics;
 using KeyEngine.Rendering;
 using KeyEngine.Tests;
 
@@ -9,7 +10,6 @@ namespace KeyEngine.Samples
         public void Load()
         {
             Camera.Main!.Zoom = 40;
-            PhysicsManager.ContinuousPhysicsEnabled = false;
 
             Entity spawner = ECS.AddEntity("Square Spawner");
             spawner.AddComponent<SquareSpawner>();
@@ -44,12 +44,6 @@ namespace KeyEngine.Samples
 
         private class SquareSpawner(Entity owner) : Component(owner)
         {
-            public bool ContinuousPhysicsEnabled 
-            {
-                get => PhysicsManager.ContinuousPhysicsEnabled;
-                set => PhysicsManager.ContinuousPhysicsEnabled = value;
-            }
-
             private readonly Random random = new Random();
             private int colorCounter;
 

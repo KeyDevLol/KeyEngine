@@ -1,5 +1,6 @@
 ﻿
 using KeyEngine.Mathematics;
+using KeyEngine.Physics;
 
 namespace KeyEngine.Game
 {
@@ -27,11 +28,6 @@ namespace KeyEngine.Game
         public override void Update(float deltaTime)
         {
             float x = Input.GetAxisRaw(KeyCode.A, KeyCode.D);
-
-            if (PhysicsManager.RayCast(Owner.Position - new Vector2(0, 1), Owner.Position - new Vector2(0, 2), out RigidBody? other))
-            {
-                Log.Print(other.Owner.Name);
-            }
 
             if (Input.IsKeyPressed(KeyCode.Space))
             {

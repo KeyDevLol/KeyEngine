@@ -1,45 +1,29 @@
-﻿using Genbox.VelcroPhysics.Dynamics;
-using KeyEngine.Mathematics;
-using System.Diagnostics.CodeAnalysis;
-using PVector2 = Microsoft.Xna.Framework.Vector2;
+﻿using KeyEngine.Mathematics;
+using KeyEngine.Physics.Extensions;
+using nkast.Aether.Physics2D.Dynamics;
 
-namespace KeyEngine
+namespace KeyEngine.Physics
 {
     public static class PhysicsManager
     {
-        public static World World { get; private set; } = new World(new PVector2(0, -9.82f));
+        public static World World { get; private set; }
 
         public static Vector2 Gravity
         {
-            get { return _gravity; }
-            set { _gravity = value; World.Gravity = _gravity; }
+            get => World.Gravity.AsEngineVector();
+            set => World.Gravity = value.AsPhysicsVector();
         }
-        private static Vector2 _gravity = new Vector2(0, -9.82f);
 
-        public static bool ContinuousPhysicsEnabled
+        static PhysicsManager()
         {
-            get => World.ContinuousPhysicsEnabled;
-            set => World.ContinuousPhysicsEnabled = value;
+            World = new World();
+            Gravity = new Vector2(0, -9.82f);
         }
 
         public static void Update(float deltaTime)
         {
             if (World.BodyList.Count > 0)
                 World.Step(Mathf.Clamp(deltaTime, 0, 0.1f));
-        }
-
-        public static bool RayCast(Vector2 point1, Vector2 point2, [NotNullWhen(true)] out RigidBody? rb)
-        {
-            List<Fixture> fixtures = World.RayCast(point1, point2);
-
-            if (fixtures.Count > 0)
-            {
-                rb = (RigidBody)fixtures[0].UserData;
-                return true;
-            }
-
-            rb = null;
-            return false;
         }
     }
 }
