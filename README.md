@@ -13,8 +13,9 @@ The engine is NOT finished yet, it is under active development.
 
 # Supported O/S
 - ✔️ Windows 10
+- ✔️ Linux
 - ❓ MacOS
-- Linux distros:
+- Tested linux distros:
 - ✔️ Ubuntu
 - ✔️ Linux Mint
 - ✔️ Fedora
