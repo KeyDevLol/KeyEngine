@@ -34,7 +34,7 @@ namespace KeyEngine.Editor.GUI
             ImGui.ListBox($"##{nameof(Hierarchy)}_ListBox", ref currentListIndex, entityNames, entityNames.Length);
             if (temp != currentListIndex)
             {
-                Inspector.RefreshEntity(entities[currentListIndex]);
+                Inspector.Inspector.RefreshEntity(entities[currentListIndex]);
             }
         }
 

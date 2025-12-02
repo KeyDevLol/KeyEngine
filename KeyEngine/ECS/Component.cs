@@ -1,4 +1,4 @@
-﻿using KeyEngine.Editor.GUI;
+﻿using KeyEngine.Editor.Attributes;
 using KeyEngine.Serialization;
 
 namespace KeyEngine
@@ -6,8 +6,7 @@ namespace KeyEngine
     public class Component : ISerializable
     {
         public readonly Entity Owner;
-        [HideInInspector]
-        public bool Enabled { get; set; } = true;
+        [HideInInspector] public bool Enabled { get; set; } = true;
 
         public Component(Entity owner)
         {
@@ -23,17 +22,7 @@ namespace KeyEngine
         public virtual void RenderSelectedGizmos() { }
         public virtual void RenderGizmos() { }
 
-        public virtual SerializeData SceneSerialize() => SerializeData.Empty;
-        public virtual void SceneDeserialize(SerializeData serializeData) { }
-
-        public void SerializeWrite(ref BinaryWriter writer)
-        {
-            //throw new NotImplementedException();
-        }
-
-        public void SerializeRead(ref BinaryReader reader)
-        {
-           // throw new NotImplementedException();
-        }
+        public virtual SerializeData EditorSerialize() => new SerializeData();
+        public virtual void EditorDeserialize(SerializeData data) { }
     }
 }

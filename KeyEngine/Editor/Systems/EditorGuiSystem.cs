@@ -5,6 +5,7 @@ using KeyEngine.Rendering;
 using OpenTK.Windowing.Common;
 using KeyEngine.Editor.GUI.Themes;
 using KeyEngine.Editor.GUI.FileBrowser;
+using KeyEngine.Editor.GUI.Inspector;
 
 namespace KeyEngine.Editor.Systems
 {

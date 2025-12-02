@@ -62,7 +62,7 @@ namespace KeyEngine.Rendering.Gizmos
             squareVAO.Unbind();
             squareVBO.Unbind();
 
-            #endregion // Square
+            #endregion Square
 
             #region Circle
 
@@ -84,23 +84,25 @@ namespace KeyEngine.Rendering.Gizmos
             #endregion Circle
         }
 
-        public static void DrawSquare(Vector2 position, Vector2 size)
+        public static void DrawSquare(Vector2 position, Vector2 size, bool filled = false)
         {
-            DrawSquare(position, size, 0, DefaultGizmosColor);
+            DrawSquare(position, size, 0, DefaultGizmosColor, filled);
         }
 
-        public static void DrawSquare(Vector2 position, Vector2 size, float rotation)
+        public static void DrawSquare(Vector2 position, Vector2 size, float rotation, bool filled = false)
         {
-            DrawSquare(position, size, rotation, DefaultGizmosColor);
+            DrawSquare(position, size, rotation, DefaultGizmosColor, filled);
         }
 
-        public static void DrawSquare(Vector2 position, Vector2 size, Color01 color)
+        public static void DrawSquare(Vector2 position, Vector2 size, Color01 color, bool filled = false)
         {
-            DrawSquare(position, size, 0, color);
+            DrawSquare(position, size, 0, color, filled);
         }
 
-        public static void DrawSquare(Vector2 position, Vector2 size, float rotation, Color01 color)
+        public static void DrawSquare(Vector2 position, Vector2 size, float rotation, Color01 color, bool filled = false)
         {
+            GL.Enable(EnableCap.Blend);
+            GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
             Shader.Bind(gizmosMainShader);
 
             Matrix4 transform = Matrix4.Identity;
@@ -109,14 +111,15 @@ namespace KeyEngine.Rendering.Gizmos
             transform *= Matrix4.CreateTranslation(position.X, position.Y, 1);
 
             gizmosMainShader.SetMatrix4("u_ViewProjection", false, transform * Camera.Main!.ViewProjection);
-            gizmosMainShader.SetVector4("u_Color", new OpenTK.Mathematics.Vector4(color.R, color.G, color.B, color.A));
+            gizmosMainShader.SetVector4("u_Color", new Vector4(color.R, color.G, color.B, color.A));
 
             squareVAO.Bind();
 
-            GL.DrawArrays(PrimitiveType.LineLoop, 0, 4);
+            GL.DrawArrays(filled ? PrimitiveType.TriangleFan : PrimitiveType.LineLoop, 0, 4);
 
             squareVAO.Unbind();
             Shader.Unbind();
+            GL.Disable(EnableCap.Blend);
         }
 
         public static void DrawCircle(Vector2 position, Vector2 size)

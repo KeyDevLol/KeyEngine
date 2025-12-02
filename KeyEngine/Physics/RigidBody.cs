@@ -1,4 +1,4 @@
-﻿using KeyEngine.Editor.GUI;
+﻿using KeyEngine.Editor.Attributes;
 using KeyEngine.Mathematics;
 using KeyEngine.Physics.Extensions;
 using KeyEngine.Rendering.Gizmos;
@@ -95,21 +95,37 @@ namespace KeyEngine.Physics
 
         public float Mass
         {
-            get => body.Mass;
-            set => body.Mass = value;
+            get => _mass;
+            set
+            {
+                _mass = value;
+                body.Mass = value;
+            }
         }
+        private float _mass;
 
         public bool SleepingAllowed
         {
-            get => body.SleepingAllowed;
-            set => body.SleepingAllowed = value;
+            get => _sleepingAllowed;
+            set
+            {
+                _sleepingAllowed = value; 
+                body.SleepingAllowed = value;
+            }
         }
+        private bool _sleepingAllowed = true;
 
         public bool FreezeRotation
         {
-            get => body.FixedRotation;
-            set => body.FixedRotation = value;
+            get => _freezeRotation;
+            set
+            {
+                _freezeRotation = value;
+                body.FixedRotation = value;
+            }  
+
         }
+        private bool _freezeRotation = false;
 
         public float Friction
         { 
@@ -123,7 +139,7 @@ namespace KeyEngine.Physics
                 fixture.Friction = _friction;
             }
         }
-        private float _friction = 0.4f;
+        private float _friction = 0.5f;
 
         public float Restitution
         {
@@ -137,7 +153,7 @@ namespace KeyEngine.Physics
                 fixture.Restitution = _restitution;
             }
         }
-        private float _restitution = 1;
+        private float _restitution = 0;
 
         public bool IsSensor
         {
@@ -155,9 +171,19 @@ namespace KeyEngine.Physics
 
         public RigidBody(Entity owner) : base(owner)
         {
-            body = new Body();
-            body.Position = owner.Position.AsPhysicsVector();
-            body.Rotation = owner.Rotation * Mathf.DEG_2_RAD;
+            body = new Body()
+            {
+                Position = owner.Position.AsPhysicsVector(),
+                Rotation = owner.Rotation * Mathf.DEG_2_RAD,
+
+                BodyType = (PBodyType)_bodyType,
+                SleepingAllowed = _sleepingAllowed,
+                FixedRotation = _freezeRotation,
+
+                Mass = _mass,
+                Tag = this,
+                Enabled = owner.Active,
+            };
 
             fixture = CreateRectangleFixture(_colliderSize, ColliderOffset, 1);
             body.Add(fixture);
@@ -179,7 +205,9 @@ namespace KeyEngine.Physics
 #if ENABLE_EDITOR
         public override void RenderGizmos()
         {
-            GizmosRendering.DrawSquare(Owner.Position + _colliderOffset, _colliderSize, body.Rotation, Color01.Green);
+            Color01 color = GizmosRendering.DefaultGizmosColor;
+            color.A = 0.5f;
+            GizmosRendering.DrawSquare(Owner.Position + _colliderOffset, _colliderSize, body.Rotation, color, true);
         }
 #endif
         public override void OnDeleted()

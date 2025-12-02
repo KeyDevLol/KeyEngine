@@ -3,7 +3,7 @@ using System.Reflection;
 using KeyEngine.Editor.SupportedTypes;
 using NUMVector2 = System.Numerics.Vector2;
 
-namespace KeyEngine.Editor.GUI
+namespace KeyEngine.Editor.GUI.Inspector
 {
     public class Inspector : EditorWindow
     {

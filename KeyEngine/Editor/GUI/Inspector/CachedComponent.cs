@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace KeyEngine.Editor.GUI
+namespace KeyEngine.Editor.GUI.Inspector
 {
     public readonly struct CachedComponent
     {

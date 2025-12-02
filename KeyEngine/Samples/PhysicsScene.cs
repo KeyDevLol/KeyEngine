@@ -14,8 +14,6 @@ namespace KeyEngine.Samples
             Entity spawner = ECS.AddEntity("Square Spawner");
             spawner.AddComponent<SquareSpawner>();
 
-            spawner.AddComponent<InspectorTestComponent>();
-
             Entity lWall = ECS.AddEntity("Left Wall");
             Entity rWall = ECS.AddEntity("Right Wall");
 

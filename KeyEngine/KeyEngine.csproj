@@ -11,7 +11,7 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DefineConstants>$(DefineConstants);ENABLE_EDITOR;WARN_MEMORY_LEAKS</DefineConstants>
+    <DefineConstants>$(DefineConstants);WARN_MEMORY_LEAKS</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

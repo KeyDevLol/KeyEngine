@@ -106,8 +106,7 @@ namespace KeyEngine
         {
             get => field;
             set { field = value; WindowTitleChanged(); }
-        }
-        = "KeyEngine Window";
+        } = "KeyEngine Window";
         private static void WindowTitleChanged()
         {
             MainWindow.Instance.Title = WindowTitle;

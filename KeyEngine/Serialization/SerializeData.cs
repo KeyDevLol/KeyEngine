@@ -1,127 +1,118 @@
-﻿using System.Reflection;
-using System.Collections;
+﻿using System.Collections;
 
 namespace KeyEngine.Serialization
 {
-    public readonly struct SerializeData : IEquatable<SerializeData>
+    public struct SerializeData
     {
-        public readonly Dictionary<string, Pair> Data = [];
-        public bool IsEmpty => Data.Count == 0;
+        public Dictionary<string, YamlVariable> DataPairs;
 
-        public SerializeData() { }
-
-        public void AddData(string key, object? value)
-        {
-            ArgumentNullException.ThrowIfNull(key, nameof(key));
-            Data.Add(key, new Pair(value));
+        public SerializeData() 
+        { 
+            DataPairs = [];
         }
 
-        public void GetData<T>(string key, ref T? outData)
+        public readonly void AddArray(string key, Array array)
         {
-            ArgumentNullException.ThrowIfNull(key, nameof(key));
-            object? data = Data[key].Instance;
+            SerializableVariableType typeCode = SerializableVariableType.Null;
 
-            if (data != null)
-                outData = (T)data;
-            else
-                outData = default;
+            if (array.Length > 0)
+            {
+                IEnumerator enumerator = array.GetEnumerator();
+                enumerator.MoveNext();
+                SerializableVariableType keyType = GetSerializableVariableType(enumerator.Current);
+                enumerator.Reset();
+
+                typeCode = keyType;
+            }
+
+            DataPairs.Add(key, new(SerializableCollectionType.Array, typeCode, array));
         }
 
-        public T? GetData<T>(string key)
+        public readonly void AddList(string key, IList list)
         {
-            ArgumentNullException.ThrowIfNull(key, nameof(key));
-            object? data = Data[key].Instance;
+            SerializableVariableType typeCode = SerializableVariableType.Null;
 
-            if (data != null)
-                return (T)data;
+            if (list.Count > 0)
+            {
+                IEnumerator enumerator = list.GetEnumerator();
+                enumerator.MoveNext();
+                SerializableVariableType keyType = GetSerializableVariableType(enumerator.Current);
+                enumerator.Reset();
+
+                typeCode = keyType;
+            }
+
+            DataPairs.Add(key, new(SerializableCollectionType.List, typeCode, list));
+        }
+
+        public readonly void AddDictionary(string key, IDictionary dictionary)
+        {
+            SerializableVariableType typeCode = SerializableVariableType.Null;
+
+            if (dictionary.Count > 0)
+            {
+                IEnumerator keysEnumerator = dictionary.Keys.GetEnumerator();
+                IEnumerator valuesEnumerator = dictionary.Values.GetEnumerator();
+                keysEnumerator.MoveNext();
+                SerializableVariableType keyType = GetSerializableVariableType(keysEnumerator.Current);
+                keysEnumerator.Reset();
+                valuesEnumerator.MoveNext();
+                SerializableVariableType valueType = GetSerializableVariableType(valuesEnumerator.Current);
+                valuesEnumerator.Reset();
+
+                typeCode = keyType;
+                typeCode |= valueType;
+            }
+
+            DataPairs.Add(key, new(SerializableCollectionType.Dictionary, typeCode, dictionary));
+        }
+
+        public readonly void AddData(string key, object? value)
+        {
+            if (value is IList || value is IDictionary || value is Array)
+                throw new InvalidOperationException();
+
+            SerializableVariableType typeCode = value != null ? (SerializableVariableType)Type.GetTypeCode(value.GetType()) : SerializableVariableType.Null;
+
+            DataPairs.Add(key, new(SerializableCollectionType.None, typeCode, value));
+        }
+
+        public readonly void RemoveData(string key)
+        {
+            DataPairs.Remove(key);
+        }
+
+        public readonly T? GetData<T>(string key)
+        {
+            object? obj = DataPairs[key].VariableValue;
+
+            if (obj != null)
+                return (T)obj;
             else
                 return default;
         }
 
-        public bool TryGetData(string key, out object? data)
+        public readonly T? GetData<T>(string key, ref T? output)
         {
-            ArgumentNullException.ThrowIfNull(key, nameof(key));
-            if (Data.TryGetValue(key, out Pair value))
+            if (!DataPairs.TryGetValue(key, out YamlVariable variable))
+                throw new KeyNotFoundException();
+
+            object? obj = variable.VariableValue;
+
+            if (obj != null)
             {
-                data = value;
-                return true;
+                T result = (T)obj;
+                output = result;
+                return result;
             }
-
-            data = Data[key];
-            return false;
-        }
-
-        public IEnumerator GetKeys() => Data.Keys.GetEnumerator();
-
-        public IEnumerator GetValues() => Data.Values.GetEnumerator();
-
-        public bool Equals(SerializeData other)
-        {
-            return Data == other.Data;
-        }
-
-        public static bool operator ==(SerializeData left, SerializeData right)
-        {
-            return left.Equals(right);
-        }
-
-        public static bool operator !=(SerializeData left, SerializeData right)
-        {
-            return !left.Equals(right);
-        }
-
-        public static readonly SerializeData Empty = new SerializeData();
-
-        public override bool Equals(object? obj)
-        {
-            return obj is SerializeData data && Equals(data);
-        }
-
-        public override int GetHashCode()
-        {
-            return Data.GetHashCode();
-        }
-
-        public readonly struct Pair
-        {
-            public readonly Type? Type;
-            public readonly object? Instance;
-            public readonly bool IsCustomSerializable;
-            public readonly bool IsNull;
-
-            public static readonly MethodInfo? SerializeWriteMethod = typeof(ISerializable).GetMethod(nameof(ISerializable.SerializeWrite));
-            public static readonly MethodInfo? SerializeReadMethod = typeof(ISerializable).GetMethod(nameof(ISerializable.SerializeRead));
-
-            public Pair(object? instance)
+            else
             {
-                Instance = instance;
-
-                if (instance == null)
-                {
-                    IsNull = true;  
-                    return;
-                }
-
-                Type = instance.GetType();
-                Type? interfaceType = Type.GetInterface(nameof(ISerializable));
-                IsCustomSerializable = interfaceType != null;
-            }
-
-            public void CallSerializeWrite(ref BinaryWriter writer)
-            {
-                if (SerializeWriteMethod == null)
-                    return;
-
-                SerializeWriteMethod.Invoke(Instance, [writer]);
-            }
-
-            public void CallSerializeRead(ref BinaryReader reader)
-            {
-                if (SerializeReadMethod == null)
-                    return;
-
-                SerializeReadMethod.Invoke(Instance, [reader]);
+                output = default;
+                return default;
             }
         }
+
+        private readonly SerializableVariableType GetSerializableVariableType(Type type) => (SerializableVariableType)Type.GetTypeCode(type);
+        private readonly SerializableVariableType GetSerializableVariableType(object obj) => (SerializableVariableType)Type.GetTypeCode(obj.GetType());
     }
 }

@@ -1,4 +1,4 @@
-﻿using KeyEngine.Editor.GUI;
+﻿using KeyEngine.Editor.GUI.Inspector;
 
 namespace KeyEngine.Editor.Systems
 {

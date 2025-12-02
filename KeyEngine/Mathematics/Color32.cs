@@ -1,9 +1,8 @@
-﻿using KeyEngine.Serialization;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 
 namespace KeyEngine.Mathematics
 {
-    public struct Color32 : IEquatable<Color32>, ISerializable
+    public struct Color32 : IEquatable<Color32>
     {
         public byte R;
         public byte G;

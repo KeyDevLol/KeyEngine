@@ -1,4 +1,4 @@
-﻿using KeyEngine.Editor.GUI;
+﻿using KeyEngine.Editor.Attributes;
 using System.Reflection;
 
 namespace KeyEngine.Editor

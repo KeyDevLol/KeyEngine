@@ -2,12 +2,11 @@
 using System.Runtime.CompilerServices;
 using TKVector2 = OpenTK.Mathematics.Vector2;
 using NUMVector2 = System.Numerics.Vector2;
-using KeyEngine.Serialization;
 
 namespace KeyEngine.Mathematics
 {
     [Serializable]
-    public struct Vector2 : IEquatable<Vector2>, IFormattable, ISerializable
+    public struct Vector2 : IEquatable<Vector2>, IFormattable
     {
         public float X;
         public float Y;
