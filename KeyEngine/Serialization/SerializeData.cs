@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace KeyEngine.Serialization
 {
@@ -11,60 +13,19 @@ namespace KeyEngine.Serialization
             DataPairs = [];
         }
 
-        public readonly void AddArray(string key, Array array)
+        public readonly void AddArray<T>(string key, T[] array)
         {
-            SerializableVariableType typeCode = SerializableVariableType.Null;
-
-            if (array.Length > 0)
-            {
-                IEnumerator enumerator = array.GetEnumerator();
-                enumerator.MoveNext();
-                SerializableVariableType keyType = GetSerializableVariableType(enumerator.Current);
-                enumerator.Reset();
-
-                typeCode = keyType;
-            }
-
-            DataPairs.Add(key, new(SerializableCollectionType.Array, typeCode, array));
+            DataPairs.Add(key, new(SerializableCollectionType.Array, GetSerializableVariableType(typeof(T)), array));
         }
 
-        public readonly void AddList(string key, IList list)
+        public readonly void AddList<T>(string key, IList<T> list)
         {
-            SerializableVariableType typeCode = SerializableVariableType.Null;
-
-            if (list.Count > 0)
-            {
-                IEnumerator enumerator = list.GetEnumerator();
-                enumerator.MoveNext();
-                SerializableVariableType keyType = GetSerializableVariableType(enumerator.Current);
-                enumerator.Reset();
-
-                typeCode = keyType;
-            }
-
-            DataPairs.Add(key, new(SerializableCollectionType.List, typeCode, list));
+            DataPairs.Add(key, new(SerializableCollectionType.List, GetSerializableVariableType(typeof(T)), list));
         }
 
-        public readonly void AddDictionary(string key, IDictionary dictionary)
+        public readonly void AddDictionary<TKey, TValue>(string key, IDictionary<TKey, TValue> dictionary)
         {
-            SerializableVariableType typeCode = SerializableVariableType.Null;
-
-            if (dictionary.Count > 0)
-            {
-                IEnumerator keysEnumerator = dictionary.Keys.GetEnumerator();
-                IEnumerator valuesEnumerator = dictionary.Values.GetEnumerator();
-                keysEnumerator.MoveNext();
-                SerializableVariableType keyType = GetSerializableVariableType(keysEnumerator.Current);
-                keysEnumerator.Reset();
-                valuesEnumerator.MoveNext();
-                SerializableVariableType valueType = GetSerializableVariableType(valuesEnumerator.Current);
-                valuesEnumerator.Reset();
-
-                typeCode = keyType;
-                typeCode |= valueType;
-            }
-
-            DataPairs.Add(key, new(SerializableCollectionType.Dictionary, typeCode, dictionary));
+            DataPairs.Add(key, new(SerializableCollectionType.Dictionary, GetSerializableVariableType(typeof(TValue)), dictionary));
         }
 
         public readonly void AddData(string key, object? value)
@@ -84,9 +45,13 @@ namespace KeyEngine.Serialization
 
         public readonly T? GetData<T>(string key)
         {
-            object? obj = DataPairs[key].VariableValue;
+            ArgumentNullException.ThrowIfNull(key, nameof(key));
+            if (!DataPairs.TryGetValue(key, out YamlVariable variable))
+                throw new KeyNotFoundException($"Key '{key}' not found in SerializeData.");
 
-            if (obj != null)
+            object? obj = variable.VariableValue;
+
+            if (obj is not null and T)
                 return (T)obj;
             else
                 return default;
@@ -94,12 +59,13 @@ namespace KeyEngine.Serialization
 
         public readonly T? GetData<T>(string key, ref T? output)
         {
+            ArgumentNullException.ThrowIfNull(key, nameof(key));
             if (!DataPairs.TryGetValue(key, out YamlVariable variable))
-                throw new KeyNotFoundException();
+                throw new KeyNotFoundException($"Key '{key}' not found in SerializeData.");
 
             object? obj = variable.VariableValue;
 
-            if (obj != null)
+            if (obj is not null and T)
             {
                 T result = (T)obj;
                 output = result;
@@ -112,7 +78,7 @@ namespace KeyEngine.Serialization
             }
         }
 
-        private readonly SerializableVariableType GetSerializableVariableType(Type type) => (SerializableVariableType)Type.GetTypeCode(type);
-        private readonly SerializableVariableType GetSerializableVariableType(object obj) => (SerializableVariableType)Type.GetTypeCode(obj.GetType());
+        private readonly SerializableVariableType GetSerializableVariableType(Type? type) => (SerializableVariableType)Type.GetTypeCode(type);
+        private readonly SerializableVariableType GetSerializableVariableType(object? obj) => obj == null ? SerializableVariableType.Null : (SerializableVariableType)Type.GetTypeCode(obj.GetType());
     }
 }

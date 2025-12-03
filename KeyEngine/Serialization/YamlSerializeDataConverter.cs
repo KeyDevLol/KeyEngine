@@ -3,6 +3,7 @@ using System.Collections;
 using System.Linq;
 using YamlDotNet.Core;
 using YamlDotNet.Core.Events;
+using YamlDotNet.Core.Tokens;
 using YamlDotNet.Serialization;
 using Scalar = YamlDotNet.Core.Events.Scalar;
 
@@ -36,90 +37,18 @@ namespace KeyEngine.Serialization
                 parser.Consume<Scalar>(); // VariableType
                 SerializableVariableType variableType = (SerializableVariableType)rootDeserializer.Invoke(typeof(SerializableVariableType))!; // VariableType Value
 
-                SerializableVariableType dictionaryKeyType = SerializableVariableType.Null;
-                if (collectionType == SerializableCollectionType.Dictionary)
-                {
-                    parser.Consume<Scalar>(); // KeyType
-                    dictionaryKeyType = (SerializableVariableType)rootDeserializer.Invoke(typeof(SerializableVariableType))!;
-                }
-
                 object? value = null;
 
-                if (collectionType != SerializableCollectionType.None)
+                if (variableType != SerializableVariableType.Null)
                 {
-                    Type listType = typeof(List<>).MakeGenericType(GetTypeFromVariableType(variableType));
-                    IList collectionValues = (IList)Activator.CreateInstance(listType)!;
-
-                    parser.Consume<Scalar>(); // Value
-                    parser.Consume<SequenceStart>();
-
-                    while (!parser.TryConsume<SequenceEnd>(out _))
-                    {
-                        switch (collectionType)
-                        {
-                            case SerializableCollectionType.Array:
-                                collectionValues.Add(ReadVariableValue(variableType, rootDeserializer));
-                                break;
-                            case SerializableCollectionType.List:
-                                collectionValues.Add(ReadVariableValue(variableType, rootDeserializer));
-                                break;
-                            case SerializableCollectionType.Dictionary:
-                                collectionValues.Add(ReadVariableValue(dictionaryKeyType, rootDeserializer)); // Key
-                                collectionValues.Add(ReadVariableValue(variableType, rootDeserializer)); // Value
-                                break;
-                        }
-                    }
-
-                    switch (collectionType)
-                    {
-                        case SerializableCollectionType.Array:
-                            Array arrayValues = Array.CreateInstance(GetTypeFromVariableType(variableType), collectionValues.Count);
-
-                            int i = 0;
-                            foreach (var collectionValue in collectionValues)
-                            {
-                                arrayValues.SetValue(collectionValue, i);
-                                i++;
-                            }
-
-                            value = arrayValues;
-                            break;
-                        case SerializableCollectionType.List:
-                            value = collectionValues;
-                            break;
-                        case SerializableCollectionType.Dictionary:
-                            object? dictKey = null;
-                            bool readKey = true;
-
-                            Type dictKeyType = GetTypeFromVariableType(dictionaryKeyType);
-                            Type dictValueType = GetTypeFromVariableType(variableType);
-
-                            Type dictType = typeof(Dictionary<,>).MakeGenericType(dictKeyType, dictValueType);
-                            IDictionary dict = (IDictionary)Activator.CreateInstance(dictType)!;
-
-                            foreach (object? obj in collectionValues)
-                            {
-                                if (readKey)
-                                {
-                                    dictKey = obj;
-                                }
-                                else
-                                {
-                                    dict!.Add(dictKey!, obj);
-                                }
-
-                                readKey = !readKey;
-                            }
-
-                            value = dict;
-
-                            break;
-                    }
+                    if (collectionType == SerializableCollectionType.None)
+                        value = ReadVariable(ref parser, ref rootDeserializer, collectionType, variableType);
+                    else
+                        value = ReadCollection(ref parser, ref rootDeserializer, collectionType, variableType);
                 }
                 else
                 {
-                    parser.Consume<Scalar>(); // Value
-                    value = ReadVariableValue(variableType, rootDeserializer);
+                    parser.Consume<Scalar>(); // Null Value
                 }
 
                 serializeData.DataPairs.Add(pairKey, new YamlVariable(collectionType, variableType, value));
@@ -170,7 +99,7 @@ namespace KeyEngine.Serialization
                 }
 
                 emitter.Emit(new Scalar("Value"));
-                WriteVariable(ref emitter, serializer, pair.Value);
+                WriteVariable(ref emitter, ref serializer, pair.Value);
 
                 emitter.Emit(new MappingEnd());
             }
@@ -179,50 +108,79 @@ namespace KeyEngine.Serialization
             emitter.Emit(new MappingEnd());
         }
 
-        private static void WriteVariable(ref IEmitter emitter, ObjectSerializer objectSerializer, YamlVariable dataPair)
+        private static void WriteVariable(ref IEmitter emitter, ref ObjectSerializer objectSerializer, YamlVariable dataPair)
         {
             if (dataPair.CollectionType != SerializableCollectionType.None)
-                WriteCollection(ref emitter, objectSerializer, dataPair);
+                WriteCollection(ref emitter, ref objectSerializer, dataPair);
             else
-                WriteVariableValue(ref emitter, objectSerializer, dataPair);
+                WriteVariableValue(ref emitter, ref objectSerializer, dataPair);
         }
 
-        private static void WriteCollection(ref IEmitter emitter, ObjectSerializer objectSerializer, YamlVariable dataPair)
+        private static object? ReadVariable(ref IParser parser, ref ObjectDeserializer deserializer, SerializableCollectionType collectionType, SerializableVariableType variableType)
+        {
+            if (collectionType == SerializableCollectionType.None)
+            {
+                parser.Consume<Scalar>(); // Value
+                return ReadVariableValue(ref parser, ref deserializer, variableType);
+            }
+            else
+            {
+                return ReadCollection(ref parser, ref deserializer, collectionType, variableType);
+            }
+        }
+
+        private static void WriteCollection(ref IEmitter emitter, ref ObjectSerializer objectSerializer, YamlVariable dataPair)
         {
             emitter.Emit(new SequenceStart(null, null, false, SequenceStyle.Block));
 
             switch (dataPair.CollectionType)
             {
                 case SerializableCollectionType.Array:
-                    object[]? array = dataPair.VariableValue as object[];
+                    object[]? array = (object[]?)dataPair.VariableValue;
+
+                    if (array == null)
+                    {
+                        WriteVariableValue(ref emitter, ref objectSerializer, SerializableVariableType.Null, null);
+                        break;
+                    }
 
                     foreach (object? obj in array)
                     {
-                        dataPair.VariableValue = obj;
-                        WriteVariableValue(ref emitter, objectSerializer, dataPair);
+                        WriteVariableValue(ref emitter, ref objectSerializer, dataPair.VariableType, obj);
                     }
                     break;
 
                 case SerializableCollectionType.List:
-                    IList list = dataPair.VariableValue as IList ?? throw new NullReferenceException();
+                    IList? list = dataPair.VariableValue as IList;
+
+                    if (list == null)
+                    {
+                        WriteVariableValue(ref emitter, ref objectSerializer, SerializableVariableType.Null, null);
+                        break;
+                    }
 
                     foreach (object? obj in list)
                     {
-                        dataPair.VariableValue = obj;
-                        WriteVariableValue(ref emitter, objectSerializer, dataPair);
+                        WriteVariableValue(ref emitter, ref objectSerializer, dataPair.VariableType, obj);
                     }
                     break;
 
                 case SerializableCollectionType.Dictionary:
 
-                    IDictionary dictionary = dataPair.VariableValue as IDictionary ?? throw new InvalidCastException();
+                    IDictionary? dictionary = dataPair.VariableValue as IDictionary;
+
+                    if (dictionary == null)
+                    {
+                        WriteVariableValue(ref emitter, ref objectSerializer, SerializableVariableType.Null, null);
+                        break;
+                    }
 
                     foreach (DictionaryEntry pair in dictionary)
                     {
                         dataPair.VariableValue = pair.Key;
-                        WriteVariableValue(ref emitter, objectSerializer, dataPair);
+                        WriteVariableValue(ref emitter, ref objectSerializer, dataPair);
                         dataPair.VariableValue = pair.Value;
-                        WriteVariableValue(ref emitter, objectSerializer, dataPair);
+                        WriteVariableValue(ref emitter, ref objectSerializer, dataPair);
                     }
 
                     break;
@@ -231,8 +189,134 @@ namespace KeyEngine.Serialization
             emitter.Emit(new SequenceEnd());
         }
 
-        private static object? ReadVariableValue(SerializableVariableType variableType, ObjectDeserializer objectDeserializer)
+        private static object? ReadCollection(ref IParser parser, ref ObjectDeserializer deserializer, SerializableCollectionType collectionType, SerializableVariableType variableType)
         {
+            object? result = null;
+
+            SerializableVariableType dictionaryKeyType = SerializableVariableType.Null;
+            if (collectionType == SerializableCollectionType.Dictionary)
+            {
+                parser.Consume<Scalar>(); // KeyType
+                dictionaryKeyType = (SerializableVariableType)deserializer.Invoke(typeof(SerializableVariableType))!;
+            }
+
+            Type listType = typeof(List<>).MakeGenericType(GetTypeFromVariableType(variableType));
+            IList collectionValues = (IList)Activator.CreateInstance(listType)!;
+
+            Type dictionaryType = typeof(Dictionary<,>).MakeGenericType(GetTypeFromVariableType(dictionaryKeyType), GetTypeFromVariableType(variableType));
+            IDictionary dictionaryValues = (IDictionary)Activator.CreateInstance(dictionaryType)!;
+
+            parser.Consume<Scalar>(); // Value
+            parser.Consume<SequenceStart>();
+
+            while (!parser.TryConsume<SequenceEnd>(out _))
+            {
+                switch (collectionType)
+                {
+                    case SerializableCollectionType.Array:
+                        collectionValues.Add(ReadVariableValue(ref parser, ref deserializer, variableType));
+                        break;
+                    case SerializableCollectionType.List:
+                        collectionValues.Add(ReadVariableValue(ref parser, ref deserializer, variableType));
+                        break;
+                    case SerializableCollectionType.Dictionary:
+                        object key = ReadVariableValue(ref parser, ref deserializer, dictionaryKeyType)!; // Key
+                        object? value = ReadVariableValue(ref parser, ref deserializer, variableType); // Value
+                        dictionaryValues.Add(key, value);
+                        break;
+                }
+            }
+
+            switch (collectionType)
+            {
+                case SerializableCollectionType.Array:
+                    Array arrayValues = Array.CreateInstance(GetTypeFromVariableType(variableType), collectionValues.Count);
+
+                    int i = 0;
+                    foreach (var collectionValue in collectionValues)
+                    {
+                        arrayValues.SetValue(collectionValue, i);
+                        i++;
+                    }
+
+                    result = arrayValues;
+                    break;
+                case SerializableCollectionType.List:
+                    result = collectionValues;
+                    break;
+                case SerializableCollectionType.Dictionary:
+                    result = dictionaryValues;
+                    break;
+            }
+
+            return result;
+        }
+
+        private static void WriteVariableValue(ref IEmitter emitter, ref ObjectSerializer objectSerializer, SerializableVariableType variableType, object? value)
+        {
+            if (value == default)
+            {
+                emitter.Emit(new Scalar("null"));
+                return;
+            }
+
+            switch (variableType)
+            {
+                case SerializableVariableType.Boolean:
+                    objectSerializer.Invoke(value, typeof(bool));
+                    break;
+                case SerializableVariableType.Char:
+                    objectSerializer.Invoke(value, typeof(char));
+                    break;
+                case SerializableVariableType.SByte:
+                    objectSerializer.Invoke(value, typeof(sbyte));
+                    break;
+                case SerializableVariableType.Byte:
+                    objectSerializer.Invoke(value, typeof(byte));
+                    break;
+                case SerializableVariableType.Short:
+                    objectSerializer.Invoke(value, typeof(short));
+                    break;
+                case SerializableVariableType.UShort:
+                    objectSerializer.Invoke(value, typeof(ushort));
+                    break;
+                case SerializableVariableType.Int:
+                    objectSerializer.Invoke(value, typeof(int));
+                    break;
+                case SerializableVariableType.Uint:
+                    objectSerializer.Invoke(value, typeof(uint));
+                    break;
+                case SerializableVariableType.Long:
+                    objectSerializer.Invoke(value, typeof(long));
+                    break;
+                case SerializableVariableType.ULong:
+                    objectSerializer.Invoke(value, typeof(ulong));
+                    break;
+                case SerializableVariableType.Float:
+                    objectSerializer.Invoke(value, typeof(float));
+                    break;
+                case SerializableVariableType.Double:
+                    objectSerializer.Invoke(value, typeof(double));
+                    break;
+                case SerializableVariableType.Decimal:
+                    objectSerializer.Invoke(value, typeof(decimal));
+                    break;
+                case SerializableVariableType.String:
+                    objectSerializer.Invoke(value, typeof(string));
+                    break;
+            }
+        }
+
+        private static void WriteVariableValue(ref IEmitter emitter, ref ObjectSerializer objectSerializer, YamlVariable dataPair)
+        {
+            WriteVariableValue(ref emitter, ref objectSerializer, dataPair.VariableType, dataPair.VariableValue);
+        }
+
+        private static object? ReadVariableValue(ref IParser parser, ref ObjectDeserializer objectDeserializer, SerializableVariableType variableType)
+        {
+            if (variableType == SerializableVariableType.Serializable)
+                throw new InvalidOperationException("Attempt to read a Serializable type as a primitive type.");
+
             return variableType switch
             {
                 SerializableVariableType.Boolean => objectDeserializer.Invoke(typeof(bool)),
@@ -249,63 +333,9 @@ namespace KeyEngine.Serialization
                 SerializableVariableType.Double => objectDeserializer.Invoke(typeof(double)),
                 SerializableVariableType.Decimal => objectDeserializer.Invoke(typeof(decimal)),
                 SerializableVariableType.String => objectDeserializer.Invoke(typeof(string)),
+                SerializableVariableType.Null => parser.Consume<Scalar>(),
                 _ => null,
             };
-        }
-
-        private static void WriteVariableValue(ref IEmitter emitter, ObjectSerializer objectSerializer, YamlVariable dataPair)
-        {
-            if (dataPair.VariableValue == default)
-            {
-                emitter.Emit(new Scalar("null"));
-                return;
-            }
-
-            switch (dataPair.VariableType)
-            {
-                case SerializableVariableType.Boolean:
-                    objectSerializer.Invoke(dataPair.VariableValue, typeof(bool));
-                    break;
-                case SerializableVariableType.Char:
-                    objectSerializer.Invoke(dataPair.VariableValue, typeof(char));
-                    break;
-                case SerializableVariableType.SByte:
-                    objectSerializer.Invoke(dataPair.VariableValue, typeof(sbyte));
-                    break;
-                case SerializableVariableType.Byte:
-                    objectSerializer.Invoke(dataPair.VariableValue, typeof(byte));
-                    break;
-                case SerializableVariableType.Short:
-                    objectSerializer.Invoke(dataPair.VariableValue, typeof(short));
-                    break;
-                case SerializableVariableType.UShort:
-                    objectSerializer.Invoke(dataPair.VariableValue, typeof(ushort));
-                    break;
-                case SerializableVariableType.Int:
-                    objectSerializer.Invoke(dataPair.VariableValue, typeof(int));
-                    break;
-                case SerializableVariableType.Uint:
-                    objectSerializer.Invoke(dataPair.VariableValue, typeof(uint));
-                    break;
-                case SerializableVariableType.Long:
-                    objectSerializer.Invoke(dataPair.VariableValue, typeof(long));
-                    break;
-                case SerializableVariableType.ULong:
-                    objectSerializer.Invoke(dataPair.VariableValue, typeof(ulong));
-                    break;
-                case SerializableVariableType.Float:
-                    objectSerializer.Invoke(dataPair.VariableValue, typeof(float));
-                    break;
-                case SerializableVariableType.Double:
-                    objectSerializer.Invoke(dataPair.VariableValue, typeof(double));
-                    break;
-                case SerializableVariableType.Decimal:
-                    objectSerializer.Invoke(dataPair.VariableValue, typeof(decimal));
-                    break;
-                case SerializableVariableType.String:
-                    objectSerializer.Invoke(dataPair.VariableValue, typeof(string));
-                    break;
-            }
         }
 
         private static Type GetTypeFromVariableType(SerializableVariableType variableType)
@@ -331,6 +361,6 @@ namespace KeyEngine.Serialization
         }
 
         private SerializableVariableType GetSerializableVariableType(Type type) => (SerializableVariableType)Type.GetTypeCode(type);
-        private SerializableVariableType GetSerializableVariableType(object obj) => (SerializableVariableType)Type.GetTypeCode(obj.GetType());
+        private SerializableVariableType GetSerializableVariableType(object obj) => obj == null ? SerializableVariableType.Null : (SerializableVariableType)Type.GetTypeCode(obj.GetType());
     }
 }
