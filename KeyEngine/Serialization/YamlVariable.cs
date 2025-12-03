@@ -1,6 +1,6 @@
 ﻿namespace KeyEngine.Serialization
 {
-    public struct YamlVariable
+    public class YamlVariable
     {
         public SerializableCollectionType CollectionType;
         public SerializableVariableType VariableType;
@@ -12,5 +12,7 @@
             VariableType = variableType;
             VariableValue = variableValue;
         }
+
+        public YamlVariable() { }
     }
 }

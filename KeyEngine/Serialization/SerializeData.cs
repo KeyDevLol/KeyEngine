@@ -25,7 +25,7 @@ namespace KeyEngine.Serialization
 
         public readonly void AddDictionary<TKey, TValue>(string key, IDictionary<TKey, TValue> dictionary)
         {
-            DataPairs.Add(key, new(SerializableCollectionType.Dictionary, GetSerializableVariableType(typeof(TValue)), dictionary));
+            DataPairs.Add(key, new YamlDictionaryVariable(GetSerializableVariableType(typeof(TKey)), GetSerializableVariableType(typeof(TValue)), dictionary));
         }
 
         public readonly void AddData(string key, object? value)

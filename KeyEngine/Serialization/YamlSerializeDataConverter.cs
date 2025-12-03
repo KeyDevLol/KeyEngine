@@ -82,20 +82,11 @@ namespace KeyEngine.Serialization
                 emitter.Emit(new Scalar("VariableType"));
                 emitter.Emit(new Scalar(pair.Value.VariableType.ToString()));
 
-                if (pair.Value.CollectionType == SerializableCollectionType.Dictionary && pair.Value.VariableValue is IDictionary dictionary)
+                if (pair.Value.CollectionType == SerializableCollectionType.Dictionary && pair.Value is YamlDictionaryVariable dictionaryVariable)
                 {
                     emitter.Emit(new Scalar("KeyType"));
-                    SerializableVariableType keyType = SerializableVariableType.Null;
 
-                    if (dictionary.Count > 0)
-                    {
-                        IEnumerator enumerator = dictionary.Keys.GetEnumerator();
-                        enumerator.MoveNext();
-                        keyType = GetSerializableVariableType(enumerator.Current);
-                        enumerator.Reset();
-                    }
-
-                    emitter.Emit(new Scalar(keyType.ToString()));
+                    emitter.Emit(new Scalar(dictionaryVariable.KeyType.ToString()));
                 }
 
                 emitter.Emit(new Scalar("Value"));
@@ -132,6 +123,12 @@ namespace KeyEngine.Serialization
         private static void WriteCollection(ref IEmitter emitter, ref ObjectSerializer objectSerializer, YamlVariable dataPair)
         {
             emitter.Emit(new SequenceStart(null, null, false, SequenceStyle.Block));
+
+            if (dataPair.VariableValue == null)
+            {
+                emitter.Emit(new SequenceEnd());
+                return;
+            }
 
             switch (dataPair.CollectionType)
             {
@@ -230,6 +227,13 @@ namespace KeyEngine.Serialization
             switch (collectionType)
             {
                 case SerializableCollectionType.Array:
+
+                    if (collectionValues.Count == 0)
+                    {
+                        result = default;
+                        break;
+                    }
+
                     Array arrayValues = Array.CreateInstance(GetTypeFromVariableType(variableType), collectionValues.Count);
 
                     int i = 0;
@@ -242,9 +246,23 @@ namespace KeyEngine.Serialization
                     result = arrayValues;
                     break;
                 case SerializableCollectionType.List:
+
+                    if (collectionValues.Count == 0)
+                    {
+                        result = default;
+                        break;
+                    }
+
                     result = collectionValues;
                     break;
                 case SerializableCollectionType.Dictionary:
+
+                    if (dictionaryValues.Count == 0)
+                    {
+                        result = default;
+                        break;
+                    }
+
                     result = dictionaryValues;
                     break;
             }

@@ -68,8 +68,7 @@ namespace KeyEngine.Serialization
             if (component == null)
                 return entity;
 
-            ISerializable test = (ISerializable)component;
-            test.EditorDeserialize(serializeData);
+            component.EditorDeserialize(serializeData);
 
             return entity;
         }
