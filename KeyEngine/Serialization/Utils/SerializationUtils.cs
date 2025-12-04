@@ -1,5 +1,4 @@
-﻿
-namespace KeyEngine.Serialization.Utils
+﻿namespace KeyEngine.Serialization.Utils
 {
     public static class SerializationUtils
     {
@@ -10,12 +9,12 @@ namespace KeyEngine.Serialization.Utils
 
         extension (Type? type)
         {
-            public SerializableVariableType ToSerializableType() => (SerializableVariableType)Type.GetTypeCode(type);
+            public SerializableVariableType GetSerializableType() => (SerializableVariableType)Type.GetTypeCode(type);
         }
 
         extension (SerializableVariableType type)
         {
-            public Type ToSystemType()
+            public Type GetSystemType()
             {
                 return type switch
                 {

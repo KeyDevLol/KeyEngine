@@ -1,34 +1,28 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections;
+using KeyEngine.Serialization.Utils;
 
 namespace KeyEngine.Serialization
 {
-    public struct SerializeData
+    public class SerializeData
     {
-        public Dictionary<string, YamlVariable> DataPairs;
+        public Dictionary<string, YamlVariable> DataPairs = [];
 
-        public SerializeData() 
-        { 
-            DataPairs = [];
-        }
-
-        public readonly void AddArray<T>(string key, T[] array)
+        public void AddArray<T>(string key, T[] array)
         {
-            DataPairs.Add(key, new(SerializableCollectionType.Array, GetSerializableVariableType(typeof(T)), array));
+            DataPairs.Add(key, new(SerializableCollectionType.Array, typeof(T).GetSerializableType(), array));
         }
 
-        public readonly void AddList<T>(string key, IList<T> list)
+        public void AddList<T>(string key, IList<T> list)
         {
-            DataPairs.Add(key, new(SerializableCollectionType.List, GetSerializableVariableType(typeof(T)), list));
+            DataPairs.Add(key, new(SerializableCollectionType.List, typeof(T).GetSerializableType(), list));
         }
 
-        public readonly void AddDictionary<TKey, TValue>(string key, IDictionary<TKey, TValue> dictionary)
+        public void AddDictionary<TKey, TValue>(string key, IDictionary<TKey, TValue> dictionary)
         {
-            DataPairs.Add(key, new YamlDictionaryVariable(GetSerializableVariableType(typeof(TKey)), GetSerializableVariableType(typeof(TValue)), dictionary));
+            DataPairs.Add(key, new YamlDictionaryVariable(typeof(TKey).GetSerializableType(), typeof(TValue).GetSerializableType(), dictionary));
         }
 
-        public readonly void AddData(string key, object? value)
+        public void AddData(string key, object? value)
         {
             if (value is IList || value is IDictionary || value is Array)
                 throw new InvalidOperationException();
@@ -38,29 +32,32 @@ namespace KeyEngine.Serialization
             DataPairs.Add(key, new(SerializableCollectionType.None, typeCode, value));
         }
 
-        public readonly void RemoveData(string key)
+        public void RemoveData(string key)
         {
             DataPairs.Remove(key);
         }
 
-        public readonly T? GetData<T>(string key)
+        public T? GetData<T>(string key)
         {
             ArgumentNullException.ThrowIfNull(key, nameof(key));
-            if (!DataPairs.TryGetValue(key, out YamlVariable variable))
+            if (!DataPairs.TryGetValue(key, out YamlVariable? variable))
                 throw new KeyNotFoundException($"Key '{key}' not found in SerializeData.");
 
             object? obj = variable.VariableValue;
-
+            Log.Print(obj);
             if (obj is not null and T)
                 return (T)obj;
             else
+            {
+
                 return default;
+            }
         }
 
-        public readonly T? GetData<T>(string key, ref T? output)
+        public T? GetData<T>(string key, ref T? output)
         {
             ArgumentNullException.ThrowIfNull(key, nameof(key));
-            if (!DataPairs.TryGetValue(key, out YamlVariable variable))
+            if (!DataPairs.TryGetValue(key, out YamlVariable? variable))
                 throw new KeyNotFoundException($"Key '{key}' not found in SerializeData.");
 
             object? obj = variable.VariableValue;
@@ -77,8 +74,5 @@ namespace KeyEngine.Serialization
                 return default;
             }
         }
-
-        private readonly SerializableVariableType GetSerializableVariableType(Type? type) => (SerializableVariableType)Type.GetTypeCode(type);
-        private readonly SerializableVariableType GetSerializableVariableType(object? obj) => obj == null ? SerializableVariableType.Null : (SerializableVariableType)Type.GetTypeCode(obj.GetType());
     }
 }
