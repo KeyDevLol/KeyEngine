@@ -2,6 +2,7 @@
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Windowing.Common;
 using System.Globalization;
+using System.Runtime.InteropServices;
 
 namespace KeyEngine
 {
@@ -30,7 +31,7 @@ namespace KeyEngine
         } = true;
         private static void VSyncChanged()
         {
-            MainWindow.Instance.VSync = VSync ? VSyncMode.On : VSyncMode.Off;
+            MainWindow.Instance?.VSync = VSync ? VSyncMode.On : VSyncMode.Off;
         }
 
         #endregion VSync
@@ -92,7 +93,7 @@ namespace KeyEngine
         }
         private static void OnMaxFramerateChanged()
         {
-            MainWindow.Instance.UpdateFrequency = MaxFramerate;
+            MainWindow.Instance?.UpdateFrequency = MaxFramerate;
         }
 
         #endregion MaxFramerate
@@ -106,10 +107,10 @@ namespace KeyEngine
         {
             get => field;
             set { field = value; WindowTitleChanged(); }
-        } = "KeyEngine Window";
+        } = "KeyEngine 5";
         private static void WindowTitleChanged()
         {
-            MainWindow.Instance.Title = WindowTitle;
+            MainWindow.Instance?.Title = WindowTitle;
         }
 
         #endregion WindowTitle
@@ -127,7 +128,7 @@ namespace KeyEngine
         }
         private static void WindowStateChanged()
         {
-            MainWindow.Instance.WindowState = (WindowState)WindowState;
+            MainWindow.Instance?.WindowState = (WindowState)WindowState;
         }
         public enum WindowStateEnum
         {
@@ -152,7 +153,7 @@ namespace KeyEngine
         }
         private static void WindowBorderChanged()
         {
-            MainWindow.Instance.WindowBorder = (WindowBorder)WindowBorder;
+            MainWindow.Instance?.WindowBorder = (WindowBorder)WindowBorder;
         }
 
         public enum WindowBorderEnum
@@ -186,7 +187,7 @@ namespace KeyEngine
 
         private static void OnWindowSizeChanged()
         {
-            MainWindow.Instance.Size = WindowSize;
+            MainWindow.Instance?.Size = WindowSize;
         }
 
         #endregion WindowSize
@@ -200,13 +201,13 @@ namespace KeyEngine
         {
             get
             {
-                if (OperatingSystem.IsWindows())
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                     return CurrentOSEnum.Windows;
-                else if (OperatingSystem.IsLinux())
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
                     return CurrentOSEnum.Linux;
-                else if (OperatingSystem.IsMacOS())
-                    return CurrentOSEnum.MacOS;
-                else if (OperatingSystem.IsFreeBSD())
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                    return CurrentOSEnum.OSX;
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.FreeBSD))
                     return CurrentOSEnum.FreeBSD;
 
                 // How??
@@ -216,12 +217,24 @@ namespace KeyEngine
         public enum CurrentOSEnum
         {
             /// <summary>
-            /// Unsupported (how?) or unidentified OS
+            /// Unsupported or unidentified OS (how?)
             /// </summary>
             Unidentified,
+            /// <summary>
+            /// Windows OS
+            /// </summary>
             Windows,
+            /// <summary>
+            /// Linux OS
+            /// </summary>
             Linux,
-            MacOS,
+            /// <summary>
+            /// OSX
+            /// </summary>
+            OSX,
+            /// <summary>
+            /// FreeBSD OS
+            /// </summary>
             FreeBSD
         }
 

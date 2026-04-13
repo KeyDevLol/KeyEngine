@@ -1,4 +1,5 @@
-﻿using KeyEngine.Graphics;
+﻿using KeyEngine.Assets;
+using KeyEngine.Graphics;
 using KeyEngine.Mathematics;
 using KeyEngine.Rendering;
 using OpenTK.Graphics.OpenGL;

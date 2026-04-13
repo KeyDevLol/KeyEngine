@@ -1,5 +1,8 @@
 ﻿using ImGuiNET;
+using KeyEngine.Assets;
+using KeyEngine.Editor.GUI.AssetEditor;
 using KeyEngine.Graphics;
+using KeyEngine.Rendering;
 using System.Diagnostics;
 using System.Numerics;
 
@@ -24,7 +27,7 @@ namespace KeyEngine.Editor.GUI.FileBrowser
 
         public FileBrowser()
         {
-            title = "File Browser";
+            Title = "File Browser";
 
             fileWatcher = new FileSystemWatcher(currentFolder);
 
@@ -156,6 +159,9 @@ namespace KeyEngine.Editor.GUI.FileBrowser
 
                 foreach (FileInfo file in files)
                 {
+                    if (file.Extension == ".assetdata")
+                        continue;
+
                     cursorPos = ImGui.GetCursorPos();
 
                     ImGui.SetCursorPosX(cursorPos.X + 9);
@@ -164,8 +170,7 @@ namespace KeyEngine.Editor.GUI.FileBrowser
                     ImGui.PushID(file.FullName);
                     ImGui.Selectable(file.Name);
                     ImGui.PopID();
-
-                    if (ImGui.IsMouseDoubleClicked(ImGuiMouseButton.Left) && ImGui.IsItemHovered())
+                    if (ImGui.IsItemDoubleClicked(ImGuiMouseButton.Left))
                         OpenFileInExternalProgram(file.FullName);
                 }
 
@@ -191,7 +196,7 @@ namespace KeyEngine.Editor.GUI.FileBrowser
 
                 ImGui.ImageButton(directory, folderIcon.Handle, new Vector2(iconsSize, iconsSize), new Vector2(0, 1), new Vector2(1, 0), Vector4.Zero, new Vector4(1, 0.737f, 0.847f, 1));
 
-                if (ImGui.IsItemHovered() && ImGui.IsMouseDoubleClicked(ImGuiMouseButton.Left))
+                if (ImGui.IsItemDoubleClicked(ImGuiMouseButton.Left))
                 {
                     OpenFolder(GetProgramRelativePath(directory));
                     folderChanged = true;
@@ -208,18 +213,24 @@ namespace KeyEngine.Editor.GUI.FileBrowser
             {
                 FileInfo fileInfo = new FileInfo(file);
 
+                if (fileInfo.Extension == ".assetdata")
+                    continue;
+
                 string fileName = Path.GetFileName(file);
 
                 ImGui.PushID($"{currentFolder}_{fileName}");
                 ImGui.ImageButton(currentFolder, FileIconHelper.GetFileIcon(fileInfo.Extension).Handle, new Vector2(iconsSize, iconsSize), new Vector2(0, 1), new Vector2(1, 0));
                 ImGui.PopID();
 
-                if (ImGui.IsItemHovered())
+                if (ImGui.IsItemClicked(ImGuiMouseButton.Left))
                 {
-                    if (ImGui.IsMouseDoubleClicked(ImGuiMouseButton.Left))
-                    {
-                        OpenFileInExternalProgram(file);
-                    }
+                    Log.Print(file);
+                    AssetEditorWindow.Singleton.CurrentAsset = AssetsManager.GetAssetInfo(file);
+                }
+
+                if (ImGui.IsItemDoubleClicked(ImGuiMouseButton.Left))
+                {
+                    OpenFileInExternalProgram(file);
                 }
 
                 ImGui.TextWrapped(fileName);

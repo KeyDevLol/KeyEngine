@@ -1,50 +1,57 @@
-﻿
-namespace KeyEngine
+﻿namespace KeyEngine
 {
+    /// <summary>
+    /// Static manager for loading, unloading, and controlling game scenes.
+    /// </summary>
     public static class SceneManager
     {
+        /// <summary>
+        /// The currently active scene.
+        /// </summary>
         public static IScene? CurrentScene { get; private set; }
-        public static bool SceneIsRunning { get; private set; }
+        /// <summary>
+        /// Indicates whether the current scene is actively running.
+        /// </summary>
+        public static bool IsSceneRunning { get; private set; }
 
-        public static void LoadScene<T>(bool callGC = false) where T : IScene
+        /// <summary>
+        /// Loads a new scene of the specified type.
+        /// </summary>
+        /// <param name="forceGC">If true, forces garbage collection after unloading the previous scene.</param>
+        public static void StartScene<T>(bool forceGC = false, bool ignoreSceneImmunity = false) where T : IScene
         {
-            CurrentScene?.Unload();
-            SceneIsRunning = false;
-            
-            ECS.RemoveAllEntities();
-            //ECS.ClearAddQueue();
-            //ECS.ClearRemoveQueue();
-            if (callGC)
-                GC.Collect();
-
             CurrentScene = Activator.CreateInstance<T>();
             CurrentScene.Load();
-
-            SceneIsRunning = true;
-
-            //ECS.PassAddQueue();
-            //ECS.PassRemoveQueue();
-            ECS.CallStart();
+            StartScene(CurrentScene, forceGC, ignoreSceneImmunity);
         }
 
-        public static void LoadScene(IScene scene, bool callGC = false)
+        /// <summary>
+        /// Loads the provided scene instance.
+        /// </summary>
+        /// <param name="forceGC">If true, forces garbage collection after unloading the previous scene.</param>
+        public static void StartScene(IScene scene, bool forceGC = false, bool ignoreSceneImmunity = false)
         {
             CurrentScene?.Unload();
-            SceneIsRunning = false;
+            IsSceneRunning = false;
 
-            ECS.RemoveAllEntities();
-            //ECS.ClearAddQueue();
-            //ECS.ClearRemoveQueue();
-            if (callGC)
+            for (int i = 0; i < ECS.EntitiesCount; i++)
+            {
+                Entity entity = ECS.EntityCollection[i];
+
+                if (ECS.EntityCollection[i].SceneImmunity && !ignoreSceneImmunity)
+                    continue;
+
+                entity.Destroy();
+            }
+
+            if (forceGC)
                 GC.Collect();
 
             CurrentScene = scene;
             CurrentScene.Load();
 
-            SceneIsRunning = true;
+            IsSceneRunning = true;
 
-            //ECS.PassAddQueue();
-            //ECS.PassRemoveQueue();
             ECS.CallStart();
         }
     }

@@ -15,7 +15,7 @@ namespace KeyEngine.Editor.SupportedTypes
 
             if (value == null)
             {
-                return null;
+                return null!;
             }
 
             Type type = value.GetType();

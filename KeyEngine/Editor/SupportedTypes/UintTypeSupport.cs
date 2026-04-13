@@ -9,7 +9,7 @@ namespace KeyEngine.Editor.SupportedTypes
             uint value = (uint)args.Value!;
             float floatValue = value;
 
-            ImGui.DragFloat(args.VariableName, ref floatValue, 1, 0);
+            ImGui.DragFloat(args.DisplayName, ref floatValue, 1, 0);
 
             return (uint)floatValue;
         }

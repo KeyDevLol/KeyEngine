@@ -18,6 +18,7 @@ namespace KeyEngine.Serialization
         {
             Entity entity = new Entity();
             Component? component = null;
+            object? componentObj = null;
             SerializeData serializeData = new SerializeData();
             parser.Consume<MappingStart>();
 
@@ -53,6 +54,7 @@ namespace KeyEngine.Serialization
                 Type? componentType = Type.GetType(parser.Consume<Scalar>().Value) ?? throw new TypeUnloadedException();
 
                 component = (Component)entity.AddComponent(componentType);
+                componentObj = component;
 
                 if (parser.TryConsume<Scalar>(out Scalar? empty))
                 {
@@ -61,14 +63,10 @@ namespace KeyEngine.Serialization
                 }
 
                 serializeData = (SerializeData)rootDeserializer.Invoke(typeof(SerializeData))!;
+                component.Deserialize(serializeData);
             }
 
             parser.Consume<MappingEnd>();
-
-            if (component == null)
-                return entity;
-
-            component.EditorDeserialize(serializeData);
 
             return entity;
         }
@@ -119,7 +117,7 @@ namespace KeyEngine.Serialization
                 emitter.Emit(new Scalar("Empty"));
                 return;
             }
-            SerializeData serializeData = serializable.EditorSerialize();
+            SerializeData serializeData = serializable.Serialize();
             serializer.Invoke(serializeData, typeof(SerializeData));
         }
     }

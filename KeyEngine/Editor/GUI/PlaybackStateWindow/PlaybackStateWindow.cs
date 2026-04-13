@@ -11,7 +11,7 @@ namespace KeyEngine.Editor.GUI
     {
         public PlaybackStateWindow()
         {
-            title = "Playback";
+            Title = "Playback";
         }
 
         public override void Render()

@@ -1,4 +1,5 @@
-﻿using KeyEngine.Graphics;
+﻿using KeyEngine.Assets;
+using KeyEngine.Graphics;
 
 namespace KeyEngine.Game
 {

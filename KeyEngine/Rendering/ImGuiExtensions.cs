@@ -7,6 +7,11 @@ namespace KeyEngine.Rendering
     {
         extension(ImGui)
         {
+            public static bool IsItemDoubleClicked(ImGuiMouseButton button)
+            {
+                return ImGui.IsMouseDoubleClicked(button) && ImGui.IsItemHovered();
+            }
+
             public static bool InspectorVariable(string nameText, string valueName, float valueSizePercentage = 0.5f, float buttonHeight = 10)
             {
                 InspectorVariableText(nameText);

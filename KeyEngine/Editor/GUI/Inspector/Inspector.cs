@@ -19,7 +19,7 @@ namespace KeyEngine.Editor.GUI.Inspector
                 return;
 
             instance = this;
-            title = "Inspector";
+            Title = "Inspector";
         }
 
         public static Entity? GetCurrentEntity() => instance.currentEntity;
@@ -82,12 +82,14 @@ namespace KeyEngine.Editor.GUI.Inspector
                             if (SupportedTypes.SupportedTypes.TryGetTypeSupport(variable.Type, out TypeSupport? typeSupport))
                             {
                                 object? startValue = variable.GetValue(cachedComponent.Component);
-                                TypeSupportRenderArgs args = new(
-                                    GetVariableDisplayName(variable, currentEntity), 
+                                TypeSupportRenderArgs args = new TypeSupportRenderArgs
+                                (
+                                    GetVariableDisplayName(variable, currentEntity),
+                                    member.Name,
+                                    member.ReflectedType?.Name,
                                     currentEntity.Id.ToString(),
-                                    cachedComponent.Component, 
-                                    startValue, 
-                                    variable.MemberInfo);
+                                    startValue
+                                );
 
                                 object? value = typeSupport.Render(args);
 

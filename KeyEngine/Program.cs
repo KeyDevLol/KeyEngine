@@ -1,12 +1,16 @@
-﻿using KeyEngine.Samples;
+﻿using KeyEngine.Assets;
+using KeyEngine.Core;
+using KeyEngine.Samples;
 
 namespace KeyEngine
 {
-    class Program
+    internal class Program
     {
         private static void Main()
         {
-            MainWindow.Initialize(new PhysicsScene());
+            // Move to KeyEngine Studio
+            AssetsManager.RegisterAssets(new DefaultAssetsRegistration());
+            Engine.Run(new SampleScene());
         }
     }
 }

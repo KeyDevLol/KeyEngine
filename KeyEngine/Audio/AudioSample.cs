@@ -1,19 +1,21 @@
-﻿using OpenTK.Audio.OpenAL;
+﻿using NAudio.Wave;
+using KeyEngine.Assets;
+using OpenTK.Audio.OpenAL;
+using KeyEngine.Serialization;
 using System.Runtime.InteropServices;
-using NAudio.Wave;
 
 namespace KeyEngine.Audio
 {
     // TODO: Потестировать работу полной версии NAudio на других платформах кроме Windows (Полная версия нужна для загрузки mp3)
-    public class AudioSample : IAsset, IDisposable
+    public class AudioSample : Asset, IDisposable
     {
         public int BufferHandle { get; private set; } = -1;
-        private IntPtr pointer;
 
+
+        private IntPtr dataPointer;
         private bool disposed;
 
-        public bool Loaded => BufferHandle != -1 && pointer != IntPtr.Zero;
-        public bool AssetLoaded => throw new NotImplementedException();
+        public override bool AssetLoaded => BufferHandle != -1 && dataPointer != IntPtr.Zero;
 
         public AudioSample() { }
         public AudioSample(string filePath) => LoadWavFile(filePath);
@@ -47,13 +49,13 @@ namespace KeyEngine.Audio
                     channels = 1;
                 }
 
-                pointer = GetDataPointer(array);
+                dataPointer = GetDataPointer(array);
                 BufferHandle = AL.GenBuffer();
 
                 AL.BufferData(
                 BufferHandle
                 , AudioManager.GetSoundFormat(channels, bits)
-                , pointer
+                , dataPointer
                 , array.Length
                 , sampleRate);
             }
@@ -78,23 +80,25 @@ namespace KeyEngine.Audio
                 return result;
             }
         }
+
         private void DisposeUnmanaged()
         {
-            if (Loaded)
+            if (AssetLoaded)
                 AL.DeleteBuffer(BufferHandle);
 
-            if (pointer != IntPtr.Zero)
-                Marshal.FreeHGlobal(pointer);
+            if (dataPointer != IntPtr.Zero)
+                Marshal.FreeHGlobal(dataPointer);
         }
 
-        public void LoadAsset(string path)
+        internal override void LoadAsset(string path)
         {
             LoadWavFile(path);
+            AssetPath = path;
         }
 
-        public void UnloadAsset()
+        public string? GetAssetPath()
         {
-            Dispose();
+            return AssetPath;
         }
 
         public void Dispose()
@@ -103,6 +107,26 @@ namespace KeyEngine.Audio
             DisposeUnmanaged();
             GC.SuppressFinalize(this);
             disposed = true;
+        }
+
+        public void LoadAsset(string path, string dataPath)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal override void UnloadAsset()
+        {
+            Dispose();
+        }
+
+        public override SerializeData Serialize()
+        {
+            return new SerializeData();
+        }
+
+        public override void Deserialize(SerializeData data)
+        {
+            
         }
     }
 }

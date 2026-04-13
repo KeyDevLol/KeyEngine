@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+  </Folder>
+  <Project Path="KeyEngine Studio Project/KeyEngine Studio Project.csproj" Id="82b55574-56f7-4990-b605-abc13e53af72" />
+  <Project Path="KeyEngine Studio/KeyEngine Studio.csproj" Id="6cdb2d95-39ee-4934-90c0-30d5caa6ecbc" />
+  <Project Path="KeyEngine Workshop/KeyEngine Workshop.csproj" />
+  <Project Path="KeyEngine/KeyEngine.csproj" />
+</Solution>

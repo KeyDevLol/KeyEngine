@@ -23,7 +23,7 @@ namespace KeyEngine.Editor.GUI
                 return;
 
             instance = this;
-            title = "Hierachy";
+            Title = "Hierachy";
         }
 
         public override void Render()

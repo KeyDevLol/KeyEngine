@@ -1,9 +1,12 @@
-﻿using OpenTK.Graphics.OpenGL;
-using StbImageSharp;
+﻿using StbImageSharp;
+using KeyEngine.Assets;
+using KeyEngine.Serialization;
+using OpenTK.Graphics.OpenGL;
 
 namespace KeyEngine.Graphics
 {
-    public class Texture : IDisposable, IAsset
+    // TODO: Сделать чтобы текстура не генерилась в конструкторе. Сделать чтобы UpdateParams срабатывал только если текстура сгенерена
+    public class Texture : Asset, IDisposable 
     {
         public static readonly Texture Square = new([255, 255, 255, 255], 1, 1);
 
@@ -26,18 +29,18 @@ namespace KeyEngine.Graphics
 
         public int Width { get; private set; }
         public int Height { get; private set; }
-        public bool AssetLoaded { get => !disposed; }
-
-        public string? Name;
+        public override bool AssetLoaded { get => !string.IsNullOrEmpty(AssetPath); }
 
         public Texture()
         {
+            //AssetsManager.RegisterAssetType<Texture>("png", "jpg", "jpeg", "bmp", "psd", "tga", "hdr");
             Handle = GL.GenTexture();
             UpdateParams();
         }
 
         public Texture(in string? path)
         {
+            AssetsManager.RegisterAssetType<Texture>("png", "jpg", "jpeg", "bmp", "psd", "tga", "hdr");
             Handle = GL.GenTexture();
             UpdateParams();
             LoadFromFile(path);
@@ -45,6 +48,7 @@ namespace KeyEngine.Graphics
 
         public Texture(in byte[] data, in int width, in int height)
         {
+            AssetsManager.RegisterAssetType<Texture>("png", "jpg", "jpeg", "bmp", "psd", "tga", "hdr");
             Handle = GL.GenTexture();
             UpdateParams();
             LoadFromBytes(data, width, height);
@@ -53,7 +57,7 @@ namespace KeyEngine.Graphics
 #if WARN_MEMORY_LEAKS
         ~Texture()
         {
-            Log.Assert(disposed, $"{nameof(Texture)} '{Name}' was finalized but not disposed, this is a memory leak.", LogType.Warning);
+            Log.Assert(disposed, $"{nameof(Texture)} '{AssetPath}' was finalized but not disposed, this is a memory leak.", LogType.Warning);
         }
 #endif // WARN_MEMORY_LEAKS
 
@@ -92,7 +96,7 @@ namespace KeyEngine.Graphics
 
             Unbind();
 
-            Name = Path.GetFileNameWithoutExtension(path);
+            AssetPath = path;
         }
 
         public void LoadFromBytes(in byte[] data, in int width, in int height)
@@ -100,6 +104,7 @@ namespace KeyEngine.Graphics
             Bind();
 
             GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, width, height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, data);
+            UpdateParams();
 
             Width = width;
             Height = height;
@@ -168,14 +173,50 @@ namespace KeyEngine.Graphics
             disposed = true;
         }
 
-        public void LoadAsset(string path)
+        internal override void LoadAsset(string sourcePath)
         {
-            LoadFromFile(path);
+            LoadFromFile(sourcePath);
         }
 
-        public void UnloadAsset()
+        public override SerializeData Serialize()
+        {
+            SerializeData data = new SerializeData();
+            data.AddData("wrapMode", _wrapMode);
+            data.AddData("filterMode", _filterMode);
+            data.AddData("data", 10);
+
+            return data;
+        }
+
+        public override void Deserialize(SerializeData data)
+        {
+            data.GetData("wrapMode", ref _wrapMode);
+            data.GetData("filterMode", ref _filterMode);
+            UpdateParams();
+        }
+
+        internal override void UnloadAsset()
         {
             Dispose();
+        }
+
+        public string[] GetAssetExtensions()
+        {
+            return
+            [
+                "png",
+                "jpg",
+                "bmp",
+                "tga",
+                "psd",
+                "hdr",
+            ];
+        }
+
+        private struct TextureAssetData
+        {
+            public WrapMode WrapMode;
+            public FilterMode FilterMode;
         }
     }
 

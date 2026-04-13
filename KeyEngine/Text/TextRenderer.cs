@@ -125,7 +125,7 @@ namespace KeyEngine
 
         public override void Render()
         {
-            if (Font == null || Font.Loaded == false)
+            if (Font == null || Font.AssetLoaded == false)
                 return;
 
             GL.Enable(EnableCap.Blend);
@@ -277,7 +277,7 @@ namespace KeyEngine
             textureVbo.Dispose();
             ebo.Dispose();
 
-            if (Font != null && Font.Loaded)
+            if (Font != null && Font.AssetLoaded)
                 Font.Dispose();
         }
 

@@ -10,7 +10,7 @@ namespace KeyEngine.Editor.SupportedTypes
             Vector2 value = (Vector2)args.Value!;
             System.Numerics.Vector2 vector = value;
 
-            ImGui.DragFloat2(args.VariableName, ref vector, 0.1f);
+            ImGui.DragFloat2(args.DisplayName, ref vector, 0.1f);
 
             return (Vector2)vector;
         }

@@ -1,11 +1,12 @@
 ﻿using ImGuiNET;
-using KeyEngine.Editor.GUI.Windows;
-using KeyEngine.Editor.GUI;
 using KeyEngine.Rendering;
+using KeyEngine.Editor.GUI;
 using OpenTK.Windowing.Common;
 using KeyEngine.Editor.GUI.Themes;
-using KeyEngine.Editor.GUI.FileBrowser;
+using KeyEngine.Editor.GUI.Windows;
 using KeyEngine.Editor.GUI.Inspector;
+using KeyEngine.Editor.GUI.FileBrowser;
+using KeyEngine.Editor.GUI.AssetEditor;
 
 namespace KeyEngine.Editor.Systems
 {
@@ -27,6 +28,7 @@ namespace KeyEngine.Editor.Systems
             RegisterWindow<PlaybackStateWindow>();
             RegisterWindow<DebugInfo>();
             RegisterWindow<ConsoleWindow>();
+            RegisterWindow<AssetEditorWindow>();
         }
 
         public EditorGuiSystem()
@@ -60,6 +62,7 @@ namespace KeyEngine.Editor.Systems
         {
             if (!EnableRenderingGUI)
                 return;
+
             ImGui.ShowStyleEditor();
             ImGui.PushFont(currentTheme.Font);
 

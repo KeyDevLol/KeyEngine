@@ -1,11 +1,12 @@
-﻿using KeyEngine.Audio;
+﻿using KeyEngine.Assets;
+using KeyEngine.Audio;
 using KeyEngine.Mathematics;
 
 namespace KeyEngine.Samples
 {
     public class AudioScene : IScene
     {
-        private readonly AssetReference<AudioSample>? audio = AssetsManager.GetAsset<AudioSample>("Assets/Audio/Vigilantism.wav");
+        private readonly AssetReference<AudioSample>? audio = AssetsManager.GetAssetReference<AudioSample>("Assets/Audio/Vigilantism.wav");
 
         public void Load()
         {

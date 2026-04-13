@@ -1,4 +1,5 @@
-﻿using KeyEngine.Mathematics;
+﻿using KeyEngine.Assets;
+using KeyEngine.Mathematics;
 using KeyEngine.Rendering.Gizmos;
 using OpenTK.Audio.OpenAL;
 
@@ -125,7 +126,7 @@ namespace KeyEngine.Audio
 
         public void Play()
         {
-            if (AudioSample != null && AudioSample.Loaded)
+            if (AudioSample != null && AudioSample.AssetLoaded)
             {
                 AL.SourcePlay(SourceHandle);
             }
@@ -135,7 +136,7 @@ namespace KeyEngine.Audio
         {
             ArgumentNullException.ThrowIfNull(audioSample);
 
-            if (audioSample.Loaded)
+            if (audioSample.AssetLoaded)
             {
                 assetAudioSample.Value = audioSample;
                 AL.Source(SourceHandle, ALSourcei.Buffer, audioSample.BufferHandle);

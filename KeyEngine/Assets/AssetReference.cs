@@ -1,8 +1,9 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using KeyEngine.Serialization;
+using System.Diagnostics.CodeAnalysis;
 
-namespace KeyEngine
+namespace KeyEngine.Assets
 {
-    public class AssetReference<T> where T : class, IAsset
+    public class AssetReference<T> where T : Asset
     {
         private readonly WeakReference weakReference;
         public T? Value
@@ -13,13 +14,12 @@ namespace KeyEngine
         [MemberNotNullWhen(true, nameof(Value))]
         public bool IsLoaded => weakReference.IsAlive;
 
-
         public AssetReference()
         {
             weakReference = new WeakReference(null);
         }
 
-        public AssetReference(T asset)
+        public AssetReference(T? asset)
         {
             weakReference = new WeakReference(asset);
         }

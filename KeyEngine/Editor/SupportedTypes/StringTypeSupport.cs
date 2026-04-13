@@ -2,13 +2,12 @@
 
 namespace KeyEngine.Editor.SupportedTypes
 {
-    public class FloatTypeSupport : TypeSupport
+    public class StringTypeSupport : TypeSupport
     {
         public override object Render(TypeSupportRenderArgs args)
         {
-            float value = (float)args.Value!;
-
-            ImGui.DragFloat(args.DisplayName, ref value, 0.1f);
+            string? value = args.Value as string;
+            ImGui.InputText(args.DisplayName, ref value, 1000);
 
             return value;
         }

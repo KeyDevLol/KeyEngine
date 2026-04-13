@@ -1,14 +1,15 @@
 ﻿using FreeTypeSharp;
-using static FreeTypeSharp.FT;
+using KeyEngine.Assets;
+using KeyEngine.Mathematics;
+using KeyEngine.Serialization;
 using OpenTK.Graphics.OpenGL;
 using System.Runtime.InteropServices;
-using KeyEngine.Graphics;
-using KeyEngine.Editor;
-using KeyEngine.Mathematics;
+using static FreeTypeSharp.FT;
 
 namespace KeyEngine
 {
-    public class Font : IDisposable, IAsset
+    // TIP: Мейби лучше не инициализировать каждый раз либу
+    public class Font : Asset, IDisposable
     {
         public const string ENG_SYMBOLS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
         public const string RUS_SYMBOLS = "абвгдеёжзийклмнопрстуфхцчшщъыьэюяАБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ";
@@ -16,22 +17,28 @@ namespace KeyEngine
         public const string SPEC_SYMBOLS = "!\"@#$%&'()*+,-./\\:;<=>?[]^_`{|}~∎ ";
         public const string ALL_PRESETS = ENG_SYMBOLS + RUS_SYMBOLS + NUMBER_SYMBOLS + SPEC_SYMBOLS;
 
-        public readonly string Name;
-        public readonly short Asscender;
+        public string? Name;
+        public short Asscender;
 
-        public readonly string Path;
-        public readonly string UsedSymbols;
+        public uint Width { get; set; }
+        public uint Height { get; set; }
+        public override bool AssetLoaded => glyphs != null;
 
-        public bool Loaded { get; private set; }
 
-        public bool AssetLoaded => throw new NotImplementedException();
+        public string? UsedSymbols;
 
-        private Dictionary<char, Glyph> glyphs;
+        private Dictionary<char, Glyph> glyphs = [];
 
-        public unsafe Font(string characters, string path, uint resWidth = 500, uint resHeight = 500)
+        public Font() { }
+
+        public unsafe Font(string path, string characters, uint resWidth = 500, uint resHeight = 500)
         {
-            glyphs = new Dictionary<char, Glyph>();
+            AssetsManager.RegisterAssetType<Font>("ttf");
+            LoadFromFile(path, characters, resWidth, resHeight);
+        }
 
+        private unsafe void LoadFromFile(string path, string characters, uint resWidth = 500, uint resHeight = 500)
+        {
             FT_LibraryRec_* lib;
             FT_FaceRec_* face;
             FT_Error error = FT_Error.FT_Err_Ok;
@@ -53,7 +60,6 @@ namespace KeyEngine
 
             //Set size
             error = FT_Set_Pixel_Sizes(face, 0, 128);
-            //error = FT_Set_Char_Size(face, 0, 16 * 64, resWidth, resHeight);
             CheckError(error, "FT_Set_Char_Size");
 
             GL.PixelStore(PixelStoreParameter.UnpackAlignment, 1);
@@ -77,6 +83,7 @@ namespace KeyEngine
                     0, PixelFormat.Red,
                     PixelType.UnsignedByte,
                     (IntPtr)buffer);
+
                 GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.ClampToEdge);
                 GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.ClampToEdge);
                 GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
@@ -85,12 +92,6 @@ namespace KeyEngine
                 Vector2 size = new Vector2(face->glyph->bitmap.width, face->glyph->bitmap.rows);
                 Vector2 bearing = new Vector2(face->glyph->bitmap_left, face->glyph->bitmap_top);
                 Glyph glyph = new Glyph(texture, size, bearing, face->glyph->advance.x);
-                //{
-                //    texture = charTexture,
-                //    Size = new Vector2(face->glyph->bitmap.width, face->glyph->bitmap.rows),
-                //    Bearing = new Vector2(face->glyph->bitmap_left, face->glyph->bitmap_top),
-                //    Advance = face->glyph->advance.x
-                //};
 
                 glyphs.Add(c, glyph);
             }
@@ -100,9 +101,8 @@ namespace KeyEngine
             FT_Done_Face(face);
             FT_Done_FreeType(lib);
 
-            Loaded = true;
             UsedSymbols = characters;
-            this.Path = path;
+            AssetPath = path;
         }
 
         public void Dispose()
@@ -112,11 +112,9 @@ namespace KeyEngine
                 glyph.Dispose();
             }
 
-            glyphs = null;
-            Loaded = false;
+            glyphs = null!;
 
             GC.SuppressFinalize(this);
-            Log.Print("Font - disposed.");
         }
 
         public bool TryGetGlyph(char ch, out Glyph glyph)
@@ -128,24 +126,45 @@ namespace KeyEngine
         {
             if (error != FT_Error.FT_Err_Ok)
             {
-                Loaded = false;
+                glyphs = null!;
                 throw new InvalidOperationException($"{operation}. Error: {error}");
             }
         }
 
-        public override int GetHashCode()
+        internal override void LoadAsset(string sourcePath)
         {
-            return Path.GetHashCode();
+            LoadFromFile(sourcePath, UsedSymbols!, Width, Height);
         }
 
-        public void LoadAsset(string path)
+        internal override void UnloadAsset()
         {
-            throw new NotImplementedException();
+            Dispose();
         }
 
-        public void UnloadAsset()
+        public override SerializeData Serialize()
         {
-            throw new NotImplementedException();
+            SerializeData serializeData = new SerializeData();
+            serializeData.AddData("symbols", UsedSymbols);
+            serializeData.AddData("width", Width);
+            serializeData.AddData("height", Height);
+            return serializeData;
+        }
+
+        public override void Deserialize(SerializeData data)
+        {
+            UsedSymbols = data.GetData<string>("symbols");
+            Width = data.GetData<uint>("width");
+            Height = data.GetData<uint>("height");
+        }
+
+        internal override SerializeData? GetDefaultAssetData()
+        {
+            SerializeData serializeData = new SerializeData();
+            serializeData.AddData("symbols", ALL_PRESETS);
+            serializeData.AddData("width", 512);
+            serializeData.AddData("height", 512);
+
+            return serializeData;
         }
     }
 }

@@ -8,7 +8,7 @@ namespace KeyEngine.Editor.SupportedTypes
         {
             bool value = (bool)args.Value!;
 
-            ImGui.Checkbox(args.VariableName, ref value);
+            ImGui.Checkbox(args.DisplayName, ref value);
 
             return value;
         }

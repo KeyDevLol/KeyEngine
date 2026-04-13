@@ -1,7 +1,8 @@
-﻿using KeyEngine.Mathematics;
+﻿using KeyEngine.Tests;
 using KeyEngine.Physics;
 using KeyEngine.Rendering;
-using KeyEngine.Tests;
+using KeyEngine.Mathematics;
+using KeyEngine.Physics.Extensions;
 
 namespace KeyEngine.Samples
 {
@@ -22,8 +23,8 @@ namespace KeyEngine.Samples
             lWall.Position = new Vector2(14.750f, 0);
             rWall.Position = new Vector2(-14.750f, 0);
 
-            lWall.AddComponent<RigidBody>().BodyType = BodyType.Kinematic;
-            rWall.AddComponent<RigidBody>().BodyType = BodyType.Kinematic;
+            lWall.AddComponent<RigidBody>().BodyType = BodyType.Static;
+            rWall.AddComponent<RigidBody>().BodyType = BodyType.Static;
             lWall.AddComponent<SpriteRenderer>();
             rWall.AddComponent<SpriteRenderer>();
 
@@ -32,7 +33,7 @@ namespace KeyEngine.Samples
             ground.Scale = new Vector2(30, 0.5f);
             ground.Position = new Vector2(0, -10);
 
-            ground.AddComponent<RigidBody>().BodyType = BodyType.Kinematic;
+            ground.AddComponent<RigidBody>().BodyType = BodyType.Static;
             ground.AddComponent<SpriteRenderer>();
 
             spawner.AddComponent<YamlSerializerTest>();

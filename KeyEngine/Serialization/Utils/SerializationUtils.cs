@@ -4,12 +4,32 @@
     {
         extension (object? obj)
         {
-            private SerializableVariableType GetSerializableType() => obj == null ? SerializableVariableType.Null : (SerializableVariableType)Type.GetTypeCode(obj.GetType());
+            public SerializableVariableType GetSerializableType()
+            {
+                if (obj == null)
+                    return SerializableVariableType.Null;
+                else if (obj is ISerializableEmitter)
+                    return SerializableVariableType.EmitterSerializable;
+                else if (obj.GetType().IsEnum)
+                    return SerializableVariableType.Enum;
+
+                return (SerializableVariableType)Type.GetTypeCode(obj.GetType());
+            }
         }
 
         extension (Type? type)
         {
-            public SerializableVariableType GetSerializableType() => (SerializableVariableType)Type.GetTypeCode(type);
+            public SerializableVariableType GetSerializableType()
+            {
+                if (type == null)
+                    return SerializableVariableType.Null;
+                else if (type is ISerializableEmitter)
+                    return SerializableVariableType.EmitterSerializable;
+                else if (type.IsEnum)
+                    return SerializableVariableType.Enum;
+
+                    return (SerializableVariableType)Type.GetTypeCode(type);
+            }
         }
 
         extension (SerializableVariableType type)
@@ -32,7 +52,7 @@
                     SerializableVariableType.Double => typeof(double),
                     SerializableVariableType.Decimal => typeof(decimal),
                     SerializableVariableType.String => typeof(string),
-                    _ => typeof(object)
+                    _ => throw new ArgumentException(type.ToString())
                 };
             }
         }

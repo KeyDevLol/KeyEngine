@@ -18,5 +18,7 @@
         Double = 14,
         Decimal = 15,
         String = 18,
+        Enum = 19,
+        EmitterSerializable = 20,
     }
 }

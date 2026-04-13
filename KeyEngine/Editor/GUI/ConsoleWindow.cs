@@ -11,7 +11,7 @@ namespace KeyEngine.Editor.GUI
 
         public ConsoleWindow()
         {
-            this.title = "Console";
+            this.Title = "Console";
             Log.OnMessageReceived += OnLogMessageReceived;
         }
 

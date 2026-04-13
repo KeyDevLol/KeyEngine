@@ -3,20 +3,22 @@ using System.Numerics;
 
 namespace KeyEngine.Editor.SupportedTypes
 {
-    public class KeyCodeTypeSupport : TypeSupport
+    public class EnumTypeSupport : TypeSupport
     {
-        private static string[]? keyCodeValues;
-        private string? searchInput = string.Empty;
         private bool popupOpened;
+        private string? searchInput = string.Empty;
+        private string? cacheDisplayName;
 
         public override object Render(TypeSupportRenderArgs args)
         {
-            keyCodeValues ??= Enum.GetNames<KeyCode>();
+            popupOpened = cacheDisplayName == args.DisplayName;
 
-            KeyCode value = (KeyCode)args.Value!;
-            string valueName = value == 0 ? KeyCode.Unknown.ToString() : value.ToString();
+            Type enumType = args.Value!.GetType();
+            string[] enumNames = Enum.GetNames(enumType);
 
-            if (DrawInspectorVariable(args.DisplayName, valueName, out float windowWidth, out Vector2 windowPos))
+            object value = args.Value!;
+
+            if (DrawInspectorVariable(args.DisplayName, value.ToString()!, out float windowWidth, out Vector2 windowPos))
             {
                 if (popupOpened)
                 {
@@ -24,7 +26,7 @@ namespace KeyEngine.Editor.SupportedTypes
                 }
                 else
                 {
-                    popupOpened = true;
+                    cacheDisplayName = args.DisplayName;
                     ImGui.OpenPopup(args.DisplayName);
                 }
             }
@@ -36,44 +38,44 @@ namespace KeyEngine.Editor.SupportedTypes
                 ImGui.SetNextWindowSizeConstraints(Vector2.Zero, new Vector2(windowWidth, viewport.WorkSize.Y - windowPos.Y));
                 ImGui.SetNextWindowPos(windowPos);
 
-                DrawPopup(args, ref value);
+                DrawPopup(args, enumType, enumNames, ref value);
             }
 
             return value;
         }
 
-        private void DrawPopup(TypeSupportRenderArgs args, ref KeyCode value)
+        private void DrawPopup(TypeSupportRenderArgs args, Type enumType, string[] enumNames, ref object value)
         {
             if (ImGui.BeginPopup(args.DisplayName, ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.Popup))
             {
                 ImGui.InputTextWithHint("##Search", "Search...", ref searchInput, 60, ImGuiInputTextFlags.NoHorizontalScroll);
 
-                string[]? filteredValues = null;
+                string[]? keyCodes = null;
 
                 if (!string.IsNullOrEmpty(searchInput))
                 {
                     StringComparison comparison = StringComparison.CurrentCultureIgnoreCase;
                     string lowerSearchInput = searchInput.ToLower();
-                    filteredValues = keyCodeValues!.Where(s => s.StartsWith(lowerSearchInput, comparison) || s.Equals(lowerSearchInput, comparison)).ToArray();
+                    keyCodes = enumNames!.Where(s => s.StartsWith(lowerSearchInput, comparison) || s.Equals(lowerSearchInput, comparison)).ToArray();
                 }
                 else
                 {
-                    filteredValues = keyCodeValues;
+                    keyCodes = enumNames;
                 }
 
-                if (ImGui.IsKeyDown(ImGuiKey.Enter) && filteredValues!.Length == 1)
+                if (ImGui.IsKeyDown(ImGuiKey.Enter) && keyCodes!.Length == 1)
                 {
-                    value = Enum.Parse<KeyCode>(filteredValues[0]);
+                    value = Enum.Parse(enumType, keyCodes[0]);
                     ClosePopup();
                 }
 
                 ImGui.Separator();
 
-                foreach (string keyCode in filteredValues!)
+                foreach (string keyCode in keyCodes!)
                 {
                     if (ImGui.Selectable(keyCode))
                     {
-                        value = Enum.Parse<KeyCode>(keyCode);
+                        value = Enum.Parse(enumType, keyCode);
                         ClosePopup();
                         break;
                     }
@@ -109,7 +111,7 @@ namespace KeyEngine.Editor.SupportedTypes
         private void ClosePopup()
         {
             searchInput = string.Empty;
-            popupOpened = false;
+            cacheDisplayName = null;
             ImGui.CloseCurrentPopup();
         }
     }

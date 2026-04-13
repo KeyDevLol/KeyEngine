@@ -2,7 +2,7 @@
 {
     public interface ISerializable
     {
-        public SerializeData EditorSerialize();
-        public void EditorDeserialize(SerializeData data);
+        public SerializeData Serialize();
+        public void Deserialize(SerializeData data);
     }
 }

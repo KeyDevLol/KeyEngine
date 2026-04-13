@@ -8,7 +8,7 @@ namespace KeyEngine.Editor.SupportedTypes
         {
             int value = (int)args.Value!;
 
-            ImGui.DragInt(args.VariableName, ref value);
+            ImGui.DragInt(args.DisplayName, ref value);
 
             return value;
         }

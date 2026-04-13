@@ -1,11 +1,15 @@
 ﻿using ImGuiNET;
 using KeyEngine.Mathematics;
+using System.Runtime.InteropServices;
 
 namespace KeyEngine.Editor.GUI
 {
-    public class DebugInfo : EditorWindow
+    public unsafe class DebugInfo : EditorWindow
     {
-        private readonly double[] fps = new double[100];
+        private byte* pPlotText;
+        private nint pPlotTextH;
+
+        private float[] fps = new float[500];
         private double time;
 
         private double averageFPS;
@@ -13,20 +17,39 @@ namespace KeyEngine.Editor.GUI
 
         public DebugInfo()
         {
-            title = "Debug Info";
+            Title = "Debug Info";
+
+            pPlotTextH = Marshal.StringToHGlobalAnsi("PULSE");
+            pPlotText = (byte*)pPlotTextH;
         }
 
-        public override void Render()
+        ~DebugInfo()
+        {
+            Marshal.FreeHGlobal(pPlotTextH);
+        }
+
+        public override unsafe void Render()
         {
             double ms = (ImGui.GetTime() - time);
             time = ImGui.GetTime();
 
             fps[fpsIndex] = Mathf.Round((float)(1f / ms));
 
-            ImGui.Text($"MS: {(ms * 1000):F2}");
+            ImGui.Text($"MS: {(ms * 1000):F2}"); 
             ImGui.Text($"FPS: {(1f / ms):F0}");
             ImGui.Text($"AVRG FPS: {averageFPS:F1}");
             ImGui.Text($"Total Objects: {ECS.EntitiesCount}");
+
+            fixed (float* data = fps)
+            {
+                int values_offset = 0;
+                byte* overlay_text = null;
+                float scale_min = float.MaxValue;
+                float scale_max = float.MaxValue;
+                Vector2 graph_size = new Vector2(100, 50);
+                int stride = 4;
+                ImGuiNative.igPlotLines_FloatPtr(pPlotText, data, fps.Length, values_offset, overlay_text, scale_min, scale_max, graph_size, stride);
+            }
 
             fpsIndex++;
 

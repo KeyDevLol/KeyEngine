@@ -3,14 +3,16 @@
     public class YamlVariable
     {
         public SerializableCollectionType CollectionType;
-        public SerializableVariableType VariableType;
+        public SerializableVariableType SerializableType;
         public object? VariableValue;
+        public Type? SystemType;
 
         public YamlVariable(SerializableCollectionType collectionType, SerializableVariableType variableType, object? variableValue)
         {
             CollectionType = collectionType;
-            VariableType = variableType;
+            SerializableType = variableType;
             VariableValue = variableValue;
+            SystemType = variableValue?.GetType();
         }
 
         public YamlVariable() { }

@@ -8,7 +8,7 @@ namespace KeyEngine.Editor.SupportedTypes
         {
             double value = (double)args.Value!;
 
-            ImGui.InputDouble(args.VariableName, ref value, 0.1f);
+            ImGui.InputDouble(args.DisplayName, ref value, 0.1f);
 
             return (double)value;
         }

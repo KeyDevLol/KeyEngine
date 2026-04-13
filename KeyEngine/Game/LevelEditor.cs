@@ -47,7 +47,7 @@ namespace KeyEngine.Game
                 {
                     if (tiles.TryGetValue(roundedVec, out Tile tile))
                     {
-                        ECS.RemoveEntity(tile.Entity);
+                        tile.Entity.Destroy();
                         tiles.Remove(roundedVec);
                     }
                 }

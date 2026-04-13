@@ -23,7 +23,7 @@ namespace KeyEngine.Physics
         public static void Update(float deltaTime)
         {
             if (World.BodyList.Count > 0)
-                World.Step(Mathf.Clamp(deltaTime, 0, 0.1f));
+                World.Step(deltaTime);
         }
     }
 }

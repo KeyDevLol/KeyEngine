@@ -2,11 +2,31 @@
 
 namespace KeyEngine
 {
+    /// <summary>
+    /// Represents a game entity with transform and components
+    /// </summary>
     public class Entity : Transformable, IComparable<Entity>
     {
+        /// <summary>
+        /// Gets or sets the entity's name.
+        /// </summary>
         public string? Name { get; set; }
+        /// <summary>
+        /// Gets or sets a value indicating if the entity is active.
+        /// </summary>
         public bool Active { get; set; } = true;
+        /// <summary>
+        /// !Needs documentation
+        /// </summary>
+        public bool IsAlive { get; private set; } = true;
+        /// <summary>
+        /// If true, the entity will not be destroyed when loading a new scene.
+        /// </summary>
+        public bool SceneImmunity { get; set; }
 
+        /// <summary>
+        /// Gets or sets the rendering order.
+        /// </summary>
         public int Layer
         {
             get => _layer;
@@ -21,6 +41,9 @@ namespace KeyEngine
         }
         private int _layer;
 
+        /// <summary>
+        /// Unique identifier for tracking and referencing this entity instance.
+        /// </summary>
         public readonly Guid Id;
 
         private readonly List<Component> components;
@@ -28,13 +51,20 @@ namespace KeyEngine
         protected event Action<Component>? OnComponentAdded;
         protected event Action<Component>? OnComponentRemoved;
 
-        public Entity(string? name = null)
+        internal Entity(string? name = null)
         {
-            Name = name ?? "My name is Edwin";
+            Name = name ?? "New Entity";
             components = [];
             Id = Guid.NewGuid();
         }
 
+        /// <summary>
+        /// Adds a new component of the given type to the entity.
+        /// </summary>
+        /// <returns>
+        /// The newly created component instance.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">Thrown when type is null.</exception>
         public object AddComponent(Type type)
         {
             if (Activator.CreateInstance(type, [this]) is not Component component)
@@ -42,7 +72,7 @@ namespace KeyEngine
 
             components.Add(component);
 
-            if (SceneManager.SceneIsRunning)
+            if (SceneManager.IsSceneRunning)
                 component.Start();
 
             OnComponentAdded?.Invoke(component);
@@ -50,17 +80,31 @@ namespace KeyEngine
             return component;
         }
 
+        /// <summary>
+        /// Adds a new component of the given type to the entity.
+        /// </summary>
+        /// <returns>
+        /// The newly created component instance.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">Thrown when type is null.</exception>
         public T AddComponent<T>() where T : Component
         {
             return (T)AddComponent(typeof(T));
         }
 
+        /// <summary>
+        /// Adds a new component of the given type to the entity.
+        /// </summary>
+        /// <returns>
+        /// The newly created component instance.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">Thrown when component is null.</exception>
         public Component AddComponent(Component component)
         {
             ArgumentNullException.ThrowIfNull(component, nameof(component));
             components.Add(component);
 
-            if (SceneManager.SceneIsRunning)
+            if (SceneManager.IsSceneRunning)
                 component.Start();
 
             OnComponentAdded?.Invoke(component);
@@ -68,6 +112,9 @@ namespace KeyEngine
             return component;
         }
 
+        /// <summary>
+        /// Finds and removes the first component matching the given type.
+        /// </summary>
         public void RemoveComponent(Type type)
         {
             for (int i = 0; i < components.Count; i++)
@@ -84,11 +131,24 @@ namespace KeyEngine
             }
         }
 
+        /// <summary>
+        /// Finds and removes the first component matching the given type.
+        /// </summary>
         public void RemoveComponent<T>() where T : Component
         {
             RemoveComponent(typeof(T));
         }
 
+        /// <summary>
+        /// Retrieves a component of the specified generic type from the entity.
+        /// </summary>
+        /// <typeparam name="T">Component type to search for.</typeparam>
+        /// <returns>
+        /// The component instance if found; otherwise <see langword="null"/>.
+        /// </returns>
+        /// <remarks>
+        /// Returns the first matching component.
+        /// </remarks>
         public T? GetComponent<T>() where T : Component
         {
             foreach (Component component in components)
@@ -100,9 +160,20 @@ namespace KeyEngine
             return null;
         }
 
+        /// <summary>
+        /// Returns all components attached to this entity.
+        /// </summary>
         public IEnumerable<Component> GetAllComponents()
         {
             return components;
+        }
+
+        /// <summary>
+        /// !Needs documentation
+        /// </summary>
+        public void Destroy()
+        {
+            IsAlive = false;
         }
 
         internal virtual void CallStart()

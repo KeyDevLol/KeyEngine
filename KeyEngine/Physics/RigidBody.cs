@@ -203,7 +203,7 @@ namespace KeyEngine.Physics
         }
 
 #if ENABLE_EDITOR
-        public override void RenderGizmos()
+        public override void RenderSelectedGizmos()
         {
             Color01 color = GizmosRendering.DefaultGizmosColor;
             color.A = 0.5f;
