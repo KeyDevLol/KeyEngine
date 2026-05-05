@@ -3,8 +3,8 @@ KeyEngine is an open-source game engine/framework for creating 2D games, powered
 
 The engine is NOT finished yet, it is under active development.
 
-![Alt text](GitHub_Content/Screenshot_1.png?raw=true)
-![Alt text](GitHub_Content/Screenshot_2.png?raw=true)
+<img src="GitHub_Content/Screenshot_1.png" width="500">
+<img src="GitHub_Content/Screenshot_2.png" width="500">
 
 # Build Requiments
 1. **Latest [Git](https://git-scm.com/downloads)**
