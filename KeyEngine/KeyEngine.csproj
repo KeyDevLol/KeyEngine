@@ -24,6 +24,7 @@
     <None Remove="bin\**" />
   </ItemGroup>
 
+
   <ItemGroup>
     <Compile Remove="Serialization\SceneSerialization.cs" />
   </ItemGroup>
@@ -31,6 +32,17 @@
   <ItemGroup>
     <Content Include="KeyEngine Logo.ico" />
   </ItemGroup>
+  
+<ItemGroup>
+    <Content Include=".\Content\Assets\**\*.*">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <Link>Assets\%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </Content>
+    <Content Include=".\Content\Editor\**\*.*">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <Link>Editor\%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </Content>
+</ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Aether.Physics2D" Version="2.2.0" />
