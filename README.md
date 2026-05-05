@@ -5,6 +5,7 @@ The engine is NOT finished yet, it is under active development.
 
 <img src="GitHub_Content/Screenshot_1.png" width="500">
 <img src="GitHub_Content/Screenshot_2.png" width="500">
+<img src="GitHub_Content/Screenshot_3.png" width="500">
 
 # Build Requiments
 1. **Latest [Git](https://git-scm.com/downloads)**
