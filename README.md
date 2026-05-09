@@ -12,9 +12,6 @@ The engine is NOT finished yet, it is under active development.
 2. **[.NET 10.0 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/10.0)**
 3. **[Visual Studio 2026](https://visualstudio.microsoft.com/downloads/)**
 
-> [!WARNING]
-> Copy the contents of the "Content" folder to the build folder
-
 # Supported O/S
 - ✔️ Windows 10
 - ✔️ Linux
