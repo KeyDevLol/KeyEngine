@@ -26,8 +26,6 @@ namespace KeyEngine
                 throw new InvalidOperationException("MainWindow already initialized.");
 
             instance = CreateWindow();
-
-            GL.ClearColor(0.39f, 0.58f, 0.93f, 1.0f);
         }
 
         public static new void Run()
@@ -49,19 +47,27 @@ namespace KeyEngine
 
                 WindowState = (WindowState)Application.WindowState,
                 WindowBorder = (WindowBorder)Application.WindowBorder,
-                NumberOfSamples = Application.MsaaEnabled ? (int)Application.MsaaSamplesCount : 0
+                NumberOfSamples = Application.MsaaEnabled ? (int)Application.MsaaSamplesCount : 0,
+                StartVisible = true
             };
 
             return new MainWindow(nativeWindowSettings);
         }
 
+        protected override void OnLoad()
+        {
+            base.OnLoad();
+            GL.ClearColor(0.39f, 0.58f, 0.93f, 1.0f);
+        }
+
         protected override void OnUpdateFrame(FrameEventArgs args)
         {
-            if (IsFocused && !Application.RunInBackground)
+            if (WindowState != WindowState.Minimized && !Application.RunInBackground)
             {
                 float deltaTime = (float)args.Time;
                 DeltaTime = deltaTime;
 
+                base.OnUpdateFrame(args);
                 PhysicsManager.Update(DeltaTime);
                 ECS.CallUpdate(DeltaTime);
 #if ENABLE_EDITOR
@@ -72,7 +78,7 @@ namespace KeyEngine
 
         protected override void OnRenderFrame(FrameEventArgs args)
         {
-            if (!IsFocused && !Application.RunInBackground)
+            if (WindowState == WindowState.Minimized && !Application.RunInBackground)
                 return;
 
             GL.Clear(ClearBufferMask.ColorBufferBit);
@@ -82,6 +88,7 @@ namespace KeyEngine
             // Render
             if (Camera.Main != null)
             {
+                base.OnRenderFrame(args);
                 ECS.CallRender();
 #if ENABLE_EDITOR
                 Editor.Editor.Render();
