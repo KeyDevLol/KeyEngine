@@ -1,6 +1,6 @@
-﻿using KeyEngine.Assets;
+﻿using KeyEngine.Samples;
+using KeyEngine.Assets;
 using KeyEngine.Core;
-using KeyEngine.Samples;
 
 namespace KeyEngine
 {
