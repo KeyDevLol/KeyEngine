@@ -1,10 +1,8 @@
-﻿using KeyEngine.Rendering;
-
-namespace KeyEngine
+﻿namespace KeyEngine
 {
     public static class ECS
     {
-        public readonly static EntityCollection EntityCollection = [];
+        private readonly static EntityCollection EntityCollection = [];
         private readonly static Queue<Entity> entitiesToAdd = [];
         //private readonly static Queue<Entity> removeEntitiesQueue = new Queue<Entity>();
         public static int EntitiesCount => EntityCollection.Count;
@@ -77,9 +75,9 @@ namespace KeyEngine
             return null;
         }
 
-        public static Entity[] GetAllEntities()
+        public static IEnumerable<Entity> GetAllEntities()
         {
-            return [.. EntityCollection.Entities];
+            return EntityCollection;
         }
 
         #region Internal Calls
