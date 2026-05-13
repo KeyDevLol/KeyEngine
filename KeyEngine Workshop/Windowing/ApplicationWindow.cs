@@ -1,5 +1,5 @@
 ﻿using KeyEngine_Workshop.GUI;
-using KeyEngine_Workshop.Hub;
+using KeyEngine_Workshop.Projects;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
@@ -37,7 +37,6 @@ namespace KeyEngine_Workshop.Windowing
                 throw new InvalidOperationException("The window is already running.");
 
             Instance.isRunning = true;
-            instance.RegisterDefaultHandlers();
             ((GameWindow)instance).Run();
         }
 
@@ -83,13 +82,6 @@ namespace KeyEngine_Workshop.Windowing
                         return t;
 
             return default;
-        }
-
-        public void RegisterDefaultHandlers()
-        {
-            //RegisterHandler(HubMainWindow.GetInstance());
-            //RegisterHandler(new ImGuiWindowHandler());
-            RegisterHandler(WindowManager.GetInstance());
         }
 
         protected override void OnLoad()
