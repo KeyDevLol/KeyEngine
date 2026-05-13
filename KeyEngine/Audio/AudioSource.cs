@@ -7,6 +7,7 @@ namespace KeyEngine.Audio
 {
     // TODO: Сделать чтобы при изменении позиции Listener SetCalculatedGain вызывался
     // TODO: Оптимизировать использование AL.Source(SourceHandle, ALSourceb.SourceRelative, false)
+    // TODO: Сделать чтобы при отключении компонента звук прерывался
     public class AudioSource : Component
     {
         public readonly int SourceHandle;
@@ -89,14 +90,11 @@ namespace KeyEngine.Audio
             Owner.OnTransformChanged += OnOwnerTransformChanged;
             SetSourcePos();
             SetCalculatedGain();
+        }
 
-            Task.Factory.StartNew(() =>
-            {
-                while (!shouldTaskClose)
-                {
-                    SetCalculatedGain();
-                }
-            });
+        public override void Update(float deltaTime)
+        {
+            SetCalculatedGain();
         }
 
 #if ENABLE_EDITOR
@@ -109,14 +107,14 @@ namespace KeyEngine.Audio
 
         public float CalculateGain(float distance)
         {
-            float volume = _volume / 100f;
-            volume = Mathf.Clamp(volume, 0.0f, 1.0f);
+            float volume = Mathf.Clamp01(_volume / 100f);
+            float range = MaxDistance - ReferenceDistance;
+            if (range <= 0f) return volume;
+
             distance = Mathf.Clamp(distance, ReferenceDistance, MaxDistance);
+            float attenuation = 1f - Rolloff * (distance - ReferenceDistance) / range;
 
-            float distanceAttenuation = 1.0f - Rolloff * (distance - ReferenceDistance) / (MaxDistance - ReferenceDistance);
-            float gain = volume * Math.Clamp(distanceAttenuation, 0.0f, 1.0f);
-
-            return gain;
+            return volume * Mathf.Clamp01(attenuation);
         }
 
         private void OnOwnerTransformChanged()
