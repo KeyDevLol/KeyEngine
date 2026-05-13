@@ -1,19 +1,15 @@
 ﻿using ImGuiNET;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace KeyEngine.Editor.GUI
 {
+    // TODO: Исправить неймспейс и сделать ListBox по высоте во всё окно
     public class Hierarchy : EditorWindow
     {
         private static Hierarchy instance = null!;
         public static Hierarchy Instance { get => instance; }
 
         private string[] entityNames = [];
-        private Entity[] entities = [];
+        private Entity[]? entities;
 
         private int currentListIndex = -1;
 
@@ -40,14 +36,14 @@ namespace KeyEngine.Editor.GUI
 
         public void RefreshEntitiesList()
         {
-            Entity[] entities = ECS.GetAllEntities();
+            Entity[] entities = [.. ECS.GetAllEntities()];
             string[] newNames = new string[entities.Length];
 
             int i = 0;
 
             foreach (Entity entity in entities)
             {
-                newNames[i] = entity.Name;
+                newNames[i] = entity.Name ?? $"{nameof(entity.Name)} is null.";
                 i++;
             }
 
