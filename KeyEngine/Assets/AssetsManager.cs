@@ -2,9 +2,11 @@
 
 namespace KeyEngine.Assets
 {
+    // TODO: Получение assetdata пробует получить ассет по пути, а не ключепути
     public static class AssetsManager
     {
         public const string ASSETS_FOLDER_PATH = "Assets";
+        public const char PATH_KEY_CHAR = ':';
 
         public static readonly Dictionary<string, AssetInfo> Assets = [];
         private static readonly Dictionary<string, Type> registeredAssetTypes = [];
@@ -32,9 +34,10 @@ namespace KeyEngine.Assets
 
         public static Asset? GetAsset(string programRelativePath, Type type)
         {
-            programRelativePath = programRelativePath.Replace('/', '\\');
+            string pathKey = PathToDictKey(programRelativePath);
+            string normalizedPath = NormalizePath(programRelativePath);
 
-            if (Assets.TryGetValue(programRelativePath, out AssetInfo? data))
+            if (Assets.TryGetValue(pathKey, out AssetInfo? data))
             {
                 if (data.Instance == null)
                     return null;
@@ -43,16 +46,20 @@ namespace KeyEngine.Assets
             }
             else
             {
-                if (!File.Exists(programRelativePath))
+                if (!File.Exists(normalizedPath))
+                {
+                    Console.WriteLine($"TEST: {normalizedPath}");
+                    Console.WriteLine($"TEST2: {Environment.CurrentDirectory}");
                     throw new FileNotFoundException();
+                }
 
-                string dataPath = GetAssetDataPath(programRelativePath);
-                string extension = Path.GetExtension(programRelativePath)[1..];
+                string dataPath = GetAssetDataPath(normalizedPath);
+                string extension = Path.GetExtension(normalizedPath)[1..];
 
-                Asset assetInstance = CreateAsset(type, programRelativePath, dataPath);
+                Asset assetInstance = CreateAsset(type, normalizedPath, dataPath);
 
-                AssetInfo assetInfo = new AssetInfo(programRelativePath, dataPath, assetInstance);
-                Assets.Add(programRelativePath, assetInfo);
+                AssetInfo assetInfo = new AssetInfo(normalizedPath, dataPath, assetInstance);
+                Assets.Add(pathKey, assetInfo);
 
                 return assetInfo.Instance;
             }
@@ -80,17 +87,18 @@ namespace KeyEngine.Assets
 
         public static AssetInfo? GetAssetInfo(string programRelativePath)
         {
-            programRelativePath = programRelativePath.Replace('/', '\\');
+            string normalizedPath = NormalizePath(programRelativePath);
+            string pathKey = PathToDictKey(programRelativePath);
 
-            if (Assets.TryGetValue(programRelativePath, out AssetInfo? info))
+            if (Assets.TryGetValue(normalizedPath, out AssetInfo? info))
             {
                 return info;
             }
 
-            if (GetAssetAuto(programRelativePath) == null)
+            if (GetAssetAuto(normalizedPath) == null)
                 return null;
 
-            return Assets[programRelativePath];
+            return Assets[pathKey];
         }
         public static void SaveAsset(Asset asset)        
         {
@@ -152,6 +160,23 @@ namespace KeyEngine.Assets
                 if (serializeData != null)
                     asset.Deserialize(serializeData);
             }
+        }
+
+        private static string NormalizePath(string path)
+        {
+            path = path.Replace('\\', Path.DirectorySeparatorChar);
+            path = path.Replace('/', Path.DirectorySeparatorChar);
+
+            return path;
+        }
+
+        private static string PathToDictKey(string path)
+        {
+            path = path.Replace('\\', PATH_KEY_CHAR);
+            path = path.Replace('/', PATH_KEY_CHAR);
+            path = path.Replace(Path.DirectorySeparatorChar, PATH_KEY_CHAR);
+
+            return path;
         }
     }
 }
