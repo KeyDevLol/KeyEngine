@@ -1,12 +1,12 @@
-﻿using KeyEngine.Editor.Attributes;
-using KeyEngine.Mathematics;
-using KeyEngine.Physics.Extensions;
+﻿using KeyEngine.Mathematics;
 using KeyEngine.Rendering.Gizmos;
-using nkast.Aether.Physics2D.Collision.Shapes;
+using KeyEngine.Editor.Attributes;
+using KeyEngine.Physics.Extensions;
 using nkast.Aether.Physics2D.Common;
 using nkast.Aether.Physics2D.Dynamics;
-using PBodyType = nkast.Aether.Physics2D.Dynamics.BodyType;
+using nkast.Aether.Physics2D.Collision.Shapes;
 using Vector2 = KeyEngine.Mathematics.Vector2;
+using PBodyType = nkast.Aether.Physics2D.Dynamics.BodyType;
 
 namespace KeyEngine.Physics
 {
@@ -58,10 +58,7 @@ namespace KeyEngine.Physics
             }
             set
             {
-                if (body != null)
-                {
-                    body.AngularVelocity = value * Mathf.DEG_2_RAD;
-                }
+                body?.AngularVelocity = value * Mathf.DEG_2_RAD;
             }
         }
 
