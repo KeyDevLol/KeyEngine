@@ -84,8 +84,8 @@ namespace KeyEngine.Editor.GUI.Inspector
                                 object? startValue = variable.GetValue(cachedComponent.Component);
                                 TypeSupportRenderArgs args = new TypeSupportRenderArgs
                                 (
-                                    GetVariableDisplayName(variable, currentEntity),
                                     member.Name,
+                                    GetVariableId(variable, currentEntity),
                                     member.ReflectedType?.Name,
                                     currentEntity.Id.ToString(),
                                     startValue
@@ -123,9 +123,9 @@ namespace KeyEngine.Editor.GUI.Inspector
             }
         }
 
-        private static string GetVariableDisplayName(VariableInfo variableInfo, Entity entity)
+        private static string GetVariableId(VariableInfo variableInfo, Entity entity)
         {
-            return $"{variableInfo.MemberInfo.Name}##{variableInfo.ReflectedType?.Name}_{entity.Id}";
+            return $"{variableInfo.ReflectedType?.Name}_{entity.Id}";
         }
 
         private void DrawEnabled(string componentName, ref bool enabled)

@@ -3,6 +3,7 @@ using System.Numerics;
 
 namespace KeyEngine.Editor.SupportedTypes
 {
+    // TODO: Сделать, чтобы текст был выше кнопки выбора
     public class EnumTypeSupport : TypeSupport
     {
         private bool popupOpened;
@@ -18,7 +19,7 @@ namespace KeyEngine.Editor.SupportedTypes
 
             object value = args.Value!;
 
-            if (DrawInspectorVariable(args.DisplayName, value.ToString()!, out float windowWidth, out Vector2 windowPos))
+            if (DrawInspectorVariable(args.VariableName, args.VariableId, value.ToString()!, out float windowWidth, out Vector2 windowPos))
             {
                 if (popupOpened)
                 {
@@ -90,9 +91,9 @@ namespace KeyEngine.Editor.SupportedTypes
             }
         }
 
-        private bool DrawInspectorVariable(string variableText, string valueName, out float windowWidth, out Vector2 windowPos)
+        private bool DrawInspectorVariable(string variableName, string variableId, string valueName, out float windowWidth, out Vector2 windowPos)
         {
-            ImGui.Text(variableText);
+            ImGui.Text(variableName);
             ImGui.SameLine();
 
             float remaining = ImGui.GetContentRegionAvail().X;
@@ -105,7 +106,7 @@ namespace KeyEngine.Editor.SupportedTypes
             windowWidth = buttonWidth < 100 ? 100 : buttonWidth;
             windowPos = screenCursorPos += new Vector2(0, buttonHeight);
 
-            return ImGui.Button(valueName, new Vector2(buttonWidth, buttonHeight));
+            return ImGui.Button($"{valueName}##{variableId}", new Vector2(buttonWidth, buttonHeight));
         }
 
         private void ClosePopup()
