@@ -35,9 +35,8 @@ namespace KeyEngine.Editor.GUI
 
             fps[fpsIndex] = Mathf.Round((float)(1f / ms));
 
-            ImGui.Text($"MS: {(ms * 1000):F2}"); 
             ImGui.Text($"FPS: {(1f / ms):F0}");
-            ImGui.Text($"AVRG FPS: {averageFPS:F1}");
+            ImGui.Text($"AVG FPS: {averageFPS:F1}");
             ImGui.Text($"Total Objects: {ECS.EntitiesCount}");
 
             fixed (float* data = fps)
