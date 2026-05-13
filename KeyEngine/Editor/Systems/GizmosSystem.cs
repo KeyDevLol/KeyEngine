@@ -6,10 +6,8 @@ namespace KeyEngine.Editor.Systems
     {
         public override void Render()
         {
-            for (int i = ECS.EntityCollection.Count; i-- > 0;)
+            foreach (Entity entity in ECS.GetAllEntities())
             {
-                Entity entity = ECS.EntityCollection[i];
-
                 if (!entity.Active)
                     continue;
 
