@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "KeyEngine Workshop": {
+      "commandName": "Project",
+      "hotReloadEnabled": false,
+      "nativeDebugging": false
+    }
+  }
+}
