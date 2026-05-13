@@ -34,14 +34,16 @@
             CurrentScene?.Unload();
             IsSceneRunning = false;
 
-            for (int i = 0; i < ECS.EntitiesCount; i++)
+
+            foreach (Entity entity in ECS.GetAllEntities())
             {
-                Entity entity = ECS.EntityCollection[i];
+                for (int i = 0; i < ECS.EntitiesCount; i++)
+                {
+                    if (entity.SceneImmunity && !ignoreSceneImmunity)
+                        continue;
 
-                if (ECS.EntityCollection[i].SceneImmunity && !ignoreSceneImmunity)
-                    continue;
-
-                entity.Destroy();
+                    entity.Destroy();
+                }
             }
 
             if (forceGC)
