@@ -2,43 +2,43 @@
 
 namespace KeyEngine
 {
-    public class EntityCollection : IEnumerable
+    public class EntityCollection : IReadOnlyList<Entity>
     {
-        public List<Entity> Entities;
+        private readonly List<Entity> entities;
 
         public EntityCollection()
         {
-            Entities = new List<Entity>();
+            entities = [];
         }
 
         public void Add(Entity entity)
         {
-            int index = Entities.BinarySearch(entity, EntityLayerComparer.Instance);
+            int index = entities.BinarySearch(entity, EntityLayerComparer.Instance);
             if (index < 0)
                 index = ~index;
 
-            Entities.Insert(index, entity);
+            entities.Insert(index, entity);
         }
 
         public void RefreshLayer(Entity entity)
         {
             Remove(entity);
 
-            int index = Entities.BinarySearch(entity, EntityLayerComparer.Instance);
+            int index = entities.BinarySearch(entity, EntityLayerComparer.Instance);
             if (index < 0)
                 index = ~index;
 
-            Entities.Insert(index, entity);
+            entities.Insert(index, entity);
         }
 
         public Entity? Get(Entity entity)
         {
-            int index = Entities.BinarySearch(entity, EntityLayerComparer.Instance);
+            int index = entities.BinarySearch(entity, EntityLayerComparer.Instance);
 
             if (index < 0)
                 return null;
 
-            return Entities[index];
+            return entities[index];
         }
 
         public bool Get(Entity entity, out Entity? result)
@@ -47,20 +47,29 @@ namespace KeyEngine
             return result != null;
         }
 
-        public void RemoveAt(int index) => Entities.RemoveAt(index);
-        public void Remove(Entity entity) => Entities.Remove(entity);
-        public bool Contains(Entity entity) => Entities.Contains(entity);
-        public Entity Find(string name) => Entities[Entities.FindIndex(e => e.Name == name)];
-        public Entity Find(Guid id) => Entities[Entities.FindIndex(e => e.Id == id)];
-        public int FindIndex(string name) => Entities.FindIndex(e => e.Name == name);
-        public int FindIndex(Guid id) => Entities.FindIndex(e => e.Id == id);
-        public int Count => Entities.Count;
-        public IEnumerator GetEnumerator() => Entities.GetEnumerator();
+        public void RemoveAt(int index) => entities.RemoveAt(index);
+        public void Remove(Entity entity) => entities.Remove(entity);
+        public bool Contains(Entity entity) => entities.Contains(entity);
+        [Obsolete(message:$"Use {nameof(FindByName)}", DiagnosticId ="223")]
+        public Entity Find(string name) => entities[entities.FindIndex(e => e.Name == name)];
+        public Entity? FindByName(string name) => entities.FirstOrDefault(e => e.Name == name);
+        [Obsolete($"Use {nameof(FindById)} instead.")]
+        public Entity Find(Guid id) => entities[entities.FindIndex(e => e.Id == id)];
+        public Entity? FindById(Guid id) => entities.FirstOrDefault(e => e.Id == id);
+        public int FindIndex(string name) => entities.FindIndex(e => e.Name == name);
+        public int FindIndex(Guid id) => entities.FindIndex(e => e.Id == id);
+        public int Count => entities.Count;
+        public IEnumerator GetEnumerator() => entities.GetEnumerator();
+
+        IEnumerator<Entity> IEnumerable<Entity>.GetEnumerator()
+        {
+            return entities.GetEnumerator();
+        }
 
         public Entity this[int index]
         {
-            get => Entities[index];
-            set => Entities[index] = value;
+            get => entities[index];
+            set => entities[index] = value;
         }
 
         private class EntityLayerComparer : IComparer<Entity>
@@ -69,12 +78,14 @@ namespace KeyEngine
 
             public int Compare(Entity? first, Entity? second)
             {
-                if (first == null || second == null)
-                    throw new NullReferenceException();
+                if (ReferenceEquals(first, second)) return 0;
+                if (first is null) return -1;
+                if (second is null) return 1;
 
-                if (first.Layer > second.Layer) return -1;
-                if (first.Layer < second.Layer) return 1;
-                return -1;
+                if (first.Layer != second.Layer)
+                    return first.Layer.CompareTo(second.Layer);
+
+                return first.Id.CompareTo(second.Id);
             }
         }
     }
