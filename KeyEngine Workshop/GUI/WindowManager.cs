@@ -1,12 +1,14 @@
-﻿using OpenTK.Windowing.Common;
-using KeyEngine_Workshop.Windowing;
-using KeyEngine_Workshop.Hub;
-using KeyEngine_Workshop.Rendering;
+﻿using ImGuiNET;
 using OpenTK.Mathematics;
 using OpenTK.Graphics.OpenGL;
+using KeyEngine_Workshop.Hub;
+using OpenTK.Windowing.Common;
+using KeyEngine_Workshop.Windowing;
+using KeyEngine_Workshop.Rendering;
 
 namespace KeyEngine_Workshop.GUI
 {
+    // TODO: Сделать чтобы при открытии нового окна, создавался новый его экземпляр
     public class WindowManager : OpenTKWindowHandlerBase
     {
         private static WindowManager instance = null!;
@@ -21,6 +23,7 @@ namespace KeyEngine_Workshop.GUI
 
             Vector2i clientSize = ApplicationWindow.Instance.ClientSize;
             ImGuiController = new ImGuiController(clientSize.X, clientSize.Y);
+            ImGui.GetIO().ConfigFlags |= ImGuiConfigFlags.NavEnableKeyboard;
         }
 
         public override void OnLoad()
@@ -38,6 +41,7 @@ namespace KeyEngine_Workshop.GUI
         private void RegisterDefaultWindows()
         {
             RegisterWindow(HubWindow.GetInstance());
+            RegisterWindow(new CreateProjectWindow());
             //RegisterWindow(new TestGui());
         }
 
@@ -54,7 +58,17 @@ namespace KeyEngine_Workshop.GUI
             GL.Viewport(0, 0, size.X, size.Y);
 
             foreach (GuiWindowBase window in windowList)
-                window.OnRenderFrame();
+            {
+                if (window is CreateProjectWindow)
+                {
+                    if (window.IsVisible)
+                        window.OnRenderFrame();
+                }
+                else
+                {
+                    window.OnRenderFrame();
+                }
+            }
 
             ImGuiController.Render();
         }
