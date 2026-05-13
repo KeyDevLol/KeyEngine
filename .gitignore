@@ -364,6 +364,8 @@ FodyWeavers.xsd
 
 # KeyEngine Ignore
 Tests/
-Builds/
+Build/Windows
+Build/MacOS
+Build/Linux
 ToDo.txt
 Debug Build.lnk
