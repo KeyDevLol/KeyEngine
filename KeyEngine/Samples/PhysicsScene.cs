@@ -1,8 +1,6 @@
-﻿using KeyEngine.Tests;
-using KeyEngine.Physics;
+﻿using KeyEngine.Physics;
 using KeyEngine.Rendering;
 using KeyEngine.Mathematics;
-using KeyEngine.Physics.Extensions;
 
 namespace KeyEngine.Samples
 {
@@ -35,8 +33,6 @@ namespace KeyEngine.Samples
 
             ground.AddComponent<RigidBody>().BodyType = BodyType.Static;
             ground.AddComponent<SpriteRenderer>();
-
-            spawner.AddComponent<YamlSerializerTest>();
         }
 
         public void Unload() { }

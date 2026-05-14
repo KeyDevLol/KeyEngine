@@ -1,6 +1,4 @@
-﻿using KeyEngine.Tests;
-
-namespace KeyEngine.Game
+﻿namespace KeyEngine.Game
 {
     public class GameScene : IScene
     {
