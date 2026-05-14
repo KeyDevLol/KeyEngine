@@ -8,6 +8,7 @@ namespace KeyEngine.Audio
     // TODO: Сделать чтобы при изменении позиции Listener SetCalculatedGain вызывался
     // TODO: Оптимизировать использование AL.Source(SourceHandle, ALSourceb.SourceRelative, false)
     // TODO: Сделать чтобы при отключении компонента звук прерывался
+    // TODO: Сделать стриминг проигрывание, чтобы не заносить сразу весь файл в память
     public class AudioSource : Component
     {
         public readonly int SourceHandle;
