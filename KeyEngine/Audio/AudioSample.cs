@@ -19,7 +19,13 @@ namespace KeyEngine.Audio
         public override bool AssetLoaded => BufferHandle != -1 && dataPointer != IntPtr.Zero;
 
         public AudioSample() { }
-        public AudioSample(string filePath) => LoadWavFile(filePath);
+        public AudioSample(string filePath)
+        {
+            if (filePath.EndsWith(".wav"))
+                LoadWavFile(filePath);
+            else if (filePath.EndsWith(".mp3"))
+                LoadMp3File(filePath);
+        }
 
         /// <summary>
         /// Loads audio file in wav format
@@ -132,11 +138,6 @@ namespace KeyEngine.Audio
             disposed = true;
         }
 
-        public void LoadAsset(string path, string dataPath)
-        {
-            throw new NotImplementedException();
-        }
-
         internal override void UnloadAsset()
         {
             Dispose();
@@ -147,9 +148,6 @@ namespace KeyEngine.Audio
             return new SerializeData();
         }
 
-        public override void Deserialize(SerializeData data)
-        {
-            
-        }
+        public override void Deserialize(SerializeData data) { }
     }
 }
