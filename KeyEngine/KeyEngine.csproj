@@ -49,6 +49,7 @@
     <PackageReference Include="FreeTypeSharp" Version="3.0.1" />
     <PackageReference Include="ImGui.NET" Version="1.91.6.1" />
     <PackageReference Include="NAudio" Version="2.2.1" />
+    <PackageReference Include="NLayer" Version="1.16.0" />
     <PackageReference Include="OpenTK" Version="4.9.4" />
     <PackageReference Include="StbImageSharp" Version="2.30.15" />
     <PackageReference Include="StbImageWriteSharp" Version="1.16.7" />

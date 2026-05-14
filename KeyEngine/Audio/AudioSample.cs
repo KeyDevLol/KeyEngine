@@ -1,4 +1,5 @@
-﻿using NAudio.Wave;
+﻿using NLayer;
+using NAudio.Wave;
 using KeyEngine.Assets;
 using OpenTK.Audio.OpenAL;
 using KeyEngine.Serialization;
@@ -39,7 +40,7 @@ namespace KeyEngine.Audio
                 if (channels == 1)
                 {
                     array = new byte[waveFileReader.Length];
-                    waveFileReader.Read(array, 0, array.Length);
+                    waveFileReader.ReadExactly(array);
                 }
                 else
                 {
@@ -49,19 +50,41 @@ namespace KeyEngine.Audio
                     channels = 1;
                 }
 
-                dataPointer = GetDataPointer(array);
-                BufferHandle = AL.GenBuffer();
-
-                AL.BufferData(
-                BufferHandle
-                , AudioManager.GetSoundFormat(channels, bits)
-                , dataPointer
-                , array.Length
-                , sampleRate);
+                GenDataPointer(array);
+                GenDataBuffer(channels, bits, sampleRate, array);
             }
         }
+        public void LoadMp3File(string path)
+        {
+            MpegFile mpegFile = new MpegFile(path);
+            byte[] buffer = new byte[4096];
+            List<byte> allSamples = [];
 
-        private IntPtr GetDataPointer(byte[] data)
+            int totalRead;
+            while ((totalRead = mpegFile.ReadSamplesInt16(buffer, 0, buffer.Length)) > 0)
+            {
+                allSamples.AddRange(buffer.Take(totalRead));
+            }
+
+            byte[] pcmData = [.. allSamples];
+
+            GenDataPointer(pcmData);
+            GenDataBuffer(mpegFile.Channels, 16, mpegFile.SampleRate, pcmData);
+        }
+
+        private void GenDataBuffer(int channels, int bits, int sampleRate, byte[] array)
+        {
+            BufferHandle = AL.GenBuffer();
+
+            AL.BufferData(
+            BufferHandle
+            , AudioManager.GetSoundFormat(channels, bits)
+            , dataPointer
+            , array.Length
+            , sampleRate);
+        }
+
+        private void GenDataPointer(byte[] data)
         {
             if (AudioManager.UseUnsafeCode == true)
             {
@@ -69,7 +92,7 @@ namespace KeyEngine.Audio
                 {
                     fixed (byte* p = data)
                     {
-                        return (IntPtr)p;
+                        dataPointer = (IntPtr)p;
                     }
                 }
             }
@@ -77,7 +100,7 @@ namespace KeyEngine.Audio
             {
                 IntPtr result = Marshal.AllocHGlobal(data.Length);
                 Marshal.Copy(data, 0, result, data.Length);
-                return result;
+                dataPointer = result;
             }
         }
 
