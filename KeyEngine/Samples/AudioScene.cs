@@ -1,12 +1,12 @@
-﻿using KeyEngine.Assets;
+﻿using KeyEngine.Mathematics;
+using KeyEngine.Assets;
 using KeyEngine.Audio;
-using KeyEngine.Mathematics;
 
 namespace KeyEngine.Samples
 {
     public class AudioScene : IScene
     {
-        private readonly AssetReference<AudioSample>? audio = AssetsManager.GetAssetReference<AudioSample>("Assets/Audio/Vigilantism.wav");
+        private readonly AssetReference<AudioSample>? audio = AssetsManager.GetAssetReference<AudioSample>("Assets/Audio/Vigilantism.mp3");
 
         public void Load()
         {
@@ -15,24 +15,24 @@ namespace KeyEngine.Samples
 
             Entity audioListener = ECS.AddEntity("Audio Listener");
             audioListener.AddComponent<AudioListener>();
-            audioListener.AddComponent<SpriteRenderer>().Color = new Color32(255, 0, 255);
-            audioListener.AddComponent<ListenerRotation>();
+            audioListener.AddComponent<SpriteRenderer>();
 
             Entity audioSourceEntity = ECS.AddEntity("Audio Source");
+            audioSourceEntity.Scale = new(0.5f);
             AudioSource audioSource = audioSourceEntity.AddComponent<AudioSource>();
+            audioSourceEntity.AddComponent<SpriteRenderer>().Color = Color32.Pink;
+            audioSourceEntity.AddComponent<AudioSourceRotation>();
             audioSource.ReferenceDistance = 4.4f;
             audioSource.PanSmoothness = 2.5f;
 
             audioSource.SetAudioSample(audio.Value);
             audioSource.Play();
 
-            audioSourceEntity.AddComponent<SpriteRenderer>();
-            audioSourceEntity.Scale = new Vector2(0.5f, 0.5f);
         }
 
         public void Unload() { }
 
-        private class ListenerRotation(Entity owner) : Component(owner)
+        private class AudioSourceRotation(Entity owner) : Component(owner)
         {
             public float Speed = 3;
             public float Radius = 4.2f;

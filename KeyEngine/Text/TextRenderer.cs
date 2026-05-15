@@ -1,9 +1,10 @@
-﻿using KeyEngine.Mathematics;
+﻿using OpenTK.Graphics.OpenGL;
+using KeyEngine.Mathematics;
 using KeyEngine.Rendering;
-using OpenTK.Graphics.OpenGL;
 
 namespace KeyEngine
 {
+    // TODO: Сделать Batch рендеринг
     public class TextRenderer : Component
     {
         protected readonly static Shader textShader = new Shader("Assets/Shaders/Text/Text.vert", "Assets/Shaders/Text/Text.frag");

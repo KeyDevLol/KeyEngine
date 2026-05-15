@@ -1,9 +1,8 @@
-﻿using NLayer;
-using NAudio.Wave;
-using KeyEngine.Assets;
-using OpenTK.Audio.OpenAL;
+﻿using System.Runtime.InteropServices;
+using KeyEngine.Audio.FileLoaders;
 using KeyEngine.Serialization;
-using System.Runtime.InteropServices;
+using OpenTK.Audio.OpenAL;
+using KeyEngine.Assets;
 
 namespace KeyEngine.Audio
 {
@@ -12,101 +11,59 @@ namespace KeyEngine.Audio
     {
         public int BufferHandle { get; private set; } = -1;
 
-
         private IntPtr dataPointer;
         private bool disposed;
 
         public override bool AssetLoaded => BufferHandle != -1 && dataPointer != IntPtr.Zero;
 
         public AudioSample() { }
-        public AudioSample(string filePath)
+        public AudioSample(string path)
         {
-            if (filePath.EndsWith(".wav"))
-                LoadWavFile(filePath);
-            else if (filePath.EndsWith(".mp3"))
-                LoadMp3File(filePath);
+            LoadFile(path);
         }
 
-        /// <summary>
-        /// Loads audio file in wav format
-        /// </summary>
-        /// <param name="filePath">Path to audio file</param>
-        public void LoadWavFile(string path)
+        public void LoadFile(string path)
         {
-            using (WaveFileReader waveFileReader = new WaveFileReader(path))
+            IAudioFileDataProvider provider = Path.GetExtension(path).ToLowerInvariant() switch
             {
-                WaveStream stream = waveFileReader;
+                ".wav" => new WavFileDataProvider(path),
+                ".mp3" => new Mp3FileDataRrovider(path),
+                _ => throw new InvalidDataException($"Audio files with type: {Path.GetExtension(path)} are not supported.")
+            };
 
-                int channels = stream.WaveFormat.Channels;
-                int bits = stream.WaveFormat.BitsPerSample;
-                int sampleRate = stream.WaveFormat.SampleRate;
-
-                byte[] array;
-
-                if (channels == 1)
-                {
-                    array = new byte[waveFileReader.Length];
-                    waveFileReader.ReadExactly(array);
-                }
-                else
-                {
-                    var l = new StereoToMonoProvider16(waveFileReader);
-                    array = new byte[waveFileReader.Length / 2];
-                    l.Read(array, 0, array.Length);
-                    channels = 1;
-                }
-
-                GenDataPointer(array);
-                GenDataBuffer(channels, bits, sampleRate, array);
-            }
-        }
-        public void LoadMp3File(string path)
-        {
-            MpegFile mpegFile = new MpegFile(path);
-            byte[] buffer = new byte[4096];
-            List<byte> allSamples = [];
-
-            int totalRead;
-            while ((totalRead = mpegFile.ReadSamplesInt16(buffer, 0, buffer.Length)) > 0)
-            {
-                allSamples.AddRange(buffer.Take(totalRead));
-            }
-
-            byte[] pcmData = [.. allSamples];
-
-            GenDataPointer(pcmData);
-            GenDataBuffer(mpegFile.Channels, 16, mpegFile.SampleRate, pcmData);
+            GenAudioBuffer(provider);
         }
 
-        private void GenDataBuffer(int channels, int bits, int sampleRate, byte[] array)
+        private void GenAudioBuffer(IAudioFileDataProvider provider)
         {
+            dataPointer = GenDataPointer(provider.PcmData);
             BufferHandle = AL.GenBuffer();
 
             AL.BufferData(
             BufferHandle
-            , AudioManager.GetSoundFormat(channels, bits)
+            , AudioManager.GetSoundFormat(provider.Channels, provider.BitsPerSample)
             , dataPointer
-            , array.Length
-            , sampleRate);
+            , provider.PcmData.Length
+            , provider.SampleRate);
         }
 
-        private void GenDataPointer(byte[] data)
+        private static IntPtr GenDataPointer(byte[] pcmData)
         {
             if (AudioManager.UseUnsafeCode == true)
             {
                 unsafe
                 {
-                    fixed (byte* p = data)
+                    fixed (byte* p = pcmData)
                     {
-                        dataPointer = (IntPtr)p;
+                        return (IntPtr)p;
                     }
                 }
             }
             else
             {
-                IntPtr result = Marshal.AllocHGlobal(data.Length);
-                Marshal.Copy(data, 0, result, data.Length);
-                dataPointer = result;
+                IntPtr result = Marshal.AllocHGlobal(pcmData.Length);
+                Marshal.Copy(pcmData, 0, result, pcmData.Length);
+                return result;
             }
         }
 
@@ -121,7 +78,7 @@ namespace KeyEngine.Audio
 
         internal override void LoadAsset(string path)
         {
-            LoadWavFile(path);
+            LoadFile(path);
             AssetPath = path;
         }
 
