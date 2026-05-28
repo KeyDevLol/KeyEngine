@@ -10,7 +10,7 @@ The engine is NOT finished yet, it is under active development.
 # Build Requiments
 1. **Latest [Git](https://git-scm.com/downloads)**
 2. **[.NET 10.0 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/10.0)**
-3. **[Visual Studio 2026](https://visualstudio.microsoft.com/downloads/)** **[or Rider 2026](https://www.jetbrains.com/rider/)**
+3. **[Visual Studio 2026](https://visualstudio.microsoft.com/downloads/)** or **[Rider 2026](https://www.jetbrains.com/rider/)**
 
 # Supported O/S
 - ✔️ Windows 10
