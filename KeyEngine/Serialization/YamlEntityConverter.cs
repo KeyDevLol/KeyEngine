@@ -28,7 +28,7 @@ namespace KeyEngine.Serialization
 
             parser.Consume<Scalar>(); // Active
             bool active = bool.Parse(parser.Consume<Scalar>().Value); // Active
-            entity.Active = active;
+            entity.IsActive = active;
 
             parser.Consume<Scalar>(); // Position
             Vector2 position = (Vector2)rootDeserializer.Invoke(typeof(Vector2))!;
@@ -81,7 +81,7 @@ namespace KeyEngine.Serialization
             emitter.Emit(new Scalar(null, null, entity.Name ?? string.Empty, ScalarStyle.DoubleQuoted, true, false)); // Name
 
             emitter.Emit(new Scalar("Active"));
-            emitter.Emit(new Scalar(entity.Active.ToString()));
+            emitter.Emit(new Scalar(entity.IsActive.ToString()));
 
             emitter.Emit(new Scalar("Position"));
             serializer.Invoke(entity.Position, typeof(Vector2));

@@ -1,4 +1,4 @@
-﻿using YamlDotNet.Serialization;
+﻿using KeyEngine.Serialization.Serializers;
 
 namespace KeyEngine.Serialization
 {
@@ -8,53 +8,36 @@ namespace KeyEngine.Serialization
     /// </summary>
     public static class SerializationManager
     {
-        public readonly static IDeserializer DefaultDeserializer;
-        public readonly static ISerializer DefaultSerializer;
+        public readonly static ISerializer Serializer;
 
         static SerializationManager()
         {
-            DefaultDeserializer = new DeserializerBuilder()
-                .WithTypeConverter(new YamlSerializeDataConverter())
-                .WithTypeConverter(new YamlEntityConverter())
-                .WithTypeConverter(new YamlVector2Converter())
-                .IgnoreUnmatchedProperties()
-                .Build();
+            Serializer = new YamlSerializer();
+        }
 
-            DefaultSerializer = new SerializerBuilder()
-                .WithTypeConverter(new YamlSerializeDataConverter())
-                .WithTypeConverter(new YamlEntityConverter())
-                .WithTypeConverter(new YamlVector2Converter())
-                .DisableAliases()
-                .Build();
+        public static string Serialize(SerializeData serializeData)
+        {
+            return Serializer.Serialize(serializeData);
         }
 
         public static string Serialize(ISerializable serializable)
         {
-            return DefaultSerializer.Serialize(serializable.Serialize());
+            return Serializer.Serialize(serializable.Serialize());
+        }
+
+        public static void SerializeToFile(string path, SerializeData serializeData)
+        {
+            File.WriteAllText(path, Serializer.Serialize(serializeData));
         }
 
         public static void SerializeToFile(string path, ISerializable serializable)
         {
             File.WriteAllText(path, Serialize(serializable));
         }
-        public static string Serialize(SerializeData serializeData)
-        {
-            return DefaultSerializer.Serialize(serializeData);
-        }
-
-        public static void SerializeToFile(string path, SerializeData serializeData)
-        {
-            File.WriteAllText(path, DefaultSerializer.Serialize(serializeData));
-        }
-
-        public static string Serialize(object? obj)
-        {
-            return DefaultSerializer.Serialize(obj);
-        }
 
         public static SerializeData? Deserialize(string yaml)
         {
-            return DefaultDeserializer.Deserialize<SerializeData>(yaml);
+            return Serializer.Deserialize(yaml);
         }
 
         public static SerializeData? DeserializeFile(string path)
