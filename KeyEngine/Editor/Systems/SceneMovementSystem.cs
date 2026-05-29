@@ -28,12 +28,12 @@ namespace KeyEngine.Editor.Systems
 
         private void UpdateMouseMovement()
         {
-            if (Input.IsMouseButtonPressed(MouseButtonCode.Right))
+            if (Input.IsMouseButtonPressed(MouseButtonCode.Right) || Input.IsMouseButtonPressed(MouseButtonCode.Middle))
             {
                 isDragged = true;
                 origin = Camera.Main!.ScreenToWorldCoords(Input.MousePosition);
             }
-            else if (Input.IsMouseButtonReleased(MouseButtonCode.Right))
+            else if (Input.IsMouseButtonReleased(MouseButtonCode.Right) || Input.IsMouseButtonReleased(MouseButtonCode.Middle))
             {
                 isDragged = false;
             }
@@ -75,7 +75,7 @@ namespace KeyEngine.Editor.Systems
 
         private void WasdMove()
         {
-            if (!Input.IsMouseButtonDown(MouseButtonCode.Right))
+            if (!Input.IsMouseButtonDown(MouseButtonCode.Right) || Input.IsMouseButtonDown(MouseButtonCode.Middle))
                 return;
 
             float xAxis = Input.GetAxisRaw(KeyCode.A, KeyCode.D);
