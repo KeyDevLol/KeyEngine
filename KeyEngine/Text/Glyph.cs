@@ -3,7 +3,7 @@ using OpenTK.Graphics.OpenGL;
 
 namespace KeyEngine
 {
-    public struct Glyph : IDisposable
+    public class Glyph : IDisposable
     {
         public readonly Vector2 Size;
         public readonly Vector2 Bearing;
@@ -20,6 +20,7 @@ namespace KeyEngine
             Advance = advance;
             TextureHandle = textureHandle;
         }
+        ~Glyph() => Dispose();
 
         public void Dispose()
         {
