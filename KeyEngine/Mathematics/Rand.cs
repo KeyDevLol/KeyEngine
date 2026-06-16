@@ -1,31 +1,21 @@
-﻿namespace KeyEngine.Mathematics
+﻿using System.Numerics;
+
+namespace KeyEngine.Mathematics
 {
     public static class Rand
     {
-        private static Random rand = new Random();
+        private static Random Rng { get; set; } = new Random();
 
-        public static double GenValue(double min, double max)
+        public static void SetSeed(int seed) => Rng = new(seed);
+
+        public static int Range(int min, int max) => Rng.Next(min, max);
+        public static double Range(double min, double max) => Lerp(min, max, Rng.NextDouble());
+        public static float Range(float min, float max) => Lerp(min, max, Rng.NextSingle());
+
+        private static T Lerp<T>(T min, T max, T range01) where T : INumber<T>
         {
-            if (min > max || max < min)
-                throw new ArgumentOutOfRangeException();
-
-            return rand.NextDouble() * (max - min) + min;
-        }
-
-        public static float GenValue(float min, float max)
-        {
-            if (min > max || max < min)
-                throw new ArgumentOutOfRangeException();
-
-            return rand.NextSingle() * (max - min) + min;
-        }
-
-        public static int GenValue(int min, int max)
-        {
-            if (min > max || max < min)
-                throw new ArgumentOutOfRangeException();
-
-            return rand.Next(min, max);
+            ArgumentOutOfRangeException.ThrowIfGreaterThan(min, max, nameof(min));
+            return min + (max - min) * range01;
         }
     }
 }
