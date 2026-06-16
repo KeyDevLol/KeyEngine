@@ -1,31 +1,20 @@
-﻿namespace KeyEngine.Mathematics
+﻿using NAudio.Codecs;
+using System.Numerics;
+
+namespace KeyEngine.Mathematics
 {
     public static class Rand
     {
         private static Random rand = new Random();
+        
+        public static int Range(int min, int max) => rand.Next(min, max);
+        public static double Range(double min, double max) => Lerp(min, max, rand.NextSingle());
+        public static float Range(float min, float max) => Lerp(min, max, rand.NextSingle());
 
-        public static double GenValue(double min, double max)
+        private static T Lerp<T>(T min, T max, T range01) where T : INumber<T>
         {
-            if (min > max || max < min)
-                throw new ArgumentOutOfRangeException();
-
-            return rand.NextDouble() * (max - min) + min;
-        }
-
-        public static float GenValue(float min, float max)
-        {
-            if (min > max || max < min)
-                throw new ArgumentOutOfRangeException();
-
-            return rand.NextSingle() * (max - min) + min;
-        }
-
-        public static int GenValue(int min, int max)
-        {
-            if (min > max || max < min)
-                throw new ArgumentOutOfRangeException();
-
-            return rand.Next(min, max);
+            ArgumentOutOfRangeException.ThrowIfGreaterThan(min, max, nameof(min));
+            return min + (max - min) * range01;
         }
     }
 }
